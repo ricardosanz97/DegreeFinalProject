@@ -13,18 +13,19 @@ public class Obstacle : MonoBehaviour
     #region public
     public BoogiesSpawner boogiesSpawner;
     public ObstacleType type;
-    public BoxCollider _boxCol;
+    public Collider _col;
     #endregion
 
     #region private
     #endregion
 
-    private void Awake()
+    public virtual void Awake()
     {
         boogiesSpawner = FindObjectOfType<BoogiesSpawner>();
-        _boxCol = GetComponent<BoxCollider>();
+        _col = GetComponent<Collider>();
     }
 
+    /*
     public void OnMouseDown()
     {
         if (boogiesSpawner.selectingObjective)
@@ -33,4 +34,5 @@ public class Obstacle : MonoBehaviour
             boogiesSpawner.selectingObjective = false;
         }
     }
+    */
 }

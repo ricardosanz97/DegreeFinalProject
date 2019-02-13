@@ -5,32 +5,71 @@ using UnityEngine;
 public class BoogiesSpawner : MonoBehaviour
 {
     public int currentAmount = 30;
-    public int cleanersAmount = 1;
-    public int wrestlersAmount = 0;
-    public int collectorsAmount = 0;
-    public int mudThrowersAmount = 0;
-    public int explorersAmount = 0;
+    public int leftBoogiesAmount = 0;
+    public int currentElixir = 10;
+    public int wrestlersAmount = 5;
+    public int cleanersAmount = 10;
+    public int collectorsAmount = 5;
+    public int explorersAmount = 10;
 
     public bool selectingObjective = false;
-    public Obstacle obstacleSelected;
-    public Obstacle lastObstacleSelected;
+    //public Obstacle obstacleSelected;
+    //public Obstacle lastObstacleSelected;
     public GameObject boogieCleaner;
     public GameObject boogieWrestler;
     public GameObject boogieCollector;
-    public GameObject boogieMudThrower;
     public GameObject boogieExplorer;
 
     public float radiusSpawn = 2f;
 
+    public static int CurrentTotalAmount
+    {
+        get { return FindObjectOfType<BoogiesSpawner>().currentAmount; }
+        set { FindObjectOfType<BoogiesSpawner>().currentAmount = value; }
+    }
+
+    public static int CurrentBoogiesLeftAmount
+    {
+        get { return FindObjectOfType<BoogiesSpawner>().leftBoogiesAmount; }
+        set { FindObjectOfType<BoogiesSpawner>().leftBoogiesAmount = value; }
+    }
+
+    public static int CurrentElixir
+    {
+        get { return FindObjectOfType<BoogiesSpawner>().currentElixir; }
+        set { FindObjectOfType<BoogiesSpawner>().currentElixir = value; }
+    }
+
+    public static int CleanersAmount
+    {
+        get { return FindObjectOfType<BoogiesSpawner>().cleanersAmount; }
+        set { FindObjectOfType<BoogiesSpawner>().cleanersAmount = value; }
+    }
+
+    public static int WrestlersAmount
+    {
+        get { return FindObjectOfType<BoogiesSpawner>().wrestlersAmount; }
+        set { FindObjectOfType<BoogiesSpawner>().wrestlersAmount = value; }
+    }
+
+    public static int CollectorsAmount
+    {
+        get { return FindObjectOfType<BoogiesSpawner>().collectorsAmount; }
+        set { FindObjectOfType<BoogiesSpawner>().collectorsAmount = value; }
+    }
+
+    public static int ExplorersAmount
+    {
+        get { return FindObjectOfType<BoogiesSpawner>().explorersAmount; }
+        set { FindObjectOfType<BoogiesSpawner>().explorersAmount = value; }
+    }
+
+    public bool positionAccepted = false;
+
     private void Update()
     {
+        currentAmount = (cleanersAmount + wrestlersAmount + collectorsAmount + explorersAmount) + leftBoogiesAmount;
         HandleInputSelect();
-        if (obstacleSelected)
-        {
-            HandleObstacleType(obstacleSelected.type);
-            lastObstacleSelected = obstacleSelected;
-            obstacleSelected = null;
-        }
     }
 
     private void HandleInputSelect()
@@ -38,43 +77,67 @@ public class BoogiesSpawner : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F))
         {
             selectingObjective = !selectingObjective;
+            FindObjectOfType<CircleMouseBehavior>().GetComponentInChildren<SpriteRenderer>().enabled = selectingObjective;
         }
     }
 
-    private void HandleObstacleType(ObstacleType type)
+    public void SpawnAllBoogiesSelected(Vector3 clickPoint)
     {
-        switch (type)
-        {
-            case ObstacleType.Debris:
-                StartCoroutine(SpawnCleanerBoogies());
-                break;
-            case ObstacleType.Enemy:
-                StartCoroutine(SpawnWrestlersBoogies());
-                break;
-        }
+        if (CleanersAmount > 0) { StartCoroutine(SpawnCleanerBoogies(clickPoint)); }
+        if (WrestlersAmount > 0) { StartCoroutine(SpawnWrestlersBoogies(clickPoint)); }
+        if (CollectorsAmount > 0) { StartCoroutine(SpawnCollectorsBoogies(clickPoint)); }
+        if (ExplorersAmount > 0) { StartCoroutine(SpawnExplorersBoogies(clickPoint)); }
     }
 
-    private IEnumerator SpawnCleanerBoogies()
+    private IEnumerator SpawnCleanerBoogies(Vector3 clickPoint)
     {
-        for (int i = 0; i<cleanersAmount; i++)
+        int spawnNumber = cleanersAmount;
+        for (int i = 0; i<spawnNumber; i++)
         {
             yield return new WaitForSeconds(0.1f);
-            SpawnBoogie(BoogieType.Cleaner);
+            SpawnBoogie(BoogieType.Cleaner, clickPoint);
+            cleanersAmount--;
         }
         yield return null;
     }
 
-    private IEnumerator SpawnWrestlersBoogies()
+    private IEnumerator SpawnWrestlersBoogies(Vector3 clickPoint)
     {
-        for (int i = 0; i<wrestlersAmount; i++)
+        int spawnNumber = wrestlersAmount;
+        for (int i = 0; i<spawnNumber; i++)
         {
             yield return new WaitForSeconds(0.1f);
-            SpawnBoogie(BoogieType.Wrestler);
+            SpawnBoogie(BoogieType.Wrestler, clickPoint);
+            wrestlersAmount--; 
         }
         yield return null;
     }
 
-    private void SpawnBoogie(BoogieType type)
+    private IEnumerator SpawnCollectorsBoogies(Vector3 clickPoint)
+    {
+        int spawnNumber = collectorsAmount;
+        for (int i = 0; i<spawnNumber; i++)
+        {
+            yield return new WaitForSeconds(0.1f);
+            SpawnBoogie(BoogieType.Collector, clickPoint);
+            collectorsAmount--;
+        }
+        yield return null;
+    }
+
+    private IEnumerator SpawnExplorersBoogies(Vector3 clickPoint)
+    {
+        int spawnNumber = explorersAmount;
+        for (int i = 0; i < spawnNumber; i++)
+        {
+            yield return new WaitForSeconds(0.1f);
+            SpawnBoogie(BoogieType.Explorer, clickPoint);
+            explorersAmount--;
+        }
+        yield return null;
+    }
+
+    private void SpawnBoogie(BoogieType type, Vector3 clickPoint)
     {
         Vector3 randomPositionCenter = this.transform.position + this.transform.forward * radiusSpawn * 2f;
         Vector3 position = new Vector3(Random.Range(randomPositionCenter.x - radiusSpawn, randomPositionCenter.x + radiusSpawn), 0.5f, Random.Range(randomPositionCenter.z - radiusSpawn, randomPositionCenter.z + radiusSpawn));
@@ -93,11 +156,8 @@ public class BoogiesSpawner : MonoBehaviour
             case BoogieType.Collector:
                 boogieToSpawn = boogieCollector;
                 break;
-            case BoogieType.MudThrower:
-                boogieToSpawn = boogieMudThrower;
-                break;
         }
         GameObject b = Instantiate(boogieToSpawn, position, this.transform.rotation);
-        b.GetComponent<Boogie>().SetObjective(lastObstacleSelected);
+        b.GetComponent<Boogie>().initialPoint = clickPoint;
     }
 }

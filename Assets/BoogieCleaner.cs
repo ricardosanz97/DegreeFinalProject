@@ -6,40 +6,38 @@ using DG.Tweening;
 
 public class BoogieCleaner : Boogie
 {
-    private NavMeshAgent _agent;
-    private Vector3 initialPoint;
-    private Vector3 randomPoint;
-
     public bool canCharge = true;
     public bool canDeposit = false;
-    public bool backToPlayer = false;
     public DebrisObstaclePart carriedObject;
 
-    private void Awake()
-    {
-        _agent = GetComponent<NavMeshAgent>();
-    }
     private void Start()
     {
-        StartCoroutine(CheckIfWorkFinished());
         type = BoogieType.Cleaner;
-        initialPoint = currentObjective.transform.position;
-        randomPoint = new Vector3(Random.Range(initialPoint.x - currentObjective._boxCol.size.x, initialPoint.x + currentObjective._boxCol.size.x), -0.5f, 
-            Random.Range(initialPoint.z - currentObjective._boxCol.size.z, initialPoint.z + currentObjective._boxCol.size.z));
+        randomPoint = GetRandomPointAroundCircle(initialPoint);
         _agent.SetDestination(randomPoint);
     }
 
     private void Update()
     {
-        if (RandomPointDestinationReached())
+        if (RandomPointDestinationReached() && currentObjective == null)
         {
-            randomPoint = new Vector3(Random.Range(initialPoint.x - currentObjective._boxCol.size.x, initialPoint.x + currentObjective._boxCol.size.x), -0.5f,
-            Random.Range(initialPoint.z - currentObjective._boxCol.size.z, initialPoint.z + currentObjective._boxCol.size.z));
+            randomPoint = GetRandomPointAroundCircle(initialPoint);
+            _agent.SetDestination(randomPoint);
+            if (!objectiveNotFoundTimerEnabled)
+            {
+                StartCoroutine(ObjectiveNotFound());
+                objectiveNotFoundTimerEnabled = true;
+            }
+        }
+        else if (RandomPointDestinationReached() && currentObjective != null)
+        {
+            randomPoint = GetRandomPointAroundObjective(currentObjective.transform.position);
             _agent.SetDestination(randomPoint);
         }
 
-        if (PlayerDestinationReached())
+        if (PlayerDestinationReached() && backToPlayer)
         {
+            BoogiesSpawner.CleanersAmount++;
             Destroy(this.gameObject);
         }
     }
@@ -56,14 +54,19 @@ public class BoogieCleaner : Boogie
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.GetComponent<DebrisObstaclePart>() && other.GetComponent<DebrisObstaclePart>().charger == null)
+        if (other.GetComponent<DebrisObstaclePart>() && other.GetComponent<DebrisObstaclePart>().charger == null) //debris on the ground
         {
+            if (currentObjective == null)
+            {
+                SetObjective(other.GetComponentInParent<Obstacle>());
+            }
             if (carriedObject == null)
             {
                 if (!canCharge) return;
                 if (other.GetComponent<DebrisObstaclePart>().settledDown) return;
                 carriedObject = other.GetComponent<DebrisObstaclePart>();
                 carriedObject.GetComponent<DebrisObstaclePart>().charger = this;
+                carriedObject.transform.SetParent(this.transform, false);
                 carriedObject.gameObject.transform.DOMove(this.transform.Find("ChargingPoint").transform.position, 0f);
                 canDeposit = false;
                 StartCoroutine(TimeToCanUnchargeAgainElapse());
@@ -77,9 +80,18 @@ public class BoogieCleaner : Boogie
                 }
                 carriedObject.transform.DOMove(other.gameObject.transform.position, 0f);
                 carriedObject.GetComponent<DebrisObstaclePart>().charger = null;
+                carriedObject.transform.SetParent(currentObjective.transform, false);
                 carriedObject = null;
                 canCharge = false;
                 StartCoroutine(TimeToCanChargeAgainElapse());
+            }
+        }
+
+        if (other.GetComponent<BoogieCleaner>()) //other cleaner, we say him which is the objective ;)
+        {
+            if (other.GetComponent<BoogieCleaner>().currentObjective == null && currentObjective != null)
+            {
+                other.GetComponent<BoogieCleaner>().SetObjective(currentObjective);
             }
         }
 
@@ -96,20 +108,20 @@ public class BoogieCleaner : Boogie
         }
     }
 
-    IEnumerator CheckIfWorkFinished()
+    public IEnumerator CheckIfWorkFinished()
     {
         yield return new WaitForSeconds(2f);
         int counter = 0;
-        for (int i = 0; i<currentObjective.gameObject.transform.childCount; i++)
+        DebrisObstaclePart[] parts = currentObjective.GetComponent<DebrisObstacle>().debrisParts;
+        for (int i = 0; i < parts.Length; i++)
         {
-            Debug.Log("checking");
-            if (currentObjective.gameObject.transform.GetChild(i).GetComponent<DebrisObstaclePart>().settledDown)
+            if (parts[i].settledDown)
             {
                 counter++;
             }
         }
 
-        if (counter == currentObjective.gameObject.transform.childCount)
+        if (counter == parts.Length)
         {
             BackToPlayer();
         }
@@ -119,13 +131,17 @@ public class BoogieCleaner : Boogie
         }
     }
 
-    public void BackToPlayer()
+    public override void BackToPlayer()
     {
-        Debug.Log("back to player!");
         backToPlayer = true;
         randomPoint = Vector3.positiveInfinity;
         _agent.SetDestination(FindObjectOfType<BoogiesSpawner>().gameObject.transform.position);
     }
 
-
+    public override void OnObjectiveSelected()
+    {
+        Debug.Log("init coroutine");
+        StartCoroutine(CheckIfWorkFinished());
+        //StopCoroutine(ObjectiveNotFound());
+    }
 }
