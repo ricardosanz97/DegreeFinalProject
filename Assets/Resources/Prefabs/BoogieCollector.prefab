@@ -221,7 +221,7 @@ MonoBehaviour:
   initialPoint: {x: 0, y: 0, z: 0}
   randomPoint: {x: 0, y: 0, z: 0}
   currentObjective: {fileID: 0}
-  maxTimeToFindObjective: 10
+  maxTimeToFindObjective: 100
   objectiveNotFoundTimerEnabled: 0
   backToPlayer: 0
   _agent: {fileID: 0}
