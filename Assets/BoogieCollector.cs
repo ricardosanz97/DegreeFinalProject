@@ -14,16 +14,8 @@ public class BoogieCollector : Boogie
     public GameObject marker;
     private GameObject lastMarker;
     private GameObject currentMarker;
+    private GameObject lastMarkerSpawned;
     private bool coroutineChangeDirectionStarted = false;
-    public enum CURRENT_PATH
-    {
-        RandomCircle,
-        RandomObjective,
-        Marker,
-        CollectorMachine,
-        Player,
-        None
-    }
 
     public enum CURRENT_STATE
     {
@@ -31,40 +23,39 @@ public class BoogieCollector : Boogie
         WanderingAroundObjective,
         WanderingAroundCircle,
         CollectingElixir,
-        FollowingMarkers,
+        FollowingMarkersToElixirStone,
+        FollowingMarkersToCollectorMachine,
         GoingToPlayer
     }
 
-    public CURRENT_PATH currentPath;
+    private enum DIRECTION
+    {
+        ElixirStone,
+        CollectorMachine
+    }
+
     public CURRENT_STATE currentState;
+
+    public override void Awake()
+    {
+        base.Awake();
+    }
 
     private void Start()
     {
         type = BoogieType.Collector;
         randomPoint = GetRandomPointAroundCircle(initialPoint);
-        bool a = _agent.SetDestination(randomPoint);
-        currentPath = CURRENT_PATH.RandomCircle;
+        _agent.SetDestination(randomPoint);
         currentState = CURRENT_STATE.WanderingAroundCircle;
-        if (a == false)
-        {
-            Debug.LogError("Destination cant be reached. ");
-        }
-
         StartCoroutine(HandleChangeDirectionRandomly());
     }
 
     private void Update()
     {
-        if (currentObjective == null && RandomPointDestinationReached())
+        if (currentState == CURRENT_STATE.WanderingAroundCircle && RandomPointDestinationReached()) //we don't have an objective yet.
         {
             randomPoint = GetRandomPointAroundCircle(initialPoint);
-            currentPath = CURRENT_PATH.RandomCircle;
-            currentState = CURRENT_STATE.WanderingAroundCircle;
-            bool a = _agent.SetDestination(randomPoint);
-            if (a == false)
-            {
-                Debug.LogError("Destination cant be reached. ");
-            }
+            _agent.SetDestination(randomPoint);
             if (!objectiveNotFoundTimerEnabled)
             {
                 StartCoroutine(ObjectiveNotFound());
@@ -72,38 +63,46 @@ public class BoogieCollector : Boogie
             }
         }
 
-        if (currentObjective != null && currentElixirStone == null && RandomPointDestinationReached())
+        if (currentState == CURRENT_STATE.WanderingAroundObjective && RandomPointDestinationReached()) //we have an objective but we are not carrying elixir.
         {
             randomPoint = GetRandomPointAroundObjective(currentObjective.transform.position);
-            currentPath = CURRENT_PATH.RandomObjective;
-            currentState = CURRENT_STATE.WanderingAroundObjective;
-            bool a = _agent.SetDestination(randomPoint);
-            if (a == false)
+            _agent.SetDestination(randomPoint);
+        }
+
+        if (BoogiesSpawner.BoogiesKnowCollectorMachinePosition && currentState == CURRENT_STATE.GoingToCollectorMachine && CollectorMachineDestinationReached())
+        {
+            DepositElixir();
+        }
+
+        if (!BoogiesSpawner.BoogiesKnowCollectorMachinePosition && currentState == CURRENT_STATE.GoingToCollectorMachine && RandomPointDestinationReached())
+        {
+            randomPoint = GetRandomPointAroundObjective(currentObjective.transform.position);
+            _agent.SetDestination(randomPoint);
+            if (!objectiveNotFoundTimerEnabled)
             {
-                Debug.LogError("Destination cant be reached. ");
+                StartCoroutine(ObjectiveNotFound());
+                objectiveNotFoundTimerEnabled = true;
             }
         }
 
-        if (BoogiesSpawner.BoogiesKnowCollectorMachinePosition && currentElixirStone != null && /*PlayerDestinationReached()*/ CollectorMachineDestinationReached())
+        if (backToPlayer && PlayerDestinationReached())
         {
-            DepositElixir();
+            Destroy(this.gameObject);
+            BoogiesSpawner.CollectorsAmount++;
         }
     }
 
     private void DepositElixir()
     {
+        canCollect = false;
+        canFollowMarker = false;
         CollectorMachineBehavior.ElixirGot++;
         currentElixirStone = null;
         StartCoroutine(HandleCanCollectTrue());
         StartCoroutine(HandleCanFollowMarkerTrue());
         randomPoint = GetRandomPointAroundObjective(currentObjective.transform.position);
-        bool a = _agent.SetDestination(randomPoint);
-        currentPath = CURRENT_PATH.RandomObjective;
+        _agent.SetDestination(randomPoint);
         currentState = CURRENT_STATE.WanderingAroundObjective;
-        if (a == false)
-        {
-            Debug.LogError("Destination cant be reached. ");
-        }
     }
 
     IEnumerator HandleCanCollectTrue()
@@ -125,7 +124,7 @@ public class BoogieCollector : Boogie
 
     private bool PlayerDestinationReached()
     {
-        return Vector3.Distance(this.transform.position, FindObjectOfType<BoogiesSpawner>().gameObject.transform.position) < 1.5f;
+        return Vector3.Distance(this.transform.position, FindObjectOfType<BoogiesSpawner>().gameObject.transform.position) < 1f;
     }
 
     private bool CollectorMachineDestinationReached()
@@ -134,44 +133,64 @@ public class BoogieCollector : Boogie
         return distance < 1.5f;
     }
 
+    private bool Wandering()
+    {
+        return currentState == CURRENT_STATE.WanderingAroundObjective || currentState == CURRENT_STATE.WanderingAroundCircle;
+    }
+
     private void OnTriggerEnter(Collider other)
     {
-        if (other.GetComponent<ElixirObstacleStone>() && StoneIsAvailable(other.GetComponent<ElixirObstacleStone>()) && canCollect)
+        if ((Wandering() || currentState == CURRENT_STATE.FollowingMarkersToElixirStone) && other.GetComponent<ElixirObstacleStone>() && StoneIsAvailable(other.GetComponent<ElixirObstacleStone>()) && canCollect)
             //if we get a non-full stone
         {
-            currentPath = CURRENT_PATH.None;
-            currentState = CURRENT_STATE.CollectingElixir;
-            Debug.Log("tocamos una piedra y vamos a extraer elixir. ");
-            canFollowMarker = false;
             if (currentObjective == null)
             {
                 SetObjective(other.GetComponentInParent<Obstacle>());
+                if (!objectiveNotFoundTimerEnabled)
+                {
+                    StartCoroutine(ObjectiveNotFound());
+                    objectiveNotFoundTimerEnabled = true;
+                }
             }
+            currentState = CURRENT_STATE.CollectingElixir;
+            //canFollowMarker = false;
             currentElixirStone = other.GetComponent<ElixirObstacleStone>();
             currentElixirStone.bCollectorsIn++;
-            StartCoroutine(CollectElixir());
+            StartCoroutine(OnCollectingElixir());
         }
 
-        if (other.GetComponent<ElixirObstacleStone>() && !StoneIsAvailable(other.GetComponent<ElixirObstacleStone>()) && canCollect && currentObjective != null)
+        if ((Wandering() || currentState == CURRENT_STATE.FollowingMarkersToElixirStone) && other.GetComponent<ElixirObstacleStone>() && !StoneIsAvailable(other.GetComponent<ElixirObstacleStone>()) && canCollect)
         {
-            randomPoint = GetRandomPointAroundObjective(currentObjective.transform.position);
-            bool a = _agent.SetDestination(randomPoint);
-            currentPath = CURRENT_PATH.RandomObjective;
-            currentState = CURRENT_STATE.WanderingAroundObjective;
-            if (a == false)
+            if (currentObjective == null)
             {
-                Debug.LogError("Destination cant be reached. ");
+                SetObjective(other.GetComponentInParent<Obstacle>());
+                if (!objectiveNotFoundTimerEnabled)
+                {
+                    StartCoroutine(ObjectiveNotFound());
+                    objectiveNotFoundTimerEnabled = true;
+                }
+            }
+            randomPoint = GetRandomPointAroundObjective(currentObjective.transform.position);
+            _agent.SetDestination(randomPoint);
+            currentState = CURRENT_STATE.WanderingAroundObjective;
+        }
+
+        if (other.GetComponent<MarkerBehaviour>() && Wandering() && currentElixirStone == null && canFollowMarker)
+        {
+            currentMarker = other.gameObject;
+            StartCoroutine(OnFollowingMarkers(DIRECTION.ElixirStone));
+        }
+
+        if (other.GetComponent<MarkerBehaviour>() && canFollowMarker && !BoogiesSpawner.BoogiesKnowCollectorMachinePosition)
+        {
+            if (currentState == CURRENT_STATE.GoingToCollectorMachine && other.GetComponent<MarkerBehaviour>().markerCreator != this) //carrying elixir
+            {
+                currentMarker = other.gameObject;
+                StartCoroutine(OnFollowingMarkers(DIRECTION.CollectorMachine));
             }
         }
 
-        if (other.GetComponent<MarkerBehaviour>() && currentElixirStone == null && canFollowMarker)
-        {
-            Debug.Log("we can follow marker");
-            currentMarker = other.gameObject;
-            StartCoroutine(OnFollowingMarkers());
-        }
-
-        if (other.GetComponent<CollectorMachineBehavior>() && currentElixirStone != null)
+        if (other.GetComponent<CollectorMachineBehavior>() && !BoogiesSpawner.BoogiesKnowCollectorMachinePosition && (currentState == CURRENT_STATE.GoingToCollectorMachine || currentState == CURRENT_STATE.FollowingMarkersToCollectorMachine))
         {
             DepositElixir();
         }
@@ -179,27 +198,71 @@ public class BoogieCollector : Boogie
 
     private bool StoneIsAvailable(ElixirObstacleStone stone)
     {
-        return !stone.empty && stone.bCollectorsIn < 3;
+        return !stone.empty && stone.bCollectorsIn < stone.maxCollectorsIn;
     }
 
-    IEnumerator OnFollowingMarkers()
+    IEnumerator OnFollowingMarkers(DIRECTION dir)
     {
         followingMarker = true;
         canFollowMarker = false;
-        while (currentMarker != null && currentState != CURRENT_STATE.CollectingElixir)
+        
+
+        if (dir == DIRECTION.ElixirStone)
         {
-            bool a = _agent.SetDestination(currentMarker.transform.position);
-            currentPath = CURRENT_PATH.Marker;
-            currentState = CURRENT_STATE.FollowingMarkers;
-            if (a == false)
+            while (currentMarker != null && currentState != CURRENT_STATE.CollectingElixir)
             {
-                Debug.LogError("Destination cant be reached. ");
+                _agent.SetDestination(currentMarker.transform.position);
+                currentState = CURRENT_STATE.FollowingMarkersToElixirStone;
+                yield return StartCoroutine(OnGoingToAMarker());
+                if (currentMarker != null && currentMarker.GetComponent<MarkerBehaviour>().previousMarker != null)
+                {
+                    currentMarker = currentMarker.GetComponent<MarkerBehaviour>().previousMarker;
+                }
+                else
+                {
+                    break;
+                }
+                yield return null;
             }
-            yield return StartCoroutine(OnGoingToAMarker());
-            currentMarker = currentMarker.GetComponent<MarkerBehaviour>().previousMarker;
+            followingMarker = false;
+        }
+        else if (dir == DIRECTION.CollectorMachine)
+        {
+            while (currentMarker != null)
+            {
+                _agent.SetDestination(currentMarker.transform.position);
+                currentState = CURRENT_STATE.FollowingMarkersToCollectorMachine;
+                yield return StartCoroutine(OnGoingToAMarker());
+                if (currentMarker != null && currentMarker.GetComponent<MarkerBehaviour>().nextMarker != null)
+                {
+                    currentMarker = currentMarker.GetComponent<MarkerBehaviour>().nextMarker;
+                }
+                else
+                {
+                    break;
+                }
+                yield return null;
+            }
+
+            followingMarker = false;
+        }   
+    }
+
+    IEnumerator OnGoingToAMarker()
+    {
+        _agent.isStopped = false;
+        while (true)
+        {
+            if (currentState != CURRENT_STATE.FollowingMarkersToElixirStone && currentState != CURRENT_STATE.FollowingMarkersToCollectorMachine)
+            {
+                break;
+            }
+            if (currentMarker != null && Vector3.Distance(transform.position, currentMarker.transform.position) <= 0.1f)
+            {
+                break;
+            }
             yield return null;
         }
-        followingMarker = false;
     }
 
     IEnumerator HandleChangeDirectionRandomly()
@@ -207,7 +270,10 @@ public class BoogieCollector : Boogie
         while (true)
         {
             yield return new WaitForSeconds(Random.Range(2f, 4f));
-            if (currentState == CURRENT_STATE.WanderingAroundObjective || currentState == CURRENT_STATE.FollowingMarkers && currentMarker == null || currentState == CURRENT_STATE.WanderingAroundCircle)
+            if (Wandering() || 
+                (currentState == CURRENT_STATE.FollowingMarkersToElixirStone && currentMarker == null) || 
+                (currentState == CURRENT_STATE.FollowingMarkersToElixirStone && currentMarker != null && currentMarker.GetComponent<MarkerBehaviour>().previousMarker == null) || 
+                (!BoogiesSpawner.BoogiesKnowCollectorMachinePosition && currentState == CURRENT_STATE.GoingToCollectorMachine && currentMarker != null && currentMarker.GetComponent<MarkerBehaviour>().nextMarker != null))
             {
                 if (currentObjective != null)
                 {
@@ -223,25 +289,7 @@ public class BoogieCollector : Boogie
         }
     }
 
-    IEnumerator OnGoingToAMarker()
-    {
-        _agent.isStopped = false;
-        while (true)
-        {
-            if (currentState != CURRENT_STATE.FollowingMarkers)
-            {
-                break;
-            }
-            if (Vector3.Distance(transform.position, currentMarker.transform.position) <= 0.1f)
-            {
-                break;
-            }
-            yield return null;
-        }
-        
-    }
-
-    IEnumerator CollectElixir()
+    IEnumerator OnCollectingElixir()
     {
         _agent.isStopped = true;
         currentElixirStone.elixirAvailable--;
@@ -250,70 +298,87 @@ public class BoogieCollector : Boogie
             currentElixirStone.empty = true;
             //change color
         }
-        canCollect = false;
         yield return new WaitForSeconds(5f);
-        currentElixirStone.bCollectorsIn--;
-        if (BoogiesSpawner.BoogiesKnowCollectorMachinePosition) BringElixirToCollectorMachine();
+        if (BoogiesSpawner.BoogiesKnowCollectorMachinePosition)
+        {
+            canFollowMarker = false;
+            canCollect = false;
+        }
         else
         {
-            randomPoint = GetRandomPointAroundObjective(currentObjective.transform.position);
-            bool a = _agent.SetDestination(randomPoint);
-            if (a == false)
-            {
-                Debug.LogError("Destination cant be reached. ");
-            }
-            _agent.isStopped = false;
-            StartCoroutine(MarkRoad());
-            lastMarker = Instantiate(marker, transform.position, Quaternion.identity);
-            lastMarker.GetComponent<MarkerBehaviour>().previousMarker = null;
+            canFollowMarker = true;
+            canCollect = false;
+            
         }
+        currentElixirStone.bCollectorsIn--;
+        BringElixirToCollectorMachine();
     }
 
     private void BringElixirToCollectorMachine()
     {
-        bool a = _agent.SetDestination(FindObjectOfType<CollectorMachineBehavior>().transform.position);
-        currentPath = CURRENT_PATH.CollectorMachine;
         currentState = CURRENT_STATE.GoingToCollectorMachine;
-        if (a == false)
+        if (BoogiesSpawner.BoogiesKnowCollectorMachinePosition)
         {
-            Debug.LogError("Destination cant be reached. ");
+            _agent.SetDestination(FindObjectOfType<CollectorMachineBehavior>().transform.position);
+            _agent.isStopped = false;
         }
-        _agent.isStopped = false;
+        else
+        {
+            randomPoint = GetRandomPointAroundObjective(currentObjective.transform.position);
+            _agent.SetDestination(randomPoint);
+            _agent.isStopped = false;
+        }
         StartCoroutine(MarkRoad());
-        lastMarker = Instantiate(marker, transform.position, Quaternion.identity);
-        //lastMarker.GetComponent<MarkerBehaviour>().markerCreator = this;
-        lastMarker.GetComponent<MarkerBehaviour>().previousMarker = null;
     }
 
     IEnumerator MarkRoad()
     {
+        lastMarker = Instantiate(marker, transform.position, Quaternion.identity);
+        lastMarker.GetComponent<MarkerBehaviour>().previousMarker = null;
+        lastMarker.GetComponent<MarkerBehaviour>().markerCreator = this;
         while (currentElixirStone != null)
         {
-            yield return new WaitForSeconds(0.05f);
+            yield return new WaitForSeconds(0.1f);
             GameObject currentMarker = Instantiate(marker, transform.position, Quaternion.identity);
-            //lastMarker.GetComponent<MarkerBehaviour>().markerCreator = this;
+            currentMarker.GetComponent<MarkerBehaviour>().markerCreator = this;
             currentMarker.GetComponent<MarkerBehaviour>().previousMarker = lastMarker;
+            currentMarker.GetComponent<MarkerBehaviour>().previousMarker.GetComponent<MarkerBehaviour>().nextMarker = currentMarker;
             lastMarker = currentMarker;
+            if (currentState == CURRENT_STATE.FollowingMarkersToCollectorMachine)
+            {
+                //break;
+            }
         }
         lastMarker = null;
-        currentMarker = null;
     }
 
     public override void BackToPlayer()
     {
         backToPlayer = true;
         randomPoint = Vector3.positiveInfinity;
-        bool a = _agent.SetDestination(FindObjectOfType<BoogiesSpawner>().gameObject.transform.position);
-        currentPath = CURRENT_PATH.Player;
-        currentState = CURRENT_STATE.GoingToPlayer;
+        bool a =_agent.SetDestination(FindObjectOfType<BoogiesSpawner>().gameObject.transform.position);
         if (a == false)
         {
             Debug.LogError("Destination cant be reached. ");
         }
+        currentState = CURRENT_STATE.GoingToPlayer;
+    }
+
+    IEnumerator CheckIfWordFinished()
+    {
+        Debug.Log("checking. ");
+        yield return new WaitForSeconds(2f);
+        if (CollectorMachineBehavior.ElixirGot == currentObjective.GetComponent<ElixirObstacle>().totalElixirAvailable)
+        {
+            Debug.Log("back to the player. ");
+            BackToPlayer();
+        }
+        StartCoroutine(CheckIfWordFinished());
     }
 
     public override void OnObjectiveSelected()
     {
-        Debug.Log("objective selected!");
+        Debug.Log("Objective assigned");
+        StartCoroutine(CheckIfWordFinished());
     }
 }

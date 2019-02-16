@@ -5,6 +5,7 @@ using UnityEngine;
 public class ElixirObstacleStone : MonoBehaviour
 {
     public int elixirAvailable = 5;
+    public int maxCollectorsIn = 3;
     public bool empty = false;
     public int bCollectorsIn = 0;
 }

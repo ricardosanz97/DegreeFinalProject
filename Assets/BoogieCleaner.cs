@@ -142,6 +142,5 @@ public class BoogieCleaner : Boogie
     {
         Debug.Log("init coroutine");
         StartCoroutine(CheckIfWorkFinished());
-        //StopCoroutine(ObjectiveNotFound());
     }
 }
