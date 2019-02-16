@@ -84,20 +84,25 @@ public class BoogieCollector : Boogie
             }
         }
 
-        if (currentElixirStone != null && /*PlayerDestinationReached()*/ CollectorMachineDestinationReached())
+        if (BoogiesSpawner.BoogiesKnowCollectorMachinePosition && currentElixirStone != null && /*PlayerDestinationReached()*/ CollectorMachineDestinationReached())
         {
-            BoogiesSpawner.CurrentElixir++; //TODO: this is not definitive;
-            currentElixirStone = null;
-            StartCoroutine(HandleCanCollectTrue());
-            StartCoroutine(HandleCanFollowMarkerTrue());
-            randomPoint = GetRandomPointAroundObjective(currentObjective.transform.position);
-            bool a = _agent.SetDestination(randomPoint);
-            currentPath = CURRENT_PATH.RandomObjective;
-            currentState = CURRENT_STATE.WanderingAroundObjective;
-            if (a == false)
-            {
-                Debug.LogError("Destination cant be reached. ");
-            }
+            DepositElixir();
+        }
+    }
+
+    private void DepositElixir()
+    {
+        CollectorMachineBehavior.ElixirGot++;
+        currentElixirStone = null;
+        StartCoroutine(HandleCanCollectTrue());
+        StartCoroutine(HandleCanFollowMarkerTrue());
+        randomPoint = GetRandomPointAroundObjective(currentObjective.transform.position);
+        bool a = _agent.SetDestination(randomPoint);
+        currentPath = CURRENT_PATH.RandomObjective;
+        currentState = CURRENT_STATE.WanderingAroundObjective;
+        if (a == false)
+        {
+            Debug.LogError("Destination cant be reached. ");
         }
     }
 
@@ -164,6 +169,11 @@ public class BoogieCollector : Boogie
             Debug.Log("we can follow marker");
             currentMarker = other.gameObject;
             StartCoroutine(OnFollowingMarkers());
+        }
+
+        if (other.GetComponent<CollectorMachineBehavior>() && currentElixirStone != null)
+        {
+            DepositElixir();
         }
     }
 
@@ -242,12 +252,25 @@ public class BoogieCollector : Boogie
         }
         canCollect = false;
         yield return new WaitForSeconds(5f);
-        BringElixirToCollectorMachine();
+        currentElixirStone.bCollectorsIn--;
+        if (BoogiesSpawner.BoogiesKnowCollectorMachinePosition) BringElixirToCollectorMachine();
+        else
+        {
+            randomPoint = GetRandomPointAroundObjective(currentObjective.transform.position);
+            bool a = _agent.SetDestination(randomPoint);
+            if (a == false)
+            {
+                Debug.LogError("Destination cant be reached. ");
+            }
+            _agent.isStopped = false;
+            StartCoroutine(MarkRoad());
+            lastMarker = Instantiate(marker, transform.position, Quaternion.identity);
+            lastMarker.GetComponent<MarkerBehaviour>().previousMarker = null;
+        }
     }
 
     private void BringElixirToCollectorMachine()
     {
-        currentElixirStone.bCollectorsIn--;
         bool a = _agent.SetDestination(FindObjectOfType<CollectorMachineBehavior>().transform.position);
         currentPath = CURRENT_PATH.CollectorMachine;
         currentState = CURRENT_STATE.GoingToCollectorMachine;

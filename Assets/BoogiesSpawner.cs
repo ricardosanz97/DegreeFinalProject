@@ -20,6 +20,8 @@ public class BoogiesSpawner : MonoBehaviour
     public GameObject boogieCollector;
     public GameObject boogieExplorer;
 
+    public bool boogiesCleanersKnowCollectorMachinePosition = true;
+
     public float radiusSpawn = 2f;
 
     public static int CurrentTotalAmount
@@ -62,6 +64,11 @@ public class BoogiesSpawner : MonoBehaviour
     {
         get { return FindObjectOfType<BoogiesSpawner>().explorersAmount; }
         set { FindObjectOfType<BoogiesSpawner>().explorersAmount = value; }
+    }
+
+    public static bool BoogiesKnowCollectorMachinePosition
+    {
+        get { return FindObjectOfType<BoogiesSpawner>().boogiesCleanersKnowCollectorMachinePosition; }
     }
 
     public bool positionAccepted = false;
