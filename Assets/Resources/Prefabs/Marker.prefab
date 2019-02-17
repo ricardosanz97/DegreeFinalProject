@@ -107,4 +107,5 @@ MonoBehaviour:
   markerCreator: {fileID: 0}
   previousMarker: {fileID: 0}
   nextMarker: {fileID: 0}
-  lifePeriod: 7
+  lifePeriod: 15
+  valid: 0

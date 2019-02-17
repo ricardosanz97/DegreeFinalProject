@@ -12,13 +12,15 @@ public class BoogiesSpawner : MonoBehaviour
     public int collectorsAmount = 5;
     public int explorersAmount = 10;
 
-    public bool selectingObjective = false;
-    //public Obstacle obstacleSelected;
-    //public Obstacle lastObstacleSelected;
+    public bool selectingAlliesObjective = false;
+    public bool selectingSquadWrestlerSpawn = false;
+
     public GameObject boogieCleaner;
     public GameObject boogieWrestler;
     public GameObject boogieCollector;
     public GameObject boogieExplorer;
+
+    public GameObject squadWrestlers;
 
     public bool boogiesCleanersKnowCollectorMachinePosition = true;
 
@@ -72,6 +74,7 @@ public class BoogiesSpawner : MonoBehaviour
     }
 
     public bool positionAccepted = false;
+    public bool selectorEnabled = false;
 
     private void Update()
     {
@@ -83,17 +86,39 @@ public class BoogiesSpawner : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.F))
         {
-            selectingObjective = !selectingObjective;
-            FindObjectOfType<CircleMouseBehavior>().GetComponentInChildren<SpriteRenderer>().enabled = selectingObjective;
+            HandleAlliesSelect();
         }
+
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            HandleWrestlersSelect();
+        }
+    }
+
+    public void HandleWrestlersSelect()
+    {
+        selectingSquadWrestlerSpawn = !selectingSquadWrestlerSpawn;
+        selectorEnabled = selectingSquadWrestlerSpawn;
+        FindObjectOfType<SelectorMouseBehavior>().GetComponentInChildren<SpriteRenderer>().enabled = selectingSquadWrestlerSpawn;
+    }
+
+    public void HandleAlliesSelect()
+    {
+        selectingAlliesObjective = !selectingAlliesObjective;
+        FindObjectOfType<CircleMouseAlliesBehavior>().GetComponentInChildren<SpriteRenderer>().enabled = selectingAlliesObjective;
     }
 
     public void SpawnAllBoogiesSelected(Vector3 clickPoint)
     {
         if (CleanersAmount > 0) { StartCoroutine(SpawnCleanerBoogies(clickPoint)); }
-        if (WrestlersAmount > 0) { StartCoroutine(SpawnWrestlersBoogies(clickPoint)); }
         if (CollectorsAmount > 0) { StartCoroutine(SpawnCollectorsBoogies(clickPoint)); }
         if (ExplorersAmount > 0) { StartCoroutine(SpawnExplorersBoogies(clickPoint)); }
+    }
+
+    public void SpawnWrestlersSquad(Vector3 point)
+    {
+        GameObject parentSquad = Instantiate(squadWrestlers, point, Quaternion.identity) as GameObject;
+        parentSquad.GetComponentInChildren<BoogieWrestlerCommander>().SetInitialPoint(point);
     }
 
     private IEnumerator SpawnCleanerBoogies(Vector3 clickPoint)
@@ -104,18 +129,6 @@ public class BoogiesSpawner : MonoBehaviour
             yield return new WaitForSeconds(0.1f);
             SpawnBoogie(BoogieType.Cleaner, clickPoint);
             cleanersAmount--;
-        }
-        yield return null;
-    }
-
-    private IEnumerator SpawnWrestlersBoogies(Vector3 clickPoint)
-    {
-        int spawnNumber = wrestlersAmount;
-        for (int i = 0; i<spawnNumber; i++)
-        {
-            yield return new WaitForSeconds(0.1f);
-            SpawnBoogie(BoogieType.Wrestler, clickPoint);
-            wrestlersAmount--; 
         }
         yield return null;
     }
@@ -154,9 +167,6 @@ public class BoogiesSpawner : MonoBehaviour
             case BoogieType.Cleaner:
                 boogieToSpawn = boogieCleaner;
                 break;
-            case BoogieType.Wrestler:
-                boogieToSpawn = boogieWrestler;
-                break;
             case BoogieType.Explorer:
                 boogieToSpawn = boogieExplorer;
                 break;
@@ -166,5 +176,63 @@ public class BoogiesSpawner : MonoBehaviour
         }
         GameObject b = Instantiate(boogieToSpawn, position, this.transform.rotation);
         b.GetComponent<Boogie>().initialPoint = clickPoint;
+    }
+
+    public void CreateSquad(int level)
+    {
+        Vector3 position = FindObjectOfType<SelectorMouseBehavior>().clickPosition;
+        //FindObjectOfType<SelectorMouseBehavior>().GetComponentInChildren<SpriteRenderer>().enabled = false;
+        switch (level)
+        {
+            case 1:
+                SquadConfiguration.Squad squadFirst = new SquadConfiguration.Squad(SquadConfiguration.SQUAD_LEVEL.First);
+                SquadConfiguration.SquadSlot[,] squad1 = squadFirst.squad;
+                SpawnSquad(position, squad1);
+                break;
+            case 2:
+                SquadConfiguration.Squad squadSecond = new SquadConfiguration.Squad(SquadConfiguration.SQUAD_LEVEL.Second);
+                SquadConfiguration.SquadSlot[,] squad2 = squadSecond.squad;
+                SpawnSquad(position, squad2);
+                break;
+            case 3:
+                SquadConfiguration.Squad squadThird = new SquadConfiguration.Squad(SquadConfiguration.SQUAD_LEVEL.Third);
+                SquadConfiguration.SquadSlot[,] squad3 = squadThird.squad;
+                SpawnSquad(position, squad3);
+                break;
+        }
+    }
+
+    private void SpawnSquad(Vector3 position, SquadConfiguration.SquadSlot[,] squad)
+    {
+        GameObject squadGO = new GameObject("squad");
+        for (int i = 0; i<Mathf.Sqrt(squad.Length); i++)
+        {
+            for (int j = 0; j<Mathf.Sqrt(squad.Length); j++)
+            {
+                GameObject wrestlerSpawned = null;
+                switch (squad[i,j].rol)
+                {
+                    case SquadConfiguration.SQUAD_ROL.Behind:
+                        wrestlerSpawned = Instantiate(Resources.Load("Prefabs/Wrestlers/BoogieWrestlerDistance"), position, Quaternion.identity, squadGO.transform) as GameObject;
+                        break;
+                    case SquadConfiguration.SQUAD_ROL.Commander:
+                        wrestlerSpawned = Instantiate(Resources.Load("Prefabs/Wrestlers/BoogieWrestlerCommander"), position, Quaternion.identity, squadGO.transform) as GameObject;
+                        break;
+                    case SquadConfiguration.SQUAD_ROL.CornerBehind:
+                        wrestlerSpawned = Instantiate(Resources.Load("Prefabs/Wrestlers/BoogieWrestlerDistance"), position, Quaternion.identity, squadGO.transform) as GameObject;
+                        break;
+                    case SquadConfiguration.SQUAD_ROL.CornerFront:
+                        wrestlerSpawned = Instantiate(Resources.Load("Prefabs/Wrestlers/BoogieWrestlerGiant"), position, Quaternion.identity, squadGO.transform) as GameObject;
+                        break;
+                    case SquadConfiguration.SQUAD_ROL.Front:
+                        wrestlerSpawned = Instantiate(Resources.Load("Prefabs/Wrestlers/BoogieWrestlerClose"), position, Quaternion.identity, squadGO.transform) as GameObject;
+                        break;
+                    case SquadConfiguration.SQUAD_ROL.Lateral:
+                        wrestlerSpawned = Instantiate(Resources.Load("Prefabs/Wrestlers/BoogieWrestlerClose"), position, Quaternion.identity, squadGO.transform) as GameObject;
+                        break;
+                }
+                wrestlerSpawned.GetComponent<BoogieWrestler>().indexs = squad[i, j].position;
+            }
+        }
     }
 }

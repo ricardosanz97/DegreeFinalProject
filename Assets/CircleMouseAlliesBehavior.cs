@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CircleMouseBehavior : MonoBehaviour
+public class CircleMouseAlliesBehavior : MonoBehaviour
 {
     public float radiusCircle;
     private CircleCollider2D _circleCollider;
@@ -20,9 +20,10 @@ public class CircleMouseBehavior : MonoBehaviour
         if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Ground")))
         {
             this.transform.position = hit.point;
-            if (Input.GetMouseButtonDown(0) && FindObjectOfType<BoogiesSpawner>().selectingObjective)
+            if (Input.GetMouseButtonDown(0) && FindObjectOfType<BoogiesSpawner>().selectingAlliesObjective)
             {
                 Debug.Log("clicking a position");
+                FindObjectOfType<BoogiesSpawner>().HandleAlliesSelect();
                 FindObjectOfType<BoogiesSpawner>().SpawnAllBoogiesSelected(hit.point);
             }
         }
@@ -30,7 +31,7 @@ public class CircleMouseBehavior : MonoBehaviour
 
     public static float RadiusCircle
     {
-        get { return FindObjectOfType<CircleMouseBehavior>().radiusCircle; }
-        set { FindObjectOfType<CircleMouseBehavior>().radiusCircle = value; }
+        get { return FindObjectOfType<CircleMouseAlliesBehavior>().radiusCircle; }
+        set { FindObjectOfType<CircleMouseAlliesBehavior>().radiusCircle = value; }
     }
 }

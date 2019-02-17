@@ -16,6 +16,8 @@ public class BoogieCollector : Boogie
     private GameObject currentMarker;
     private GameObject lastMarkerSpawned;
     private bool coroutineChangeDirectionStarted = false;
+    [HideInInspector]public List<MarkerBehaviour> markers;
+    public CURRENT_STATE currentState;
 
     public enum CURRENT_STATE
     {
@@ -34,7 +36,7 @@ public class BoogieCollector : Boogie
         CollectorMachine
     }
 
-    public CURRENT_STATE currentState;
+    
 
     public override void Awake()
     {
@@ -100,6 +102,20 @@ public class BoogieCollector : Boogie
         currentElixirStone = null;
         StartCoroutine(HandleCanCollectTrue());
         StartCoroutine(HandleCanFollowMarkerTrue());
+        if (markers.Count > 0)
+        {
+            foreach (MarkerBehaviour mb in markers)
+            {
+                if (mb != null)
+                {
+                    mb.GetComponent<MeshRenderer>().material.color = Color.green;
+                    mb.valid = true;
+                }                
+            }
+            markers.Clear();
+        }
+
+        
         randomPoint = GetRandomPointAroundObjective(currentObjective.transform.position);
         _agent.SetDestination(randomPoint);
         currentState = CURRENT_STATE.WanderingAroundObjective;
@@ -181,7 +197,7 @@ public class BoogieCollector : Boogie
             StartCoroutine(OnFollowingMarkers(DIRECTION.ElixirStone));
         }
 
-        if (other.GetComponent<MarkerBehaviour>() && canFollowMarker && !BoogiesSpawner.BoogiesKnowCollectorMachinePosition)
+        if (other.GetComponent<MarkerBehaviour>() && canFollowMarker && !BoogiesSpawner.BoogiesKnowCollectorMachinePosition && other.GetComponent<MarkerBehaviour>().valid)
         {
             if (currentState == CURRENT_STATE.GoingToCollectorMachine && other.GetComponent<MarkerBehaviour>().markerCreator != this) //carrying elixir
             {
@@ -243,7 +259,6 @@ public class BoogieCollector : Boogie
                 }
                 yield return null;
             }
-
             followingMarker = false;
         }   
     }
@@ -272,7 +287,9 @@ public class BoogieCollector : Boogie
             yield return new WaitForSeconds(Random.Range(2f, 4f));
             if (Wandering() || 
                 (currentState == CURRENT_STATE.FollowingMarkersToElixirStone && currentMarker == null) || 
-                (currentState == CURRENT_STATE.FollowingMarkersToElixirStone && currentMarker != null && currentMarker.GetComponent<MarkerBehaviour>().previousMarker == null) || 
+                (currentState == CURRENT_STATE.FollowingMarkersToElixirStone && currentMarker != null && currentMarker.GetComponent<MarkerBehaviour>().previousMarker == null) ||
+                (!BoogiesSpawner.BoogiesKnowCollectorMachinePosition && currentState == CURRENT_STATE.FollowingMarkersToCollectorMachine && currentMarker != null && currentMarker.GetComponent<MarkerBehaviour>().nextMarker == null) ||
+                (!BoogiesSpawner.BoogiesKnowCollectorMachinePosition && currentState == CURRENT_STATE.FollowingMarkersToCollectorMachine && currentMarker == null) ||
                 (!BoogiesSpawner.BoogiesKnowCollectorMachinePosition && currentState == CURRENT_STATE.GoingToCollectorMachine && currentMarker != null && currentMarker.GetComponent<MarkerBehaviour>().nextMarker != null))
             {
                 if (currentObjective != null)
@@ -336,18 +353,18 @@ public class BoogieCollector : Boogie
         lastMarker = Instantiate(marker, transform.position, Quaternion.identity);
         lastMarker.GetComponent<MarkerBehaviour>().previousMarker = null;
         lastMarker.GetComponent<MarkerBehaviour>().markerCreator = this;
+        markers.Add(lastMarker.GetComponent<MarkerBehaviour>());    
         while (currentElixirStone != null)
         {
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.5f);
             GameObject currentMarker = Instantiate(marker, transform.position, Quaternion.identity);
-            currentMarker.GetComponent<MarkerBehaviour>().markerCreator = this;
-            currentMarker.GetComponent<MarkerBehaviour>().previousMarker = lastMarker;
-            currentMarker.GetComponent<MarkerBehaviour>().previousMarker.GetComponent<MarkerBehaviour>().nextMarker = currentMarker;
+            MarkerBehaviour mb = currentMarker.GetComponent<MarkerBehaviour>();
+            mb.markerCreator = this;
+            mb.previousMarker = lastMarker;
+            mb.previousMarker.GetComponent<MarkerBehaviour>().nextMarker = currentMarker;
+            mb.valid = false;
+            markers.Add(mb);
             lastMarker = currentMarker;
-            if (currentState == CURRENT_STATE.FollowingMarkersToCollectorMachine)
-            {
-                //break;
-            }
         }
         lastMarker = null;
     }
@@ -356,11 +373,7 @@ public class BoogieCollector : Boogie
     {
         backToPlayer = true;
         randomPoint = Vector3.positiveInfinity;
-        bool a =_agent.SetDestination(FindObjectOfType<BoogiesSpawner>().gameObject.transform.position);
-        if (a == false)
-        {
-            Debug.LogError("Destination cant be reached. ");
-        }
+        _agent.SetDestination(FindObjectOfType<BoogiesSpawner>().gameObject.transform.position);
         currentState = CURRENT_STATE.GoingToPlayer;
     }
 
@@ -370,7 +383,6 @@ public class BoogieCollector : Boogie
         yield return new WaitForSeconds(2f);
         if (CollectorMachineBehavior.ElixirGot == currentObjective.GetComponent<ElixirObstacle>().totalElixirAvailable)
         {
-            Debug.Log("back to the player. ");
             BackToPlayer();
         }
         StartCoroutine(CheckIfWordFinished());
@@ -378,7 +390,6 @@ public class BoogieCollector : Boogie
 
     public override void OnObjectiveSelected()
     {
-        Debug.Log("Objective assigned");
         StartCoroutine(CheckIfWordFinished());
     }
 }

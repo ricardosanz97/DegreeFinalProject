@@ -8,6 +8,7 @@ public class MarkerBehaviour : MonoBehaviour
     public GameObject previousMarker;
     public GameObject nextMarker;
     public float lifePeriod = 10f;
+    public bool valid;
 
     private void Start()
     {

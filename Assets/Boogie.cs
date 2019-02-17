@@ -14,14 +14,14 @@ public enum BoogieType
 public abstract class Boogie : MonoBehaviour
 {
     public BoogieType type;
-    public Vector3 initialPoint;
+    [HideInInspector]public Vector3 initialPoint;
     public Vector3 randomPoint;
     public Obstacle currentObjective;
     public float maxTimeToFindObjective = 10f;
     public bool objectiveNotFoundTimerEnabled = false;
     public bool backToPlayer = false;
 
-    public NavMeshAgent _agent;
+    [HideInInspector]public NavMeshAgent _agent;
 
     public virtual void Awake()
     {
@@ -56,9 +56,9 @@ public abstract class Boogie : MonoBehaviour
 
     public Vector3 GetRandomPointAroundCircle(Vector3 centerPoint)
     {
-        return new Vector3(Random.Range(initialPoint.x - CircleMouseBehavior.RadiusCircle, initialPoint.x + CircleMouseBehavior.RadiusCircle),
+        return new Vector3(Random.Range(initialPoint.x - CircleMouseAlliesBehavior.RadiusCircle, initialPoint.x + CircleMouseAlliesBehavior.RadiusCircle),
             -0.5f,
-            Random.Range(initialPoint.z - CircleMouseBehavior.RadiusCircle, initialPoint.z + CircleMouseBehavior.RadiusCircle));
+            Random.Range(initialPoint.z - CircleMouseAlliesBehavior.RadiusCircle, initialPoint.z + CircleMouseAlliesBehavior.RadiusCircle));
     }
 
     public Vector3 GetRandomPointAroundPlayer(Vector3 centerPoint)

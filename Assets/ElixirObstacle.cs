@@ -13,8 +13,12 @@ public class ElixirObstacle : Obstacle
         elixirStones = new ElixirObstacleStone[this.transform.childCount];
         for (int i = 0; i<this.transform.childCount; i++)
         {
-            elixirStones[i] = this.transform.GetChild(i).GetComponent<ElixirObstacleStone>();
-            totalElixirAvailable += elixirStones[i].elixirAvailable;
+            if (this.transform.GetChild(i).GetComponent<ElixirObstacleStone>())
+            {
+                elixirStones[i] = this.transform.GetChild(i).GetComponent<ElixirObstacleStone>();
+                totalElixirAvailable += elixirStones[i].elixirAvailable;
+            }
+            
         }
     }
 }
