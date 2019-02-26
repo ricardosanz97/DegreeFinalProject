@@ -31,7 +31,7 @@ Transform:
   m_GameObject: {fileID: 1013227023}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -0.492, z: 1.48}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_Children:
   - {fileID: 6395163796641872654}
   - {fileID: 2842467910108225172}
@@ -226,8 +226,14 @@ MonoBehaviour:
   backToPlayer: 0
   _agent: {fileID: 0}
   wrestlerType: 0
+  indexs:
+    i: 0
+    j: 0
+  commander: {fileID: 0}
   distanceWrestlers: []
   closeWrestlers: []
+  giantWrestlers: []
+  distanceBetweenUs: 1.8
 --- !u!1 &17792787322290799
 GameObject:
   m_ObjectHideFlags: 0
