@@ -6,11 +6,14 @@ public class CorridorEnd : MonoBehaviour
 {
     private void OnTriggerEnter(Collider other)
     {
-        if (other.GetComponent<PlayerMovement>() != null || other.GetComponent<BoogieExplorer>() != null)
+        if (other.GetComponent<PlayerMovement>() != null)
         {
-            if (this.transform.parent.GetComponentInChildren<PathBehavior>().nextInitCorridor == null)
+            if (other.GetComponent<PlayerMovement>() != null)
             {
-                Debug.Log("End of multipath. ");
+                if (this.transform.parent.GetComponentInChildren<PathBehavior>().nextInitCorridor == null)
+                {
+                    this.GetComponentInParent<MultipathController>().playerCompleteMultipath = true;
+                }
             }
         }
     }

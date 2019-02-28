@@ -227,8 +227,12 @@ MonoBehaviour:
   _agent: {fileID: 0}
   timeToCollect: 5
   canCollect: 1
+  canFollowMarker: 1
+  followingMarker: 0
   currentElixirStone: {fileID: 0}
   marker: {fileID: 2824437992462625565, guid: 253ca3517b988ad41a1b63774d3d6390, type: 3}
+  markers: []
+  currentState: 0
 --- !u!1 &17792787322290799
 GameObject:
   m_ObjectHideFlags: 0

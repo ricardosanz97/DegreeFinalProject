@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PathBehavior : MonoBehaviour
 {
-    public bool FirstCorridor = false;
+    public bool FirstPath = false;
     public int CorridorCorrectIndex;
     public int PathIndex;
     public int LastCorridorCorrectIndex = -1;

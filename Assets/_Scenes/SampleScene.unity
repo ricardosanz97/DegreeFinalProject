@@ -13578,6 +13578,56 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 169111896453255286, guid: 0e365e584d46eaf439cfcddbec57c435,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 169111896028832148, guid: 0e365e584d46eaf439cfcddbec57c435,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -8
+      objectReference: {fileID: 0}
+    - target: {fileID: 169111895901040631, guid: 0e365e584d46eaf439cfcddbec57c435,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 169111895921513398, guid: 0e365e584d46eaf439cfcddbec57c435,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 169111896088335674, guid: 0e365e584d46eaf439cfcddbec57c435,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -8
+      objectReference: {fileID: 0}
+    - target: {fileID: 169111897681924280, guid: 0e365e584d46eaf439cfcddbec57c435,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 169111897130535744, guid: 0e365e584d46eaf439cfcddbec57c435,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -8
+      objectReference: {fileID: 0}
+    - target: {fileID: 169111897130535744, guid: 0e365e584d46eaf439cfcddbec57c435,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 169111896031737228, guid: 0e365e584d46eaf439cfcddbec57c435,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 169111896006677009, guid: 0e365e584d46eaf439cfcddbec57c435,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0e365e584d46eaf439cfcddbec57c435, type: 3}
 --- !u!1 &1633288275548978010 stripped
@@ -13639,7 +13689,7 @@ MonoBehaviour:
   wrestlersAmount: 0
   cleanersAmount: 0
   collectorsAmount: 0
-  explorersAmount: 1
+  explorersAmount: 30
   radiusCircle: 0
   canSpawnBoogies: 0
   canSpawnSquad: 0

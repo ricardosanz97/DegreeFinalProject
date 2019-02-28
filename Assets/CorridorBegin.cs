@@ -11,12 +11,12 @@ public class CorridorBegin : MonoBehaviour
             MultipathController mc = this.GetComponentInParent<MultipathController>();
             PathBehavior pb = this.transform.parent.GetComponentInChildren<PathBehavior>();
             mc.distanceTraveled = (mc.initialPosition - other.transform.localPosition);
-            if (pb.FirstCorridor)
+            if (pb.FirstPath)
             {
                 mc.distanceTraveled = Vector3.zero;
                 mc.initialPosition = other.transform.position;
             }
-            else if (!pb.FirstCorridor && mc.currentPlayerIndex == pb.LastCorridorCorrectIndex)
+            else if (!pb.FirstPath && mc.currentPlayerIndex == pb.LastCorridorCorrectIndex)
             {
             }
             else

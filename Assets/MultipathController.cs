@@ -14,7 +14,10 @@ public class MultipathController : MonoBehaviour
 
     public Vector3 distanceTraveled;
     public Vector3 initialPosition;
+    public ClueBehavior[] clues;
     public string combination;
+
+    public bool playerCompleteMultipath;
     private void Awake()
     {
         //numPaths = Random.Range(minPaths, maxPaths + 1);
@@ -33,11 +36,12 @@ public class MultipathController : MonoBehaviour
             Paths[i].AssignCorridorIndexs();
             if (i == 0)
             {
-                pb.FirstCorridor = true;
+                pb.FirstPath = true;
                 firstPath = pb;
                 GetComponentInParent<MultipathObstacle>()._col = firstPath.begin.GetComponent<Collider>();
             }
         }
+        clues = new ClueBehavior[Paths.Length];
 
         for (int i = 0; i<Paths.Length - 1; i++)
         {
