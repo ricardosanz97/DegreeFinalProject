@@ -6,12 +6,12 @@ public class SquadConfiguration : MonoBehaviour
 {
     public enum SQUAD_ROL
     {
+        None,
         Commander,
-        Behind,
-        Front,
-        Lateral,
-        CornerFront,
-        CornerBehind
+        Giant,
+        Close,
+        Distance,
+        Player
     }
 
     public enum SQUAD_LEVEL
@@ -22,49 +22,57 @@ public class SquadConfiguration : MonoBehaviour
         Fourth
     }
 
+    public enum SQUAD_FORMATION
+    {
+        Contention,
+        Penetration,
+        AroundPlayer
+    }
+
     [System.Serializable]
     public class Squad
     {
         public SQUAD_LEVEL squadLevel;
-        public Index commanderPosition;
+        public SQUAD_FORMATION squadFormation;
+        public Index leaderPosition;
         public SquadSlot[,] squad;
         public int squadCols;
         public int squadRows;
+        public bool hasPlayer;
 
-        public Squad(SQUAD_LEVEL level)
+        public Squad(SQUAD_LEVEL level, SQUAD_FORMATION formation)
         {
             this.squadLevel = level;
-            switch (this.squadLevel)
+            this.squadFormation = formation;
+            switch (this.squadFormation)
             {
-                case SQUAD_LEVEL.First:
-                    BuildFirstSquad();
+                case SQUAD_FORMATION.Contention:
+                    BuildFirstContentionSquad();
                     break;
-                case SQUAD_LEVEL.Second:
-                    BuildSecondSquad();
+                case SQUAD_FORMATION.Penetration:
+                    BuildFirstPenetrationSquad();
                     break;
-                case SQUAD_LEVEL.Third:
-                    BuildThirdSquad();
-                    break;
-                case SQUAD_LEVEL.Fourth:
+                case SQUAD_FORMATION.AroundPlayer:
+                    BuildFirstAroundPlayerSquad();
                     break;
             }
         }
 
-        private void BuildFirstSquad()
+        private void BuildFirstContentionSquad()
         {
             squadCols = 3;
             squadRows = 3;
             squad = new SquadSlot[squadRows, squadCols];
-            squad[0, 0] = new SquadSlot(SQUAD_ROL.CornerBehind);
-            squad[0, 1] = new SquadSlot(SQUAD_ROL.Behind);
-            squad[0, 2] = new SquadSlot(SQUAD_ROL.CornerBehind);
-            squad[1, 0] = new SquadSlot(SQUAD_ROL.Lateral);
+            squad[0, 0] = new SquadSlot(SQUAD_ROL.Giant);
+            squad[0, 1] = new SquadSlot(SQUAD_ROL.Close);
+            squad[0, 2] = new SquadSlot(SQUAD_ROL.Giant);
+            squad[1, 0] = new SquadSlot(SQUAD_ROL.Close);
             squad[1, 1] = new SquadSlot(SQUAD_ROL.Commander);
-            commanderPosition = new Index(1, 1);
-            squad[1, 2] = new SquadSlot(SQUAD_ROL.Lateral);
-            squad[2, 0] = new SquadSlot(SQUAD_ROL.CornerFront);
-            squad[2, 1] = new SquadSlot(SQUAD_ROL.Front);
-            squad[2, 2] = new SquadSlot(SQUAD_ROL.CornerFront);
+            leaderPosition = new Index(1, 1);
+            squad[1, 2] = new SquadSlot(SQUAD_ROL.Close);
+            squad[2, 0] = new SquadSlot(SQUAD_ROL.Distance);
+            squad[2, 1] = new SquadSlot(SQUAD_ROL.Distance);
+            squad[2, 2] = new SquadSlot(SQUAD_ROL.Distance);
             for (int i = 0; i<squadRows; i++)
             {
                 for (int j = 0; j<squadCols; j++)
@@ -74,98 +82,56 @@ public class SquadConfiguration : MonoBehaviour
             }
         }
 
-        private void BuildSecondSquad()
+        private void BuildFirstPenetrationSquad()
         {
-            squad = new SquadSlot[5, 5];
-            squad[0, 0].rol = SQUAD_ROL.CornerBehind;
-            squad[0, 1].rol = SQUAD_ROL.Behind;
-            squad[0, 2].rol = SQUAD_ROL.Behind;
-            squad[0, 3].rol = SQUAD_ROL.Behind;
-            squad[0, 4].rol = SQUAD_ROL.CornerBehind;
-            squad[1, 0].rol = SQUAD_ROL.Lateral;
-            squad[1, 1].rol = SQUAD_ROL.Behind;
-            squad[1, 2].rol = SQUAD_ROL.Behind;
-            squad[1, 3].rol = SQUAD_ROL.Behind;
-            squad[1, 4].rol = SQUAD_ROL.Lateral;
-            squad[2, 0].rol = SQUAD_ROL.Lateral;
-            squad[2, 1].rol = SQUAD_ROL.Lateral;
-            squad[2, 2].rol = SQUAD_ROL.Commander;
-            commanderPosition = new Index(2, 2);
-            squad[2, 3].rol = SQUAD_ROL.Lateral;
-            squad[2, 4].rol = SQUAD_ROL.Lateral;
-            squad[3, 0].rol = SQUAD_ROL.Lateral;
-            squad[3, 1].rol = SQUAD_ROL.Front;
-            squad[3, 2].rol = SQUAD_ROL.Front;
-            squad[3, 3].rol = SQUAD_ROL.Front;
-            squad[3, 4].rol = SQUAD_ROL.Lateral;
-            squad[4, 0].rol = SQUAD_ROL.CornerFront;
-            squad[4, 1].rol = SQUAD_ROL.Front;
-            squad[4, 2].rol = SQUAD_ROL.Front;
-            squad[4, 3].rol = SQUAD_ROL.Front;
-            squad[4, 4].rol = SQUAD_ROL.CornerFront;
-        }
-
-        private void BuildThirdSquad()
-        {
-            squad = new SquadSlot[7, 7];
-            for (int i = 0; i<7; i++)
+            squadCols = 3;
+            squadRows = 3;
+            squad = new SquadSlot[squadRows, squadCols];
+            squad[0, 0] = new SquadSlot(SQUAD_ROL.Close);
+            squad[0, 1] = new SquadSlot(SQUAD_ROL.Close);
+            squad[0, 2] = new SquadSlot(SQUAD_ROL.Close);
+            squad[1, 0] = new SquadSlot(SQUAD_ROL.Distance);
+            squad[1, 1] = new SquadSlot(SQUAD_ROL.Commander);
+            leaderPosition = new Index(1, 1);
+            squad[1, 2] = new SquadSlot(SQUAD_ROL.Distance);
+            squad[2, 0] = new SquadSlot(SQUAD_ROL.Giant);
+            squad[2, 1] = new SquadSlot(SQUAD_ROL.Distance);
+            squad[2, 2] = new SquadSlot(SQUAD_ROL.Giant);
+            for (int i = 0; i < squadRows; i++)
             {
-                for (int j = 0; j<7; j++)
+                for (int j = 0; j < squadCols; j++)
                 {
                     squad[i, j].position = new Index(i, j);
-                    squad[i, j].wrestlerIn = null;
                 }
             }
-            squad[0, 0].rol = SQUAD_ROL.CornerBehind;
-            squad[0, 1].rol = SQUAD_ROL.Behind;
-            squad[0, 2].rol = SQUAD_ROL.Behind;
-            squad[0, 3].rol = SQUAD_ROL.Behind;
-            squad[0, 4].rol = SQUAD_ROL.Behind;
-            squad[0, 5].rol = SQUAD_ROL.Behind;
-            squad[0, 6].rol = SQUAD_ROL.CornerBehind;
-            squad[1, 0].rol = SQUAD_ROL.Lateral;
-            squad[1, 1].rol = SQUAD_ROL.Behind;
-            squad[1, 2].rol = SQUAD_ROL.Behind;
-            squad[1, 3].rol = SQUAD_ROL.Behind;
-            squad[1, 4].rol = SQUAD_ROL.Behind;
-            squad[1, 5].rol = SQUAD_ROL.Behind;
-            squad[1, 6].rol = SQUAD_ROL.Lateral;
-            squad[2, 0].rol = SQUAD_ROL.Lateral;
-            squad[2, 1].rol = SQUAD_ROL.Behind;
-            squad[2, 2].rol = SQUAD_ROL.Behind;
-            squad[2, 3].rol = SQUAD_ROL.Behind;
-            squad[2, 4].rol = SQUAD_ROL.Behind;
-            squad[2, 5].rol = SQUAD_ROL.Behind;
-            squad[2, 6].rol = SQUAD_ROL.Lateral;
-            squad[3, 0].rol = SQUAD_ROL.Lateral;
-            squad[3, 1].rol = SQUAD_ROL.Lateral;
-            squad[3, 2].rol = SQUAD_ROL.Lateral;
-            squad[3, 3].rol = SQUAD_ROL.Commander;
-            commanderPosition = new Index(3, 3);
-            squad[3, 4].rol = SQUAD_ROL.Lateral;
-            squad[3, 5].rol = SQUAD_ROL.Lateral;
-            squad[3, 6].rol = SQUAD_ROL.Lateral;
-            squad[4, 0].rol = SQUAD_ROL.Lateral;
-            squad[4, 1].rol = SQUAD_ROL.Front;
-            squad[4, 2].rol = SQUAD_ROL.Front;
-            squad[4, 3].rol = SQUAD_ROL.Front;
-            squad[4, 4].rol = SQUAD_ROL.Front;
-            squad[4, 5].rol = SQUAD_ROL.Front;
-            squad[4, 6].rol = SQUAD_ROL.Lateral;
-            squad[5, 0].rol = SQUAD_ROL.Lateral;
-            squad[5, 1].rol = SQUAD_ROL.Front;
-            squad[5, 2].rol = SQUAD_ROL.Front;
-            squad[5, 3].rol = SQUAD_ROL.Front;
-            squad[5, 4].rol = SQUAD_ROL.Front;
-            squad[5, 5].rol = SQUAD_ROL.Front;
-            squad[5, 6].rol = SQUAD_ROL.Lateral;
-            squad[6, 0].rol = SQUAD_ROL.CornerFront;
-            squad[6, 1].rol = SQUAD_ROL.Front;
-            squad[6, 2].rol = SQUAD_ROL.Front;
-            squad[6, 3].rol = SQUAD_ROL.Front;
-            squad[6, 4].rol = SQUAD_ROL.Front;
-            squad[6, 5].rol = SQUAD_ROL.Front;
-            squad[6, 6].rol = SQUAD_ROL.CornerFront;
+        }
+
+        private void BuildFirstAroundPlayerSquad()
+        {
+            squadCols = 3;
+            squadRows = 4;
+            squad = new SquadSlot[squadRows, squadCols];
+            squad[0, 0] = new SquadSlot(SQUAD_ROL.Giant);
+            squad[0, 1] = new SquadSlot(SQUAD_ROL.Commander);
+            squad[0, 2] = new SquadSlot(SQUAD_ROL.Giant);
+            squad[1, 0] = new SquadSlot(SQUAD_ROL.Close);
+            squad[1, 1] = new SquadSlot(SQUAD_ROL.Player);
+            hasPlayer = true;
+            leaderPosition = new Index(1, 1);
+            squad[1, 2] = new SquadSlot(SQUAD_ROL.Close);
+            squad[2, 0] = new SquadSlot(SQUAD_ROL.Distance);
+            squad[2, 1] = new SquadSlot(SQUAD_ROL.Distance);
+            squad[2, 2] = new SquadSlot(SQUAD_ROL.Distance);
+            squad[3, 0] = new SquadSlot(SQUAD_ROL.None);
+            squad[3, 1] = new SquadSlot(SQUAD_ROL.Close);
+            squad[3, 2] = new SquadSlot(SQUAD_ROL.None);
+            for (int i = 0; i < squadRows; i++)
+            {
+                for (int j = 0; j < squadCols; j++)
+                {
+                    squad[i, j].position = new Index(i, j);
+                }
+            }
         }
     }
 

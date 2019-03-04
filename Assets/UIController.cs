@@ -8,7 +8,8 @@ public class UIController : Singleton<UIController>
     public static event Action<Vector3> OnGroundClicked;
     public static event Action OnSpawnBoogiesEnabled;
     public static event Action OnSpawnSquadEnabled;
-    public static event Action OnTroopClicked;
+    public static event Action<int> OnTroopClicked;
+    public static event Action<Vector3> OnMoveSquadPositionSelected;
 
     private void Start()
     {
@@ -36,13 +37,23 @@ public class UIController : Singleton<UIController>
             if (Input.GetMouseButtonDown(0))
             {
                 OnGroundClicked?.Invoke(hit.point);
+                OnMoveSquadPositionSelected?.Invoke(hit.point);
             }
         }
         if (Physics.Raycast(ray, out hit, Mathf.Infinity) && hit.transform.gameObject.GetComponent<BoogieWrestler>())
         {
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonUp(0))
             {
-                OnTroopClicked?.Invoke();
+                BoogieWrestler boogieClicked = hit.transform.GetComponent<BoogieWrestler>();
+                OnTroopClicked += boogieClicked.WrestlerClicked;
+                OnTroopClicked?.Invoke(0);
+            }
+
+            else if (Input.GetMouseButtonUp(1))
+            {
+                BoogieWrestler boogieClicked = hit.transform.GetComponent<BoogieWrestler>();
+                OnTroopClicked += boogieClicked.WrestlerClicked;
+                OnTroopClicked?.Invoke(1);
             }
         }
     }

@@ -7,6 +7,12 @@ public class BoogieWrestler : Boogie
     public WRESTLER_TYPE wrestlerType;
     public SquadConfiguration.Index indexs;
     public BoogieWrestlerCommander commander;
+    public GameObject leader;
+
+    public virtual void WrestlerClicked(int clickButton)
+    {
+        UIController.OnTroopClicked -= WrestlerClicked;
+    }
 
     public override void BackToPlayer()
     {
@@ -27,29 +33,31 @@ public class BoogieWrestler : Boogie
     public virtual void Start()
     {
         commander = this.transform.parent.gameObject.GetComponentInChildren<BoogieWrestlerCommander>();
-        ChangeIndexsRelativeToCommander();
+        if (commander.hasPlayer)
+        {
+            leader = FindObjectOfType<BoogiesSpawner>().gameObject;
+        }
+        else
+        {
+            leader = commander.gameObject;
+        }
+        ChangeIndexsRelativeToLeader();
         TakeInitialPosition();
     }
 
-    private void ChangeIndexsRelativeToCommander()
+    private void ChangeIndexsRelativeToLeader()
     {
-        indexs.i -= commander.commanderIndex.i;
-        indexs.j -= commander.commanderIndex.j;
+        indexs.i -= commander.leaderIndex.i;
+        indexs.j -= commander.leaderIndex.j;
     }
 
     private void TakeInitialPosition()
     {
-        Vector3 newPosZ = transform.localPosition + this.transform.TransformDirection(commander.transform.forward.normalized * (commander.distanceBetweenUs * indexs.i));
-        Vector3 newPosX = transform.localPosition + this.transform.TransformDirection(commander.transform.right.normalized * (commander.distanceBetweenUs * indexs.j));
+        Debug.Log(leader.transform.position);
+        Vector3 newPosZ = leader.transform.localPosition + this.transform.TransformDirection(leader.transform.forward.normalized * (commander.distanceBetweenUs * indexs.i));
+        Vector3 newPosX = leader.transform.localPosition + this.transform.TransformDirection(leader.transform.right.normalized * (commander.distanceBetweenUs * indexs.j));
 
         Vector3 newPos = newPosZ - newPosX;
-        _agent.SetDestination(transform.TransformPoint(newPos));
-    }
-
-    public void OnMouseUp()
-    {
-        Debug.Log("clicking a wrestler!");
-        commander.selectingPosition = true;
-        //SelectorMouseBehavior.Create(SELECTION_TYPE.SquadMovingPosition);
+        _agent.SetDestination(leader.transform.TransformPoint(newPos));
     }
 }

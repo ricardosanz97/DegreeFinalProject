@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.AI;
 public class BoogiesSpawner : MonoBehaviour
 {
     public int currentAmount = 30;
@@ -209,23 +209,23 @@ public class BoogiesSpawner : MonoBehaviour
         b.GetComponent<Boogie>().initialPoint = clickPoint;
     }
 
-    public void CreateSquad(int level)
+    public void CreateSquad(int formation)
     {
         Vector3 position = FindObjectOfType<xMarkerBehavior>().transform.position;
-        switch (level)
+        switch (formation)
         {
             case 1:
-                SquadConfiguration.Squad squadFirst = new SquadConfiguration.Squad(SquadConfiguration.SQUAD_LEVEL.First);
+                SquadConfiguration.Squad squadFirst = new SquadConfiguration.Squad(SquadConfiguration.SQUAD_LEVEL.First, SquadConfiguration.SQUAD_FORMATION.Contention);
                 SquadConfiguration.SquadSlot[,] squad1 = squadFirst.squad;
                 SpawnSquad(position, squadFirst);
                 break;
             case 2:
-                SquadConfiguration.Squad squadSecond = new SquadConfiguration.Squad(SquadConfiguration.SQUAD_LEVEL.Second);
+                SquadConfiguration.Squad squadSecond = new SquadConfiguration.Squad(SquadConfiguration.SQUAD_LEVEL.First, SquadConfiguration.SQUAD_FORMATION.Penetration);
                 SquadConfiguration.SquadSlot[,] squad2 = squadSecond.squad;
                 SpawnSquad(position, squadSecond);
                 break;
             case 3:
-                SquadConfiguration.Squad squadThird = new SquadConfiguration.Squad(SquadConfiguration.SQUAD_LEVEL.Third);
+                SquadConfiguration.Squad squadThird = new SquadConfiguration.Squad(SquadConfiguration.SQUAD_LEVEL.First, SquadConfiguration.SQUAD_FORMATION.AroundPlayer);
                 SquadConfiguration.SquadSlot[,] squad3 = squadThird.squad;
                 SpawnSquad(position, squadThird);
                 break;
@@ -240,14 +240,21 @@ public class BoogiesSpawner : MonoBehaviour
         GameObject squadGO = new GameObject("squad");
         GameObject commander = Instantiate(Resources.Load("Prefabs/Wrestlers/BoogieWrestlerCommander"), position, Quaternion.identity, squadGO.transform) as GameObject;
 
-        int posI = squadConfig.commanderPosition.i;
-        int posJ = squadConfig.commanderPosition.j;
+        int posI = squadConfig.leaderPosition.i;
+        int posJ = squadConfig.leaderPosition.j;
 
-        commander.GetComponent<BoogieWrestlerCommander>().commanderIndex = new SquadConfiguration.Index(posI,posJ);
-        commander.GetComponent<BoogieWrestler>().indexs = new SquadConfiguration.Index(posI, posJ);
+        commander.GetComponent<BoogieWrestlerCommander>().leaderIndex = new SquadConfiguration.Index(posI,posJ);
+        //commander.GetComponent<BoogieWrestler>().indexs = new SquadConfiguration.Index(posI, posJ);
+
+        commander.GetComponent<BoogieWrestlerCommander>().hasPlayer = squadConfig.hasPlayer;
 
         SquadConfiguration.SquadSlot[,] squadSlots = squadConfig.squad;
 
+        if (squadConfig.hasPlayer)
+        {
+            FindObjectOfType<BoogiesSpawner>().GetComponent<NavMeshAgent>().enabled = false;
+            FindObjectOfType<PlayerMovement>().enabled = false;
+        }
         for (int i = 0; i<squadConfig.squadRows; i++)
         {
             for (int j = 0; j<squadConfig.squadCols; j++)
@@ -255,25 +262,21 @@ public class BoogiesSpawner : MonoBehaviour
                 GameObject wrestlerSpawned = null;
                 switch (squadSlots[i,j].rol)
                 {
-                    case SquadConfiguration.SQUAD_ROL.Behind:
+                    case SquadConfiguration.SQUAD_ROL.Distance:
                         wrestlerSpawned = Instantiate(Resources.Load("Prefabs/Wrestlers/BoogieWrestlerDistance"), position, Quaternion.identity, squadGO.transform) as GameObject;
                         break;
-                    case SquadConfiguration.SQUAD_ROL.CornerBehind:
-                        wrestlerSpawned = Instantiate(Resources.Load("Prefabs/Wrestlers/BoogieWrestlerDistance"), position, Quaternion.identity, squadGO.transform) as GameObject;
-                        break;
-                    case SquadConfiguration.SQUAD_ROL.CornerFront:
+                    case SquadConfiguration.SQUAD_ROL.Giant:
                         wrestlerSpawned = Instantiate(Resources.Load("Prefabs/Wrestlers/BoogieWrestlerGiant"), position, Quaternion.identity, squadGO.transform) as GameObject;
                         break;
-                    case SquadConfiguration.SQUAD_ROL.Front:
+                    case SquadConfiguration.SQUAD_ROL.Close:
                         wrestlerSpawned = Instantiate(Resources.Load("Prefabs/Wrestlers/BoogieWrestlerClose"), position, Quaternion.identity, squadGO.transform) as GameObject;
                         break;
-                    case SquadConfiguration.SQUAD_ROL.Lateral:
-                        wrestlerSpawned = Instantiate(Resources.Load("Prefabs/Wrestlers/BoogieWrestlerClose"), position, Quaternion.identity, squadGO.transform) as GameObject;
+                    case SquadConfiguration.SQUAD_ROL.Commander:
+                        commander.GetComponent<BoogieWrestlerCommander>().indexs = squadSlots[i, j].position;
                         break;
                 }
                 if (wrestlerSpawned != null)
                 {
-                    //Debug.Log("position " + i + ", " + j);
                     wrestlerSpawned.GetComponent<BoogieWrestler>().indexs = squadSlots[i, j].position;
                 } 
             }

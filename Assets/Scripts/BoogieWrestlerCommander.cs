@@ -9,7 +9,9 @@ public class BoogieWrestlerCommander : BoogieWrestler
     public List<BoogieWrestlerDistance> distanceWrestlers;
     public List<BoogieWrestlerClose> closeWrestlers;
     public List<BoogieWrestlerGiant> giantWrestlers;
-    public SquadConfiguration.Index commanderIndex;
+    public SquadConfiguration.Index leaderIndex;
+
+    public bool hasPlayer = false;
 
     public float distanceBetweenUs = 1.8f;
     public bool selectingPosition = false;
@@ -20,8 +22,16 @@ public class BoogieWrestlerCommander : BoogieWrestler
         _agent.SetDestination(initialPoint);
     }
 
+    public override void WrestlerClicked(int clickButton)
+    {
+        Debug.Log("hola soy " + gameObject.name);
+        base.WrestlerClicked(clickButton);
+    }
+
     public override void Start()
     {
+        Debug.Log("LEADER INDEXS = " + leaderIndex.i + ", " + leaderIndex.j);
+        Debug.Log("MY INDEXS = " + indexs.i + ", " + indexs.j);
         base.Start();
         GetSquadInformation();
     }
@@ -34,7 +44,7 @@ public class BoogieWrestlerCommander : BoogieWrestler
         giantWrestlers = squadParent.gameObject.GetComponentsInChildren<BoogieWrestlerGiant>().ToList();
     }
 
-    private void MoveToPosition(Vector3 clickPosition)
+    public void MoveToPosition(Vector3 clickPosition)
     {
         Debug.Log("Clicking on " + clickPosition);
     }
