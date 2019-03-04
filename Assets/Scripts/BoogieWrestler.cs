@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using System.Collections;
+using UnityEngine.AI;
 
 public class BoogieWrestler : Boogie
 {
@@ -8,6 +9,7 @@ public class BoogieWrestler : Boogie
     public SquadConfiguration.Index indexs;
     public BoogieWrestlerCommander commander;
     public GameObject leader;
+    private bool followPlayer = false;
 
     public virtual void WrestlerClicked(int clickButton)
     {
@@ -42,6 +44,7 @@ public class BoogieWrestler : Boogie
             leader = commander.gameObject;
         }
         ChangeIndexsRelativeToLeader();
+        followPlayer = true;
         TakeInitialPosition();
     }
 
@@ -53,11 +56,13 @@ public class BoogieWrestler : Boogie
 
     private void TakeInitialPosition()
     {
-        Debug.Log(leader.transform.position);
-        Vector3 newPosZ = leader.transform.localPosition + this.transform.TransformDirection(leader.transform.forward.normalized * (commander.distanceBetweenUs * indexs.i));
-        Vector3 newPosX = leader.transform.localPosition + this.transform.TransformDirection(leader.transform.right.normalized * (commander.distanceBetweenUs * indexs.j));
+        this.transform.rotation = leader.transform.rotation;
+        Vector3 offset = new Vector3(indexs.j * commander.distanceBetweenUs, this.transform.position.y, indexs.i * commander.distanceBetweenUs);
+        _agent.SetDestination(leader.transform.position + this.transform.TransformDirection(offset));
+    }
 
-        Vector3 newPos = newPosZ - newPosX;
-        _agent.SetDestination(leader.transform.TransformPoint(newPos));
+    private void Update()
+    {
+        TakeInitialPosition();
     }
 }

@@ -250,11 +250,13 @@ public class BoogiesSpawner : MonoBehaviour
 
         SquadConfiguration.SquadSlot[,] squadSlots = squadConfig.squad;
 
+        /*
         if (squadConfig.hasPlayer)
         {
             FindObjectOfType<BoogiesSpawner>().GetComponent<NavMeshAgent>().enabled = false;
             FindObjectOfType<PlayerMovement>().enabled = false;
         }
+        */
         for (int i = 0; i<squadConfig.squadRows; i++)
         {
             for (int j = 0; j<squadConfig.squadCols; j++)
