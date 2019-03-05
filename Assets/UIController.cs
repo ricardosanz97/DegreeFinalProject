@@ -62,6 +62,10 @@ public class UIController : Singleton<UIController>
     {
         if (Input.GetKeyDown(KeyCode.F))
         {
+            if (FindObjectOfType<GenericPanelController>() != null)
+            {
+                Destroy(FindObjectOfType<GenericPanelController>().gameObject);
+            }
             if (BoogiesSpawner.CanSpawnBoogies)
             {
                 if (!BoogiesSpawner.CanSpawnSquad)
@@ -89,10 +93,9 @@ public class UIController : Singleton<UIController>
                 {
                     BoogiesSpawner.SetCanSpawnBoogies(true);
                     BoogiesSpawner.SpawnBoogiesDisabled();
+                    UISpawnSquadDisabled();
                 }
-                BoogiesSpawner.SpawnSquadEnabled();
                 BoogiesSpawner.SetCanSpawnSquad(false);
-                OnSpawnSquadEnabled?.Invoke();
             }
             else
             {
@@ -100,8 +103,26 @@ public class UIController : Singleton<UIController>
                 BoogiesSpawner.SetCanSpawnSquad(true);
                 UISpawnSquadDisabled();
             }
+            UISquadSelectorController.Create();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (FindObjectOfType<SelectorMouseBehavior>() != null)
+            {
+                Destroy(FindObjectOfType<SelectorMouseBehavior>().gameObject);
+                OnMoveSquadPositionSelected -= BoogiesSpawner.CommanderSelected.MoveToPosition;
+                BoogiesSpawner.CommanderSelected = null;
+            }
         }
     }
+
+    public void HandleSpawnSquadLogic()
+    {
+        BoogiesSpawner.SpawnSquadEnabled();
+        OnSpawnSquadEnabled?.Invoke();
+    }
+
 
     public void UISpawnBoogiesEnabled()
     {
@@ -144,28 +165,11 @@ public class UIController : Singleton<UIController>
         }
     }
 
-    public void UIShowSquadConfigSelector(Vector3 position)
+    public void OnSpawnSquadPositionSelected(Vector3 position)
     {
-        UIShowXMarker(position);
-        FindObjectOfType<UISquadSelectorController>().transform.Find("Background").gameObject.SetActive(true);
+        FindObjectOfType<BoogiesSpawner>().CreateSquad(FindObjectOfType<BoogiesSpawner>().currentFormationSelected, position);
         UIHideMouseSelector();
-        OnGroundClicked -= UIShowSquadConfigSelector;
-    }
-
-    public void UIHideSquadConfigSelector()
-    {
-        if (FindObjectOfType<UISquadSelectorController>().transform.Find("Background").gameObject.activeInHierarchy)
-        {
-            FindObjectOfType<UISquadSelectorController>().transform.Find("Background").gameObject.SetActive(false);
-        }
-    }
-
-    public void UIHideXMarker()
-    {
-        if (FindObjectOfType<xMarkerBehavior>() != null)
-        {
-            Destroy(FindObjectOfType<xMarkerBehavior>().gameObject);
-        }
+        OnGroundClicked -= OnSpawnSquadPositionSelected;
     }
 
     public void UIShowXMarker(Vector3 position)

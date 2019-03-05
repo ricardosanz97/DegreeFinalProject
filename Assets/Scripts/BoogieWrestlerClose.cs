@@ -9,19 +9,7 @@ public class BoogieWrestlerClose : BoogieWrestler
     {
         Debug.Log("hola soy " + gameObject.name);
         base.WrestlerClicked(clickButton);
-        if (clickButton == 0)
-        {
-            //TROOP MODE
-            UISquadTroopOptionsController.Create(() => 
-            {
-                UIController.OnMoveSquadPositionSelected += commander.MoveToPosition;
-            }, 
-            () => 
-            {
-
-            });
-        }
-        else if (clickButton == 1)
+        if (clickButton == 1)
         {
             //SINGULAR MODE
         }

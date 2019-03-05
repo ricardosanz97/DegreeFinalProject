@@ -24,9 +24,18 @@ public class BoogiesSpawner : MonoBehaviour
 
     public GameObject squadWrestlers;
 
+    public int currentFormationSelected = 0;
+    public BoogieWrestlerCommander commanderSquadSelected = null;
+
     public bool boogiesCleanersKnowCollectorMachinePosition = true;
 
     public float radiusSpawn = 2f;
+
+    public static BoogieWrestlerCommander CommanderSelected
+    {
+        get { return FindObjectOfType<BoogiesSpawner>().commanderSquadSelected; }
+        set { FindObjectOfType<BoogiesSpawner>().commanderSquadSelected = value; }
+    }
 
     public static int CurrentTotalAmount
     {
@@ -122,7 +131,7 @@ public class BoogiesSpawner : MonoBehaviour
 
     public static void SpawnSquadEnabled()
     {
-        UIController.OnGroundClicked += UIController.I.UIShowSquadConfigSelector;
+        UIController.OnGroundClicked += UIController.I.OnSpawnSquadPositionSelected;
     }
 
     public static void SpawnBoogiesDisabled()
@@ -132,7 +141,7 @@ public class BoogiesSpawner : MonoBehaviour
 
     public static void SpawnSquadDisabled()
     {
-        UIController.OnGroundClicked -= UIController.I.UIShowSquadConfigSelector;
+        UIController.OnGroundClicked -= UIController.I.OnSpawnSquadPositionSelected;
     }
 
     public void SpawnAllBoogiesSelected(Vector3 clickPoint)
@@ -209,9 +218,9 @@ public class BoogiesSpawner : MonoBehaviour
         b.GetComponent<Boogie>().initialPoint = clickPoint;
     }
 
-    public void CreateSquad(int formation)
+    public void CreateSquad(int formation, Vector3 position)
     {
-        Vector3 position = FindObjectOfType<xMarkerBehavior>().transform.position;
+        //Vector3 position = FindObjectOfType<xMarkerBehavior>().transform.position;
         switch (formation)
         {
             case 1:
@@ -230,8 +239,7 @@ public class BoogiesSpawner : MonoBehaviour
                 SpawnSquad(position, squadThird);
                 break;
         }
-        UIController.I.UIHideSquadConfigSelector();
-        UIController.I.UIHideXMarker();
+
         SetCanSpawnSquad(true);
     }
 
@@ -248,15 +256,21 @@ public class BoogiesSpawner : MonoBehaviour
 
         commander.GetComponent<BoogieWrestlerCommander>().hasPlayer = squadConfig.hasPlayer;
 
+        switch (squadConfig.squadFormation)
+        {
+            case SquadConfiguration.SQUAD_FORMATION.Contention:
+                commander.GetComponent<BoogieWrestlerCommander>().formation = 1;
+                break;
+            case SquadConfiguration.SQUAD_FORMATION.Penetration:
+                commander.GetComponent<BoogieWrestlerCommander>().formation = 2;
+                break;
+            case SquadConfiguration.SQUAD_FORMATION.AroundPlayer:
+                commander.GetComponent<BoogieWrestlerCommander>().formation = 3;
+                break;
+        }
+
         SquadConfiguration.SquadSlot[,] squadSlots = squadConfig.squad;
 
-        /*
-        if (squadConfig.hasPlayer)
-        {
-            FindObjectOfType<BoogiesSpawner>().GetComponent<NavMeshAgent>().enabled = false;
-            FindObjectOfType<PlayerMovement>().enabled = false;
-        }
-        */
         for (int i = 0; i<squadConfig.squadRows; i++)
         {
             for (int j = 0; j<squadConfig.squadCols; j++)
@@ -283,5 +297,7 @@ public class BoogiesSpawner : MonoBehaviour
                 } 
             }
         }
+
+        currentFormationSelected = 0;
     }
 }

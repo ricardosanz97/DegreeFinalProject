@@ -13,7 +13,32 @@ public class BoogieWrestler : Boogie
 
     public virtual void WrestlerClicked(int clickButton)
     {
+        BoogiesSpawner.CommanderSelected = commander;
         UIController.OnTroopClicked -= WrestlerClicked;
+        if (clickButton == 0)
+        {
+            UISquadOptionsController.Create(() =>
+            {
+                Debug.Log("moving squad. ");
+                UIController.I.UIShowMouseSelector(SELECTION_TYPE.SquadMovingPosition);
+                UIController.OnMoveSquadPositionSelected += commander.MoveToPosition;
+            },
+            () =>
+            {
+                Debug.Log("changing formation. ");
+                UISquadSelectorController.Create(commander.formation);
+            },
+            () =>
+            {
+                Debug.Log("rotation formation. ");
+                this.commander.transform.Rotate(new Vector3(0, 1, 0) * 90f);
+            },
+            () =>
+            {
+                Debug.Log("cover boogie. ");
+            }
+            );
+        }
     }
 
     public override void BackToPlayer()
@@ -48,21 +73,21 @@ public class BoogieWrestler : Boogie
         TakeInitialPosition();
     }
 
-    private void ChangeIndexsRelativeToLeader()
+    public void ChangeIndexsRelativeToLeader()
     {
         indexs.i -= commander.leaderIndex.i;
         indexs.j -= commander.leaderIndex.j;
     }
 
-    private void TakeInitialPosition()
+    public void TakeInitialPosition()
     {
         this.transform.rotation = leader.transform.rotation;
         Vector3 offset = new Vector3(indexs.j * commander.distanceBetweenUs, this.transform.position.y, indexs.i * commander.distanceBetweenUs);
         _agent.SetDestination(leader.transform.position + this.transform.TransformDirection(offset));
     }
 
-    private void Update()
+    public virtual void Update()
     {
-        TakeInitialPosition();
+        if (this.leader != this.gameObject) TakeInitialPosition();
     }
 }

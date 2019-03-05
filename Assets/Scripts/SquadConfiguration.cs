@@ -63,16 +63,16 @@ public class SquadConfiguration : MonoBehaviour
             squadCols = 3;
             squadRows = 3;
             squad = new SquadSlot[squadRows, squadCols];
-            squad[0, 0] = new SquadSlot(SQUAD_ROL.Giant);
-            squad[0, 1] = new SquadSlot(SQUAD_ROL.Close);
-            squad[0, 2] = new SquadSlot(SQUAD_ROL.Giant);
+            squad[0, 0] = new SquadSlot(SQUAD_ROL.Distance);
+            squad[0, 1] = new SquadSlot(SQUAD_ROL.Distance);
+            squad[0, 2] = new SquadSlot(SQUAD_ROL.Distance);
             squad[1, 0] = new SquadSlot(SQUAD_ROL.Close);
             squad[1, 1] = new SquadSlot(SQUAD_ROL.Commander);
             leaderPosition = new Index(1, 1);
             squad[1, 2] = new SquadSlot(SQUAD_ROL.Close);
-            squad[2, 0] = new SquadSlot(SQUAD_ROL.Distance);
-            squad[2, 1] = new SquadSlot(SQUAD_ROL.Distance);
-            squad[2, 2] = new SquadSlot(SQUAD_ROL.Distance);
+            squad[2, 0] = new SquadSlot(SQUAD_ROL.Giant);
+            squad[2, 1] = new SquadSlot(SQUAD_ROL.Close);
+            squad[2, 2] = new SquadSlot(SQUAD_ROL.Giant);
             for (int i = 0; i<squadRows; i++)
             {
                 for (int j = 0; j<squadCols; j++)
@@ -87,16 +87,16 @@ public class SquadConfiguration : MonoBehaviour
             squadCols = 3;
             squadRows = 3;
             squad = new SquadSlot[squadRows, squadCols];
-            squad[0, 0] = new SquadSlot(SQUAD_ROL.Close);
-            squad[0, 1] = new SquadSlot(SQUAD_ROL.Close);
-            squad[0, 2] = new SquadSlot(SQUAD_ROL.Close);
+            squad[0, 0] = new SquadSlot(SQUAD_ROL.Giant);
+            squad[0, 1] = new SquadSlot(SQUAD_ROL.Distance);
+            squad[0, 2] = new SquadSlot(SQUAD_ROL.Giant);
             squad[1, 0] = new SquadSlot(SQUAD_ROL.Distance);
             squad[1, 1] = new SquadSlot(SQUAD_ROL.Commander);
             leaderPosition = new Index(1, 1);
             squad[1, 2] = new SquadSlot(SQUAD_ROL.Distance);
-            squad[2, 0] = new SquadSlot(SQUAD_ROL.Giant);
-            squad[2, 1] = new SquadSlot(SQUAD_ROL.Distance);
-            squad[2, 2] = new SquadSlot(SQUAD_ROL.Giant);
+            squad[2, 0] = new SquadSlot(SQUAD_ROL.Close);
+            squad[2, 1] = new SquadSlot(SQUAD_ROL.Close);
+            squad[2, 2] = new SquadSlot(SQUAD_ROL.Close);
             for (int i = 0; i < squadRows; i++)
             {
                 for (int j = 0; j < squadCols; j++)
@@ -111,6 +111,7 @@ public class SquadConfiguration : MonoBehaviour
             squadCols = 3;
             squadRows = 4;
             squad = new SquadSlot[squadRows, squadCols];
+            /*
             squad[0, 0] = new SquadSlot(SQUAD_ROL.Giant);
             squad[0, 1] = new SquadSlot(SQUAD_ROL.Commander);
             squad[0, 2] = new SquadSlot(SQUAD_ROL.Giant);
@@ -125,6 +126,23 @@ public class SquadConfiguration : MonoBehaviour
             squad[3, 0] = new SquadSlot(SQUAD_ROL.None);
             squad[3, 1] = new SquadSlot(SQUAD_ROL.Close);
             squad[3, 2] = new SquadSlot(SQUAD_ROL.None);
+            */
+            squad[0, 0] = new SquadSlot(SQUAD_ROL.None);
+            squad[0, 1] = new SquadSlot(SQUAD_ROL.Close);
+            squad[0, 2] = new SquadSlot(SQUAD_ROL.None);
+            squad[1, 0] = new SquadSlot(SQUAD_ROL.Distance);
+            squad[1, 1] = new SquadSlot(SQUAD_ROL.Distance);
+            squad[1, 2] = new SquadSlot(SQUAD_ROL.Distance);
+            squad[2, 0] = new SquadSlot(SQUAD_ROL.Close);
+            squad[2, 1] = new SquadSlot(SQUAD_ROL.Player);
+            hasPlayer = true;
+            leaderPosition = new Index(2, 1);
+            squad[2, 2] = new SquadSlot(SQUAD_ROL.Close);
+            squad[3, 0] = new SquadSlot(SQUAD_ROL.Giant);
+            squad[3, 1] = new SquadSlot(SQUAD_ROL.Commander);
+            squad[3, 2] = new SquadSlot(SQUAD_ROL.Giant);
+            
+            
             for (int i = 0; i < squadRows; i++)
             {
                 for (int j = 0; j < squadCols; j++)
