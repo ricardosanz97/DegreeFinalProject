@@ -963,7 +963,7 @@ MonoBehaviour:
   MoveOrStopButton: {fileID: 3203634268177201714}
   ChangeFormationButton: {fileID: 3203634268925104358}
   RotateFormationButton: {fileID: 8844628693580196754}
-  CoverBoogieButton: {fileID: 9076816083050232901}
+  CoverButton: {fileID: 9076816083050232901}
   CancelButton: {fileID: 3203634268515235288}
 --- !u!1 &6229387103661638133
 GameObject:
@@ -1172,4 +1172,4 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: FORMATION
+  m_Text: COVER

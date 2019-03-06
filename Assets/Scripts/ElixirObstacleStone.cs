@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ElixirObstacleStone : MonoBehaviour
+public class ElixirObstacleStone : InteractableBody
 {
     public int elixirAvailable = 5;
     public int maxCollectorsIn = 3;

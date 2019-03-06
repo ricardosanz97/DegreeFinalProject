@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CollectorMachineBehavior : MonoBehaviour
+public class CollectorMachineBehavior : InteractableBody
 {
     public int totalElixir;
     public static int ElixirGot

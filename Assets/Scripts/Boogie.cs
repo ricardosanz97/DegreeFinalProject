@@ -11,7 +11,7 @@ public enum BoogieType
     Collector
 }
 
-public abstract class Boogie : MonoBehaviour
+public abstract class Boogie : InteractableBody
 {
     public BoogieType type;
     [HideInInspector]public Vector3 initialPoint;

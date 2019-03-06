@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 299451289903819550}
   - component: {fileID: 299451289903819551}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: New Sprite (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -89,7 +89,7 @@ GameObject:
   m_Component:
   - component: {fileID: 299451290123490070}
   - component: {fileID: 299451290123490071}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: New Sprite (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -168,7 +168,7 @@ GameObject:
   m_Component:
   - component: {fileID: 299451290259999891}
   - component: {fileID: 299451290259999888}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: New Sprite (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -251,7 +251,7 @@ GameObject:
   - component: {fileID: 299451290522633579}
   - component: {fileID: 4424911540826954386}
   - component: {fileID: 1802128620082409986}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: 3Clue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -376,7 +376,7 @@ GameObject:
   m_Component:
   - component: {fileID: 299451290806313929}
   - component: {fileID: 299451290806313942}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: New Sprite (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -455,7 +455,7 @@ GameObject:
   m_Component:
   - component: {fileID: 299451290928559263}
   - component: {fileID: 299451290928559260}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: New Sprite (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -534,7 +534,7 @@ GameObject:
   m_Component:
   - component: {fileID: 299451291399109166}
   - component: {fileID: 299451291399109167}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: New Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -8,8 +8,8 @@ public enum SQUAD_STATE
 {
     Moving,
     CoveringPosition,
-    CoveringBoogie,
-    CoveringPlayer
+    CoveringPlayer,
+    CoveringBody
 }
 
 public class BoogieWrestlerCommander : BoogieWrestler
@@ -17,7 +17,10 @@ public class BoogieWrestlerCommander : BoogieWrestler
     public List<BoogieWrestlerDistance> distanceWrestlers;
     public List<BoogieWrestlerClose> closeWrestlers;
     public List<BoogieWrestlerGiant> giantWrestlers;
+    public List<BoogieWrestler> squadWrestlers;
     public SquadConfiguration.Index leaderIndex;
+
+    public InteractableBody coveringBody;
 
     public SQUAD_STATE currentSquadState = SQUAD_STATE.CoveringPosition;
 
@@ -34,10 +37,24 @@ public class BoogieWrestlerCommander : BoogieWrestler
         _agent.SetDestination(initialPoint);
     }
 
+    public void InteractableBodySelected(InteractableBody body)
+    {
+        coveringBody = body;
+        currentSquadState = SQUAD_STATE.CoveringBody;
+        ChangeSquadFormation(SquadConfiguration.SQUAD_FORMATION.CoverBody);
+        UIController.OnInteractableBodyPressed -= InteractableBodySelected;
+        UIController.I.UIHideMouseSelector();
+        UIController.I.selectingBodyToCover = false;
+    }
+
     public override void WrestlerClicked(int clickButton)
     {
         Debug.Log("hola soy " + gameObject.name);
         base.WrestlerClicked(clickButton);
+        if (clickButton == 1)
+        {
+            //SINGULAR MODE
+        }
     }
 
     public override void Start()
@@ -54,10 +71,20 @@ public class BoogieWrestlerCommander : BoogieWrestler
         distanceWrestlers = squadParent.gameObject.GetComponentsInChildren<BoogieWrestlerDistance>().ToList();
         closeWrestlers = squadParent.gameObject.GetComponentsInChildren<BoogieWrestlerClose>().ToList();
         giantWrestlers = squadParent.gameObject.GetComponentsInChildren<BoogieWrestlerGiant>().ToList();
+        squadWrestlers = squadParent.gameObject.GetComponentsInChildren<BoogieWrestler>().ToList();
     }
 
     public void MoveToPosition(Vector3 clickPosition)
     {
+        //UIController.OnMoveSquadPositionSelected -= MoveToPosition;
+        if (leader != commander.gameObject)
+        {
+            leader = commander.gameObject;
+            foreach (BoogieWrestler bw in squadWrestlers)
+            {
+                bw.leader = commander.gameObject;
+            }
+        }
         if (FindObjectOfType<xMarkerBehavior>() != null)
         {
             Destroy(FindObjectOfType<xMarkerBehavior>().gameObject);
@@ -75,7 +102,10 @@ public class BoogieWrestlerCommander : BoogieWrestler
         if (currentSquadState == SQUAD_STATE.Moving && Vector3.Distance(this.transform.position, randomPoint) <= 0.5f)
         {
             this.currentSquadState = SQUAD_STATE.CoveringPosition;
-            Destroy(FindObjectOfType<xMarkerBehavior>().gameObject);
+            if (FindObjectOfType <xMarkerBehavior>() != null)
+            {
+                Destroy(FindObjectOfType<xMarkerBehavior>().gameObject);
+            }
         }
     }
 
@@ -95,6 +125,10 @@ public class BoogieWrestlerCommander : BoogieWrestler
         {
             leader = FindObjectOfType<BoogiesSpawner>().gameObject;
         }
+        else if (newSquad.hasBody)
+        {
+            leader = this.coveringBody.gameObject;
+        }
         else
         {
             leader = this.gameObject;
@@ -107,12 +141,19 @@ public class BoogieWrestlerCommander : BoogieWrestler
         {
             case SquadConfiguration.SQUAD_FORMATION.Contention:
                 this.formation = 1;
+                this.currentSquadState = SQUAD_STATE.CoveringPosition;
                 break;
             case SquadConfiguration.SQUAD_FORMATION.Penetration:
                 this.formation = 2;
+                this.currentSquadState = SQUAD_STATE.CoveringPosition;
                 break;
             case SquadConfiguration.SQUAD_FORMATION.AroundPlayer:
+                this.currentSquadState = SQUAD_STATE.CoveringPlayer;
                 this.formation = 3;
+                break;
+            case SquadConfiguration.SQUAD_FORMATION.CoverBody:
+                this.currentSquadState = SQUAD_STATE.CoveringBody;
+                this.formation = 4;
                 break;
         }
 
@@ -171,6 +212,10 @@ public class BoogieWrestlerCommander : BoogieWrestler
             if (hasPlayer)
             {
                 bw.leader = FindObjectOfType<BoogiesSpawner>().gameObject;
+            }
+            else if (newSquad.hasBody)
+            {
+                bw.leader = commander.coveringBody.gameObject;
             }
             else
             {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ClueBehavior : MonoBehaviour
+public class ClueBehavior : InteractableBody
 {
     public BoogieExplorer carriedBy;
     public BoogieExplorer placedBy;

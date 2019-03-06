@@ -11,7 +11,8 @@ public class SquadConfiguration : MonoBehaviour
         Giant,
         Close,
         Distance,
-        Player
+        Player,
+        Body
     }
 
     public enum SQUAD_LEVEL
@@ -26,7 +27,8 @@ public class SquadConfiguration : MonoBehaviour
     {
         Contention,
         Penetration,
-        AroundPlayer
+        AroundPlayer,
+        CoverBody
     }
 
     [System.Serializable]
@@ -39,6 +41,7 @@ public class SquadConfiguration : MonoBehaviour
         public int squadCols;
         public int squadRows;
         public bool hasPlayer;
+        public bool hasBody;
 
         public Squad(SQUAD_LEVEL level, SQUAD_FORMATION formation)
         {
@@ -54,6 +57,9 @@ public class SquadConfiguration : MonoBehaviour
                     break;
                 case SQUAD_FORMATION.AroundPlayer:
                     BuildFirstAroundPlayerSquad();
+                    break;
+                case SQUAD_FORMATION.CoverBody:
+                    BuildFirstCoverBodySquad();
                     break;
             }
         }
@@ -111,22 +117,6 @@ public class SquadConfiguration : MonoBehaviour
             squadCols = 3;
             squadRows = 4;
             squad = new SquadSlot[squadRows, squadCols];
-            /*
-            squad[0, 0] = new SquadSlot(SQUAD_ROL.Giant);
-            squad[0, 1] = new SquadSlot(SQUAD_ROL.Commander);
-            squad[0, 2] = new SquadSlot(SQUAD_ROL.Giant);
-            squad[1, 0] = new SquadSlot(SQUAD_ROL.Close);
-            squad[1, 1] = new SquadSlot(SQUAD_ROL.Player);
-            hasPlayer = true;
-            leaderPosition = new Index(1, 1);
-            squad[1, 2] = new SquadSlot(SQUAD_ROL.Close);
-            squad[2, 0] = new SquadSlot(SQUAD_ROL.Distance);
-            squad[2, 1] = new SquadSlot(SQUAD_ROL.Distance);
-            squad[2, 2] = new SquadSlot(SQUAD_ROL.Distance);
-            squad[3, 0] = new SquadSlot(SQUAD_ROL.None);
-            squad[3, 1] = new SquadSlot(SQUAD_ROL.Close);
-            squad[3, 2] = new SquadSlot(SQUAD_ROL.None);
-            */
             squad[0, 0] = new SquadSlot(SQUAD_ROL.None);
             squad[0, 1] = new SquadSlot(SQUAD_ROL.Close);
             squad[0, 2] = new SquadSlot(SQUAD_ROL.None);
@@ -143,6 +133,36 @@ public class SquadConfiguration : MonoBehaviour
             squad[3, 2] = new SquadSlot(SQUAD_ROL.Giant);
             
             
+            for (int i = 0; i < squadRows; i++)
+            {
+                for (int j = 0; j < squadCols; j++)
+                {
+                    squad[i, j].position = new Index(i, j);
+                }
+            }
+        }
+
+        private void BuildFirstCoverBodySquad()
+        {
+            squadCols = 3;
+            squadRows = 4;
+            squad = new SquadSlot[squadRows, squadCols];
+            squad[0, 0] = new SquadSlot(SQUAD_ROL.None);
+            squad[0, 1] = new SquadSlot(SQUAD_ROL.Close);
+            squad[0, 2] = new SquadSlot(SQUAD_ROL.None);
+            squad[1, 0] = new SquadSlot(SQUAD_ROL.Distance);
+            squad[1, 1] = new SquadSlot(SQUAD_ROL.Distance);
+            squad[1, 2] = new SquadSlot(SQUAD_ROL.Distance);
+            squad[2, 0] = new SquadSlot(SQUAD_ROL.Close);
+            squad[2, 1] = new SquadSlot(SQUAD_ROL.Body);
+            hasBody = true;
+            leaderPosition = new Index(2, 1);
+            squad[2, 2] = new SquadSlot(SQUAD_ROL.Close);
+            squad[3, 0] = new SquadSlot(SQUAD_ROL.Giant);
+            squad[3, 1] = new SquadSlot(SQUAD_ROL.Commander);
+            squad[3, 2] = new SquadSlot(SQUAD_ROL.Giant);
+
+
             for (int i = 0; i < squadRows; i++)
             {
                 for (int j = 0; j < squadCols; j++)

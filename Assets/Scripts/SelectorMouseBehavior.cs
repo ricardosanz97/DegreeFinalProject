@@ -9,7 +9,8 @@ public enum SELECTION_TYPE
 {
     SquadSpawnPosition,
     SquadMovingPosition,
-    SpawnBoogiesArea
+    SpawnBoogiesArea,
+    SquadCover
 }
 public class SelectorMouseBehavior : MonoBehaviour
 {
@@ -45,6 +46,9 @@ public class SelectorMouseBehavior : MonoBehaviour
                 selectorMouseBehavior.GetComponentInChildren<SpriteRenderer>().transform.localScale = Vector3.one;
                 selectorMouseBehavior.GetComponentInChildren<SpriteRenderer>().gameObject.AddComponent<CircleCollider2D>();
                 BoogiesSpawner.RadiusCircle = selectorMouseBehavior.GetComponentInChildren<CircleCollider2D>().radius;
+                break;
+            case SELECTION_TYPE.SquadCover:
+                selectorMouseBehavior.sprite = Resources.Load<Sprite>("Sprites/selector");
                 break;
         }
         selectorMouseBehavior.GetComponentInChildren<SpriteRenderer>().sprite = selectorMouseBehavior.sprite;

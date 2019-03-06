@@ -37,6 +37,7 @@ public class UISquadSelectorController : GenericPanelController
             BoogiesSpawner.CommanderSelected.ChangeSquadFormation(SquadConfiguration.SQUAD_FORMATION.Contention);
         }
         ClosePanel();
+        Destroy(this.gameObject);
         FindObjectOfType<BoogiesSpawner>().currentFormationSelected = 1;
 
     }
@@ -52,6 +53,7 @@ public class UISquadSelectorController : GenericPanelController
             BoogiesSpawner.CommanderSelected.ChangeSquadFormation(SquadConfiguration.SQUAD_FORMATION.Penetration);
         }
         ClosePanel();
+        Destroy(this.gameObject);
         FindObjectOfType<BoogiesSpawner>().currentFormationSelected = 2;
     }
 
@@ -68,6 +70,7 @@ public class UISquadSelectorController : GenericPanelController
         }
         FindObjectOfType<BoogiesSpawner>().currentFormationSelected = 3;
         ClosePanel();
+        Destroy(this.gameObject);
     }
 
     private void HandleButtonsState()

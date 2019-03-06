@@ -9,12 +9,14 @@ public class BoogieWrestler : Boogie
     public SquadConfiguration.Index indexs;
     public BoogieWrestlerCommander commander;
     public GameObject leader;
+
     private bool followPlayer = false;
 
     public virtual void WrestlerClicked(int clickButton)
     {
+        CancelEventSubscriptions();
         BoogiesSpawner.CommanderSelected = commander;
-        UIController.OnTroopClicked -= WrestlerClicked;
+        UIController.OnWrestlerClicked -= WrestlerClicked;
         if (clickButton == 0)
         {
             UISquadOptionsController.Create(() =>
@@ -31,14 +33,23 @@ public class BoogieWrestler : Boogie
             () =>
             {
                 Debug.Log("rotation formation. ");
-                this.commander.transform.Rotate(new Vector3(0, 1, 0) * 90f);
+                this.leader.transform.Rotate(new Vector3(0, 1, 0) * 90f);
             },
             () =>
             {
                 Debug.Log("cover boogie. ");
+                UIController.OnInteractableBodyPressed += commander.InteractableBodySelected;
+                UIController.I.selectingBodyToCover = true;
+                UIController.I.UIShowMouseSelector(SELECTION_TYPE.SquadCover);
             }
             );
         }
+    }
+
+    private void CancelEventSubscriptions()
+    {
+        if (UIController.I.OnInteractableBodyPressedNull()) UIController.OnInteractableBodyPressed -= commander.InteractableBodySelected;
+        if (UIController.I.OnMoveSquadPositionSelectedNull()) UIController.OnMoveSquadPositionSelected -= commander.MoveToPosition;
     }
 
     public override void BackToPlayer()
@@ -83,7 +94,8 @@ public class BoogieWrestler : Boogie
     {
         this.transform.rotation = leader.transform.rotation;
         Vector3 offset = new Vector3(indexs.j * commander.distanceBetweenUs, this.transform.position.y, indexs.i * commander.distanceBetweenUs);
-        _agent.SetDestination(leader.transform.position + this.transform.TransformDirection(offset));
+        randomPoint = leader.transform.position + this.transform.TransformDirection(offset);
+        _agent.SetDestination(randomPoint);
     }
 
     public virtual void Update()

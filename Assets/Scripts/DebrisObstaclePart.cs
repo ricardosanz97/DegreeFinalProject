@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DebrisObstaclePart : MonoBehaviour
+public class DebrisObstaclePart : InteractableBody
 {
     public BoogieCleaner charger;
     public bool settledDown;

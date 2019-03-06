@@ -8,6 +8,10 @@ public class BoogieWrestlerGiant : BoogieWrestler
     {
         Debug.Log("hola soy " + gameObject.name);
         base.WrestlerClicked(clickButton);
+        if (clickButton == 1)
+        {
+            //SINGULAR MODE
+        }
     }
 
     public override void Start()
