@@ -5823,6 +5823,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   selectingBodyToCover: 0
+  selectingWrestlerToChange: 0
 --- !u!4 &2042790233
 Transform:
   m_ObjectHideFlags: 0

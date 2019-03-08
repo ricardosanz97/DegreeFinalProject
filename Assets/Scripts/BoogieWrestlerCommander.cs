@@ -49,11 +49,10 @@ public class BoogieWrestlerCommander : BoogieWrestler
 
     public override void WrestlerClicked(int clickButton)
     {
-        Debug.Log("hola soy " + gameObject.name);
         base.WrestlerClicked(clickButton);
         if (clickButton == 1)
         {
-            //SINGULAR MODE
+            Debug.Log("hola soy " + gameObject.name);
         }
     }
 
@@ -114,7 +113,6 @@ public class BoogieWrestlerCommander : BoogieWrestler
         SquadConfiguration.Squad newSquad = new SquadConfiguration.Squad(SquadConfiguration.SQUAD_LEVEL.First, formation);
         List<BoogieWrestler> wrestlers = new List<BoogieWrestler>();
 
-        
         int posI = newSquad.leaderPosition.i;
         int posJ = newSquad.leaderPosition.j;
 
@@ -226,5 +224,14 @@ public class BoogieWrestlerCommander : BoogieWrestler
         }
         this.ChangeIndexsRelativeToLeader();
         this.TakeInitialPosition();
+    }
+
+    public void RemoveWrestlerSquad(BoogieWrestler bw)
+    {
+        squadWrestlers.Remove(bw);
+        closeWrestlers.Clear();
+        distanceWrestlers.Clear();
+        giantWrestlers.Clear();
+        GetSquadInformation();
     }
 }

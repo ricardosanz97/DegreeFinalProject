@@ -7,11 +7,25 @@ public class BoogieWrestlerClose : BoogieWrestler
 {
     public override void WrestlerClicked(int clickButton)
     {
-        Debug.Log("hola soy " + gameObject.name);
         base.WrestlerClicked(clickButton);
         if (clickButton == 1)
         {
-            //SINGULAR MODE
+            Debug.Log("hola soy " + gameObject.name);
+            UISquadIndividualOptionsController.Create(
+            () =>
+            {
+                FollowPlayer();
+            },
+            () =>
+            {
+                BreakFormation();
+            }
+            ,
+            () =>
+            {
+                ChangePosition();
+            }
+            );
         }
     }
 

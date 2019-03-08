@@ -11,8 +11,10 @@ public class UIController : Singleton<UIController>
     public static event Action<int> OnWrestlerClicked;
     public static event Action<Vector3> OnMoveSquadPositionSelected;
     public static event Action<InteractableBody> OnInteractableBodyPressed;
+    public static event Action<BoogieWrestler> OnSelectingWrestlerChange;
 
     public bool selectingBodyToCover = false;
+    public bool selectingWrestlerToChange = false;
 
     private void Start()
     {
@@ -40,7 +42,7 @@ public class UIController : Singleton<UIController>
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
-        if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Ground")) && !selectingBodyToCover)
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Ground")) && !selectingBodyToCover && !selectingWrestlerToChange)
         {
             if (FindObjectOfType<SelectorMouseBehavior>() != null)
             {
@@ -52,7 +54,7 @@ public class UIController : Singleton<UIController>
                 OnMoveSquadPositionSelected?.Invoke(hit.point);
             }
         }
-        if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Npc")) && hit.transform.gameObject.GetComponent<BoogieWrestler>() && !selectingBodyToCover)
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Npc")) && hit.transform.gameObject.GetComponent<BoogieWrestler>() && !selectingBodyToCover && !selectingWrestlerToChange)
         {
             if (Input.GetMouseButtonUp(0))
             {
@@ -70,7 +72,7 @@ public class UIController : Singleton<UIController>
             }
         }
 
-        if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Body", "Npc")) && selectingBodyToCover)
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Body", "Npc")) && selectingBodyToCover && !selectingWrestlerToChange)
         {
             if (FindObjectOfType<SelectorMouseBehavior>() != null)
             {
@@ -85,12 +87,29 @@ public class UIController : Singleton<UIController>
                 OnInteractableBodyPressed?.Invoke(hit.transform.gameObject.GetComponent<InteractableBody>());  
             }
         }
-        else if (selectingBodyToCover)
+        else if (selectingBodyToCover && !selectingWrestlerToChange)
         {
             if (FindObjectOfType<SelectorMouseBehavior>() != null)
             {
                 Destroy(FindObjectOfType<SelectorMouseBehavior>().gameObject);
             }
+        }
+        
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Npc")) && !selectingBodyToCover && selectingWrestlerToChange)
+        {
+            if (FindObjectOfType<SelectorMouseBehavior>() != null)
+            {
+                FindObjectOfType<SelectorMouseBehavior>().transform.position = hit.point;
+            }
+            else
+            {
+                UIShowMouseSelector(SELECTION_TYPE.SelectingSquadWrestlerChange);
+            }
+            if (Input.GetMouseButtonDown(0) && hit.transform.GetComponent<BoogieWrestler>())
+            {
+                OnSelectingWrestlerChange?.Invoke(hit.transform.GetComponent<BoogieWrestler>());
+            }
+            
         }
     }
 
@@ -146,8 +165,17 @@ public class UIController : Singleton<UIController>
         {
             if (OnMoveSquadPositionSelected != null)
             {
-                OnMoveSquadPositionSelected -= BoogiesSpawner.CommanderSelected.MoveToPosition;
+                OnMoveSquadPositionSelected = null;
                 BoogiesSpawner.CommanderSelected = null;
+            }
+            if (OnSelectingWrestlerChange != null)
+            {
+                OnSelectingWrestlerChange = null;
+                this.selectingWrestlerToChange = false;
+                if (FindObjectOfType<SelectorMouseBehavior>() != null)
+                {
+                    Destroy(FindObjectOfType<SelectorMouseBehavior>().gameObject);
+                }
             }
             if (this.selectingBodyToCover)
             {
