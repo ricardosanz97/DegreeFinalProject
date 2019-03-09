@@ -10,6 +10,25 @@ public class BoogieWrestlerGiant : BoogieWrestler
         if (clickButton == 1)
         {
             Debug.Log("hola soy " + gameObject.name);
+            UISquadIndividualOptionsController.Create(
+            () =>
+            {
+                FollowPlayer();
+            },
+            () =>
+            {
+                BreakFormation();
+            }
+            ,
+            () =>
+            {
+                ChangePosition();
+            },
+            () =>
+            {
+                AssignAsLeader();
+            }
+            );
         }
     }
 

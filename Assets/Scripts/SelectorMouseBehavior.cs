@@ -68,4 +68,16 @@ public class SelectorMouseBehavior : MonoBehaviour
         }
     }
 
+    public static bool IsActive()
+    {
+        if (FindObjectOfType<SelectorMouseBehavior>() != null)
+        {
+            return (FindObjectOfType<SelectorMouseBehavior>().gameObject != null);
+        }
+        else
+        {
+            return false;
+        }
+    }
+
 }

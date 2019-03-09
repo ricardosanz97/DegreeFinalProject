@@ -24,6 +24,10 @@ public class BoogieWrestlerClose : BoogieWrestler
             () =>
             {
                 ChangePosition();
+            },
+            ()=>
+            {
+                AssignAsLeader();
             }
             );
         }

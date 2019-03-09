@@ -5,12 +5,12 @@ using UnityEngine.UI;
 
 public class UISquadSelectorController : GenericPanelController
 {
-    public int currentFormation = 0;
+    public List<SquadConfiguration.SQUAD_ROL> formation;
     public Button contentionButton;
     public Button penetrationButton;
     public Button aroundPlayerButton;
 
-    public static UISquadSelectorController Create(int currentFormation = 0)
+    public static UISquadSelectorController Create(List<SquadConfiguration.SQUAD_ROL> squadFormation)
     {
         if (FindObjectOfType<UISquadSelectorController>() != null)
         {
@@ -19,8 +19,8 @@ public class UISquadSelectorController : GenericPanelController
         }
         GameObject UISquadSelector = Instantiate(Resources.Load("Prefabs/Popups/UISelectorSquad")) as GameObject;
         UISquadSelectorController UISquadSelectorController = UISquadSelector.GetComponent<UISquadSelectorController>();
-        UISquadSelectorController.currentFormation = currentFormation;
-        UISquadSelectorController.HandleButtonsState();
+        UISquadSelectorController.formation = squadFormation;
+        UISquadSelectorController.HandleButtons();
         UISquadSelectorController.transform.SetParent(GameObject.Find("MainCanvas").transform, false);
         UISquadSelectorController.OpenPanel();
         return UISquadSelectorController;
@@ -28,7 +28,7 @@ public class UISquadSelectorController : GenericPanelController
 
     public void ButtonContentionSquadPressed()
     {
-        if (currentFormation == 0)
+        if (formation == null)
         {
             UIController.I.HandleSpawnSquadLogic();
         }
@@ -44,7 +44,7 @@ public class UISquadSelectorController : GenericPanelController
 
     public void ButtonPenetrationSquadPressed()
     {
-        if (currentFormation == 0)
+        if (formation == null)
         {
             UIController.I.HandleSpawnSquadLogic();
         }
@@ -59,7 +59,7 @@ public class UISquadSelectorController : GenericPanelController
 
     public void ButtonAroundPlayerSquadPressed()
     {
-        if (currentFormation == 0)
+        if (formation == null)
         {
             UIController.OnGroundClicked -= UIController.I.OnSpawnSquadPositionSelected;
             FindObjectOfType<BoogiesSpawner>().CreateSquad(3, FindObjectOfType<BoogiesSpawner>().transform.position);
@@ -73,19 +73,31 @@ public class UISquadSelectorController : GenericPanelController
         Destroy(this.gameObject);
     }
 
-    private void HandleButtonsState()
+    public void HandleButtons()
     {
-        switch (currentFormation)
+
+        if (formation != null)
         {
-            case 1:
-                contentionButton.enabled = false;
-                break;
-            case 2:
-                penetrationButton.enabled = false;
-                break;
-            case 3:
-                aroundPlayerButton.enabled = false;
-                break;
+            if (SquadConfiguration.ListsAreEquals(formation, FindObjectOfType<SquadConfiguration>().contentionSquad.listFormation))
+            {
+                contentionButton.gameObject.SetActive(false);
+            }
+            else if (SquadConfiguration.ListsAreEquals(formation, FindObjectOfType<SquadConfiguration>().penetrationSquad.listFormation))
+            {
+                penetrationButton.gameObject.SetActive(false);
+            }
+            else if (SquadConfiguration.ListsAreEquals(formation, FindObjectOfType<SquadConfiguration>().aroundPlayerSquad.listFormation))
+            {
+                aroundPlayerButton.gameObject.SetActive(false);
+            }
+
+            else
+            {
+                contentionButton.gameObject.SetActive(true);
+                penetrationButton.gameObject.SetActive(true);
+                aroundPlayerButton.gameObject.SetActive(true);
+            }
         }
+
     }
 }

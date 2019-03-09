@@ -7,6 +7,7 @@ public class GenericPanelController : MonoBehaviour
     public void ClosePanel()
     {
         this.gameObject.SetActive(false);
+        Destroy(this.gameObject);
     }
 
     public void OpenPanel()

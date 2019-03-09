@@ -20,11 +20,13 @@ public class BoogieWrestlerCommander : BoogieWrestler
     public List<BoogieWrestler> squadWrestlers;
     public SquadConfiguration.Index leaderIndex;
 
+    public List<SquadConfiguration.SQUAD_ROL> currentSquadList;
+
     public InteractableBody coveringBody;
 
     public SQUAD_STATE currentSquadState = SQUAD_STATE.CoveringPosition;
 
-    public int formation = 0;
+    //public int formation = 0;
 
     public bool hasPlayer = false;
 
@@ -53,6 +55,25 @@ public class BoogieWrestlerCommander : BoogieWrestler
         if (clickButton == 1)
         {
             Debug.Log("hola soy " + gameObject.name);
+            UISquadIndividualOptionsController.Create(
+            () =>
+            {
+                FollowPlayer();
+            },
+            () =>
+            {
+                BreakFormation();
+            }
+            ,
+            () =>
+            {
+                ChangePosition();
+            },
+            () =>
+            {
+                AssignAsLeader();
+            }
+            );
         }
     }
 
@@ -75,8 +96,7 @@ public class BoogieWrestlerCommander : BoogieWrestler
 
     public void MoveToPosition(Vector3 clickPosition)
     {
-        //UIController.OnMoveSquadPositionSelected -= MoveToPosition;
-        if (leader != commander.gameObject)
+        if (leader.GetComponent<BoogieWrestler>() == null)
         {
             leader = commander.gameObject;
             foreach (BoogieWrestler bw in squadWrestlers)
@@ -84,6 +104,7 @@ public class BoogieWrestlerCommander : BoogieWrestler
                 bw.leader = commander.gameObject;
             }
         }
+        //UIController.OnMoveSquadPositionSelected -= MoveToPosition;
         if (FindObjectOfType<xMarkerBehavior>() != null)
         {
             Destroy(FindObjectOfType<xMarkerBehavior>().gameObject);
@@ -91,7 +112,7 @@ public class BoogieWrestlerCommander : BoogieWrestler
         this.currentSquadState = SQUAD_STATE.Moving;
         UIController.I.UIShowXMarker(clickPosition);
         randomPoint = clickPosition;
-        _agent.SetDestination(randomPoint);
+        leader.GetComponent<BoogieWrestler>()._agent.SetDestination(randomPoint);
         Debug.Log("Clicking on " + clickPosition);
     }
 
@@ -112,6 +133,8 @@ public class BoogieWrestlerCommander : BoogieWrestler
     {
         SquadConfiguration.Squad newSquad = new SquadConfiguration.Squad(SquadConfiguration.SQUAD_LEVEL.First, formation);
         List<BoogieWrestler> wrestlers = new List<BoogieWrestler>();
+
+        this.currentSquadList = newSquad.listFormation;
 
         int posI = newSquad.leaderPosition.i;
         int posJ = newSquad.leaderPosition.j;
@@ -138,24 +161,25 @@ public class BoogieWrestlerCommander : BoogieWrestler
         switch (formation)
         {
             case SquadConfiguration.SQUAD_FORMATION.Contention:
-                this.formation = 1;
+                //this.formation = 1;
                 this.currentSquadState = SQUAD_STATE.CoveringPosition;
                 break;
             case SquadConfiguration.SQUAD_FORMATION.Penetration:
-                this.formation = 2;
+                //this.formation = 2;
                 this.currentSquadState = SQUAD_STATE.CoveringPosition;
                 break;
             case SquadConfiguration.SQUAD_FORMATION.AroundPlayer:
                 this.currentSquadState = SQUAD_STATE.CoveringPlayer;
-                this.formation = 3;
+                //this.formation = 3;
                 break;
             case SquadConfiguration.SQUAD_FORMATION.CoverBody:
                 this.currentSquadState = SQUAD_STATE.CoveringBody;
-                this.formation = 4;
+                //this.formation = 4;
                 break;
         }
 
         SquadConfiguration.SquadSlot[,] squadSlots = newSquad.squad;
+        int counter = 0;
         for (int i = 0; i<newSquad.squadRows; i++)
         {
             for (int j = 0; j<newSquad.squadCols; j++)
@@ -169,6 +193,7 @@ public class BoogieWrestlerCommander : BoogieWrestler
                             {
                                 wrestlers.Add(distanceWrestlers[k]);
                                 distanceWrestlers[k].indexs = new SquadConfiguration.Index(squadSlots[i, j].position.i, squadSlots[i,j].position.j);
+                                distanceWrestlers[k].listPosition = counter;
                                 break;
                             }
                         }
@@ -180,6 +205,7 @@ public class BoogieWrestlerCommander : BoogieWrestler
                             {
                                 wrestlers.Add(closeWrestlers[k]);
                                 closeWrestlers[k].indexs = new SquadConfiguration.Index(squadSlots[i, j].position.i, squadSlots[i, j].position.j);
+                                closeWrestlers[k].listPosition = counter;
                                 break;
                             }
                         }
@@ -191,6 +217,7 @@ public class BoogieWrestlerCommander : BoogieWrestler
                             {
                                 wrestlers.Add(giantWrestlers[k]);
                                 giantWrestlers[k].indexs = new SquadConfiguration.Index(squadSlots[i, j].position.i, squadSlots[i, j].position.j);
+                                giantWrestlers[k].listPosition = counter;
                                 break;
                             }
                         }
@@ -198,9 +225,11 @@ public class BoogieWrestlerCommander : BoogieWrestler
 
                     case SquadConfiguration.SQUAD_ROL.Commander:
                         this.indexs = new SquadConfiguration.Index(squadSlots[i, j].position.i, squadSlots[i, j].position.j);
+                        this.listPosition = counter;
                         Debug.Log(indexs.i + ", " + indexs.j);
                         break;
                 }
+                counter++;
             }
         }
 

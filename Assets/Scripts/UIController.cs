@@ -44,7 +44,7 @@ public class UIController : Singleton<UIController>
 
         if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Ground")) && !selectingBodyToCover && !selectingWrestlerToChange)
         {
-            if (FindObjectOfType<SelectorMouseBehavior>() != null)
+            if (SelectorMouseBehavior.IsActive())
             {
                 FindObjectOfType<SelectorMouseBehavior>().transform.position = hit.point;
             }
@@ -74,7 +74,7 @@ public class UIController : Singleton<UIController>
 
         if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Body", "Npc")) && selectingBodyToCover && !selectingWrestlerToChange)
         {
-            if (FindObjectOfType<SelectorMouseBehavior>() != null)
+            if (SelectorMouseBehavior.IsActive())
             {
                 FindObjectOfType<SelectorMouseBehavior>().transform.position = hit.point;
             }
@@ -89,15 +89,22 @@ public class UIController : Singleton<UIController>
         }
         else if (selectingBodyToCover && !selectingWrestlerToChange)
         {
-            if (FindObjectOfType<SelectorMouseBehavior>() != null)
+            if (SelectorMouseBehavior.IsActive())
             {
-                Destroy(FindObjectOfType<SelectorMouseBehavior>().gameObject);
+                SelectorMouseBehavior.Destroy();
             }
         }
         
         if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Npc")) && !selectingBodyToCover && selectingWrestlerToChange)
         {
-            if (FindObjectOfType<SelectorMouseBehavior>() != null)
+            BoogieWrestler bw = hit.transform.GetComponent<BoogieWrestler>() ?? null;
+            if (bw == null || bw.currentWState != W_STATE.OnSquad || bw.leader == bw.gameObject)//if is not a boogie wrestler or it is not in a squad or it is a squad leader...
+            {
+                SelectorMouseBehavior.Destroy();
+                return;
+            }
+
+            if (SelectorMouseBehavior.IsActive())
             {
                 FindObjectOfType<SelectorMouseBehavior>().transform.position = hit.point;
             }
@@ -105,11 +112,18 @@ public class UIController : Singleton<UIController>
             {
                 UIShowMouseSelector(SELECTION_TYPE.SelectingSquadWrestlerChange);
             }
-            if (Input.GetMouseButtonDown(0) && hit.transform.GetComponent<BoogieWrestler>())
+            if (Input.GetMouseButtonDown(0))
             {
                 OnSelectingWrestlerChange?.Invoke(hit.transform.GetComponent<BoogieWrestler>());
             }
             
+        }
+        else if (!selectingBodyToCover && selectingWrestlerToChange)
+        {
+            if (SelectorMouseBehavior.IsActive())
+            {
+                SelectorMouseBehavior.Destroy();
+            }
         }
     }
 
@@ -158,7 +172,8 @@ public class UIController : Singleton<UIController>
                 BoogiesSpawner.SetCanSpawnSquad(true);
                 UISpawnSquadDisabled();
             }
-            UISquadSelectorController.Create();
+            Debug.Log("Open popup formations because we press G key");
+            UISquadSelectorController.Create(null);
         }
 
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -172,24 +187,24 @@ public class UIController : Singleton<UIController>
             {
                 OnSelectingWrestlerChange = null;
                 this.selectingWrestlerToChange = false;
-                if (FindObjectOfType<SelectorMouseBehavior>() != null)
+                if (SelectorMouseBehavior.IsActive())
                 {
-                    Destroy(FindObjectOfType<SelectorMouseBehavior>().gameObject);
+                    SelectorMouseBehavior.Destroy();
                 }
             }
             if (this.selectingBodyToCover)
             {
                 this.selectingBodyToCover = false;
             }
-            if (FindObjectOfType<SelectorMouseBehavior>() != null)
+            if (SelectorMouseBehavior.IsActive())
             {
-                Destroy(FindObjectOfType<SelectorMouseBehavior>().gameObject);
+                SelectorMouseBehavior.Destroy();
                 
             }
 
             if (FindObjectOfType<GenericPanelController>() != null)
             {
-                Destroy(FindObjectOfType<GenericPanelController>().gameObject);
+                FindObjectOfType<GenericPanelController>().ClosePanel();
             }
         }
     }
@@ -223,7 +238,7 @@ public class UIController : Singleton<UIController>
 
     public void UIHideMouseSelector()
     {
-        if (FindObjectOfType<SelectorMouseBehavior>() != null)
+        if (SelectorMouseBehavior.IsActive())
         {
             SelectorMouseBehavior.Destroy();
         }
@@ -231,7 +246,7 @@ public class UIController : Singleton<UIController>
 
     public void UIShowMouseSelector(SELECTION_TYPE type)
     {
-        if (FindObjectOfType<SelectorMouseBehavior>() == null)
+        if (!SelectorMouseBehavior.IsActive())
         {
             SelectorMouseBehavior.Create(type);
         }

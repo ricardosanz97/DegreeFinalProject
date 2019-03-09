@@ -4866,6 +4866,82 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.Slider+SliderEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!1 &1732086126
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1732086128}
+  - component: {fileID: 1732086127}
+  m_Layer: 0
+  m_Name: SquadConfiguration
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1732086127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1732086126}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ea66fcd8b2265a42aca2bfdea1cd245, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  contentionSquad:
+    squadLevel: 0
+    squadFormation: 0
+    listFormation: 
+    leaderPosition:
+      i: 0
+      j: 0
+    squadCols: 0
+    squadRows: 0
+    hasPlayer: 0
+    hasBody: 0
+  penetrationSquad:
+    squadLevel: 0
+    squadFormation: 0
+    listFormation: 
+    leaderPosition:
+      i: 0
+      j: 0
+    squadCols: 0
+    squadRows: 0
+    hasPlayer: 0
+    hasBody: 0
+  aroundPlayerSquad:
+    squadLevel: 0
+    squadFormation: 0
+    listFormation: 
+    leaderPosition:
+      i: 0
+      j: 0
+    squadCols: 0
+    squadRows: 0
+    hasPlayer: 0
+    hasBody: 0
+--- !u!4 &1732086128
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1732086126}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 40.461197, y: 1.1032887, z: -19.053997}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 11
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1757394807
 GameObject:
   m_ObjectHideFlags: 0
@@ -6602,7 +6678,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Avatar
       value: 
-      objectReference: {fileID: 9000000, guid: 1cb053a79ec4941c09e73dedbad6060a, type: 3}
+      objectReference: {fileID: 0}
     - target: {fileID: 8131624974363558603, guid: 8cb72a3cf84b1bf4c92714cb89c318e3,
         type: 3}
       propertyPath: m_UseGravity

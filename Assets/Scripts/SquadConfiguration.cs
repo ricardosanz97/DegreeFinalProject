@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class SquadConfiguration : MonoBehaviour
 {
+    public Squad contentionSquad;
+    public Squad penetrationSquad;
+    public Squad aroundPlayerSquad;
+
     public enum SQUAD_ROL
     {
         None,
@@ -31,11 +35,42 @@ public class SquadConfiguration : MonoBehaviour
         CoverBody
     }
 
+    private void Awake()
+    {
+        contentionSquad = new Squad(SQUAD_LEVEL.First, SQUAD_FORMATION.Contention);
+        penetrationSquad = new Squad(SQUAD_LEVEL.First, SQUAD_FORMATION.Penetration);
+        aroundPlayerSquad = new Squad(SQUAD_LEVEL.First, SQUAD_FORMATION.AroundPlayer);
+    }
+
+    public static bool ListsAreEquals(List<SQUAD_ROL> list1, List<SQUAD_ROL> list2)
+    {
+        if (list1.Count != list2.Count)
+        {
+            Debug.Log("Counts don't match! ");
+            return false;
+        }
+        else
+        {
+            for (int i = 0; i<list1.Count; i++)
+            {
+                if (list1[i] != list2[i])
+                {
+                    Debug.Log("Position " + i + " doesn't match! ");
+                    return false;
+                }
+            }
+        }
+        Debug.Log("Lists are equal. ");
+        return true;
+
+    }
+
     [System.Serializable]
     public class Squad
     {
         public SQUAD_LEVEL squadLevel;
         public SQUAD_FORMATION squadFormation;
+        public List<SQUAD_ROL> listFormation;
         public Index leaderPosition;
         public SquadSlot[,] squad;
         public int squadCols;
@@ -86,6 +121,18 @@ public class SquadConfiguration : MonoBehaviour
                     squad[i, j].position = new Index(i, j);
                 }
             }
+            listFormation = new List<SQUAD_ROL>
+            {
+                SQUAD_ROL.Distance,
+                SQUAD_ROL.Distance,
+                SQUAD_ROL.Distance,
+                SQUAD_ROL.Close,
+                SQUAD_ROL.Commander,
+                SQUAD_ROL.Close,
+                SQUAD_ROL.Giant,
+                SQUAD_ROL.Close,
+                SQUAD_ROL.Giant
+            };
         }
 
         private void BuildFirstPenetrationSquad()
@@ -110,6 +157,18 @@ public class SquadConfiguration : MonoBehaviour
                     squad[i, j].position = new Index(i, j);
                 }
             }
+            listFormation = new List<SQUAD_ROL>
+            {
+                SQUAD_ROL.Giant,
+                SQUAD_ROL.Distance,
+                SQUAD_ROL.Giant,
+                SQUAD_ROL.Distance,
+                SQUAD_ROL.Commander,
+                SQUAD_ROL.Distance,
+                SQUAD_ROL.Close,
+                SQUAD_ROL.Close,
+                SQUAD_ROL.Close
+            };
         }
 
         private void BuildFirstAroundPlayerSquad()
@@ -140,6 +199,21 @@ public class SquadConfiguration : MonoBehaviour
                     squad[i, j].position = new Index(i, j);
                 }
             }
+            listFormation = new List<SQUAD_ROL>
+            {
+                SQUAD_ROL.None,
+                SQUAD_ROL.Close,
+                SQUAD_ROL.None,
+                SQUAD_ROL.Distance,
+                SQUAD_ROL.Distance,
+                SQUAD_ROL.Distance,
+                SQUAD_ROL.Close,
+                SQUAD_ROL.Player,
+                SQUAD_ROL.Close,
+                SQUAD_ROL.Giant,
+                SQUAD_ROL.Commander,
+                SQUAD_ROL.Giant
+            };
         }
 
         private void BuildFirstCoverBodySquad()
@@ -170,6 +244,21 @@ public class SquadConfiguration : MonoBehaviour
                     squad[i, j].position = new Index(i, j);
                 }
             }
+            listFormation = new List<SQUAD_ROL>
+            {
+                SQUAD_ROL.None,
+                SQUAD_ROL.Close,
+                SQUAD_ROL.None,
+                SQUAD_ROL.Distance,
+                SQUAD_ROL.Distance,
+                SQUAD_ROL.Distance,
+                SQUAD_ROL.Close,
+                SQUAD_ROL.Body,
+                SQUAD_ROL.Close,
+                SQUAD_ROL.Giant,
+                SQUAD_ROL.Commander,
+                SQUAD_ROL.Giant
+            };
         }
     }
 
