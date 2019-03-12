@@ -22,6 +22,8 @@ public class BoogieWrestlerCommander : BoogieWrestler
 
     public List<SquadConfiguration.SQUAD_ROL> currentSquadList;
 
+    public List<SquadConfiguration.Index> neededIndexs;
+
     public InteractableBody coveringBody;
 
     public SQUAD_STATE currentSquadState = SQUAD_STATE.CoveringPosition;
@@ -58,11 +60,11 @@ public class BoogieWrestlerCommander : BoogieWrestler
             UISquadIndividualOptionsController.Create(
             () =>
             {
-                FollowPlayer();
+                //FollowPlayer();
             },
             () =>
             {
-                BreakFormation();
+                //BreakFormation();
             }
             ,
             () =>

@@ -224,20 +224,15 @@ public class BoogiesSpawner : MonoBehaviour
         switch (formation)
         {
             case 1:
-                SquadConfiguration.Squad squadFirst = FindObjectOfType<SquadConfiguration>().contentionSquad;
-                //SquadConfiguration.SquadSlot[,] squad1 = squadFirst.squad;
+                SquadConfiguration.Squad squadFirst = new SquadConfiguration.Squad(SquadConfiguration.SQUAD_LEVEL.First, SquadConfiguration.SQUAD_FORMATION.Contention);
                 SpawnSquad(position, squadFirst);
                 break;
             case 2:
-                //SquadConfiguration.Squad squadSecond = new SquadConfiguration.Squad(SquadConfiguration.SQUAD_LEVEL.First, SquadConfiguration.SQUAD_FORMATION.Penetration);
-                SquadConfiguration.Squad squadSecond = FindObjectOfType<SquadConfiguration>().penetrationSquad;
-                //SquadConfiguration.SquadSlot[,] squad2 = squadSecond.squad;
+                SquadConfiguration.Squad squadSecond = new SquadConfiguration.Squad(SquadConfiguration.SQUAD_LEVEL.First, SquadConfiguration.SQUAD_FORMATION.Penetration);
                 SpawnSquad(position, squadSecond);
                 break;
             case 3:
-                //SquadConfiguration.Squad squadThird = new SquadConfiguration.Squad(SquadConfiguration.SQUAD_LEVEL.First, SquadConfiguration.SQUAD_FORMATION.AroundPlayer);
-                SquadConfiguration.Squad squadThird = FindObjectOfType<SquadConfiguration>().aroundPlayerSquad;
-                //SquadConfiguration.SquadSlot[,] squad3 = squadThird.squad;
+                SquadConfiguration.Squad squadThird = new SquadConfiguration.Squad(SquadConfiguration.SQUAD_LEVEL.First, SquadConfiguration.SQUAD_FORMATION.AroundPlayer);
                 SpawnSquad(position, squadThird);
                 break;
         }
@@ -247,8 +242,11 @@ public class BoogiesSpawner : MonoBehaviour
 
     private void SpawnSquad(Vector3 position, SquadConfiguration.Squad squadConfig)
     {
-        GameObject squadGO = new GameObject("squad");
-        GameObject commander = Instantiate(Resources.Load("Prefabs/Wrestlers/BoogieWrestlerCommander"), position, Quaternion.identity, squadGO.transform) as GameObject;
+        GameObject commander = Instantiate(Resources.Load("Prefabs/Wrestlers/BoogieWrestlerCommander"), position, Quaternion.identity) as GameObject;
+        GameObject squadGO = new GameObject("Squad");
+        squadGO.transform.position = position;
+        squadGO.layer = LayerMask.NameToLayer("Squad");
+        commander.transform.SetParent(squadGO.transform);
 
         int posI = squadConfig.leaderPosition.i;
         int posJ = squadConfig.leaderPosition.j;

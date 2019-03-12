@@ -12,9 +12,11 @@ public class UIController : Singleton<UIController>
     public static event Action<Vector3> OnMoveSquadPositionSelected;
     public static event Action<InteractableBody> OnInteractableBodyPressed;
     public static event Action<BoogieWrestler> OnSelectingWrestlerChange;
+    public static event Action<BoogieWrestlerCommander> OnSelectingSquadJoin;
 
     public bool selectingBodyToCover = false;
     public bool selectingWrestlerToChange = false;
+    public bool selectingSquadToJoin = false;
 
     private void Start()
     {
@@ -37,6 +39,18 @@ public class UIController : Singleton<UIController>
         return OnInteractableBodyPressed == null;
     }
 
+    public void ResetEvents()
+    {
+        OnGroundClicked = null;
+        OnSpawnBoogiesEnabled = null;
+        OnSpawnSquadEnabled = null;
+        OnWrestlerClicked = null;
+        OnMoveSquadPositionSelected = null;
+        OnInteractableBodyPressed = null;
+        OnSelectingWrestlerChange = null;
+        OnSelectingSquadJoin = null;
+    }
+
     public void UIHandleClick()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -54,7 +68,7 @@ public class UIController : Singleton<UIController>
                 OnMoveSquadPositionSelected?.Invoke(hit.point);
             }
         }
-        if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Npc")) && hit.transform.gameObject.GetComponent<BoogieWrestler>() && !selectingBodyToCover && !selectingWrestlerToChange)
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Npc")) && hit.transform.gameObject.GetComponent<BoogieWrestler>() && !selectingSquadToJoin && !selectingBodyToCover && !selectingWrestlerToChange)
         {
             if (Input.GetMouseButtonUp(0))
             {
@@ -72,7 +86,7 @@ public class UIController : Singleton<UIController>
             }
         }
 
-        if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Body", "Npc")) && selectingBodyToCover && !selectingWrestlerToChange)
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Body", "Npc")) && !selectingSquadToJoin && selectingBodyToCover && !selectingWrestlerToChange)
         {
             if (SelectorMouseBehavior.IsActive())
             {
@@ -95,7 +109,7 @@ public class UIController : Singleton<UIController>
             }
         }
         
-        if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Npc")) && !selectingBodyToCover && selectingWrestlerToChange)
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Npc")) && !selectingSquadToJoin && !selectingBodyToCover && selectingWrestlerToChange)
         {
             BoogieWrestler bw = hit.transform.GetComponent<BoogieWrestler>() ?? null;
             if (bw == null || bw.currentWState != W_STATE.OnSquad || bw.leader == bw.gameObject)//if is not a boogie wrestler or it is not in a squad or it is a squad leader...
@@ -119,6 +133,37 @@ public class UIController : Singleton<UIController>
             
         }
         else if (!selectingBodyToCover && selectingWrestlerToChange)
+        {
+            if (SelectorMouseBehavior.IsActive())
+            {
+                SelectorMouseBehavior.Destroy();
+            }
+        }
+
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Npc")) && selectingSquadToJoin && !selectingBodyToCover && !selectingWrestlerToChange)
+        {
+            BoogieWrestlerCommander bwc = hit.transform.GetComponent<BoogieWrestlerCommander>() ?? null;
+            if (bwc == null)
+            {
+                SelectorMouseBehavior.Destroy();
+                return;
+            }
+
+            if (SelectorMouseBehavior.IsActive())
+            {
+                FindObjectOfType<SelectorMouseBehavior>().transform.position = hit.point;
+            }
+            else
+            {
+                UIShowMouseSelector(SELECTION_TYPE.SelectingSquadWrestlerChange);
+            }
+            if (Input.GetMouseButtonDown(0))
+            {
+                OnSelectingSquadJoin?.Invoke(bwc);
+            }
+        }
+
+        else if (!selectingSquadToJoin)
         {
             if (SelectorMouseBehavior.IsActive())
             {
@@ -178,6 +223,20 @@ public class UIController : Singleton<UIController>
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
+            ResetEvents();
+            if (this.selectingBodyToCover)
+            {
+                this.selectingBodyToCover = false;
+            }
+            if (this.selectingSquadToJoin)
+            {
+                this.selectingSquadToJoin = false;
+            }
+            if (this.selectingWrestlerToChange)
+            {
+                this.selectingSquadToJoin = false;
+            }
+
             if (OnMoveSquadPositionSelected != null)
             {
                 OnMoveSquadPositionSelected = null;

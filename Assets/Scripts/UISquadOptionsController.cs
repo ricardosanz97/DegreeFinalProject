@@ -12,8 +12,9 @@ public class UISquadOptionsController : GenericPanelController
     public Button RotateFormationButton;
     public Button CoverButton;
     public Button CancelButton;
+    public BoogieWrestlerCommander commander;
 
-    public static UISquadOptionsController Create(Action callbackButtonMoveOrStop, Action callbackButtonFormation, Action callbackButtonRotate, Action callbackButtonCover)
+    public static UISquadOptionsController Create(BoogieWrestlerCommander bwc, Action callbackButtonMoveOrStop, Action callbackButtonFormation, Action callbackButtonRotate, Action callbackButtonCover)
     {
         if (FindObjectOfType<UISquadOptionsController>() != null)
         {
@@ -28,11 +29,21 @@ public class UISquadOptionsController : GenericPanelController
         UISquadOptionsController.RotateFormationButton.onClick.AddListener(() => { callbackButtonRotate(); });
         UISquadOptionsController.CoverButton.onClick.AddListener(() => { callbackButtonCover(); UISquadOptionsController.ClosePanel(); });
         UISquadOptionsController.CancelButton.onClick.AddListener(() => { UISquadOptionsController.ClosePanel(); Destroy(UISquadOptionsController.gameObject); });
+        UISquadOptionsController.commander = bwc;
+        UISquadOptionsController.HandleButtonStatus();
 
         UISquadOptionsController.transform.SetParent(GameObject.Find("MainCanvas").transform, false);
 
         UISquadOptionsController.OpenPanel();
 
         return UISquadOptionsController;
+    }
+
+    private void HandleButtonStatus()
+    {
+        if (!SquadConfiguration.CanUseDefaultSquads(commander.currentSquadList))
+        {
+            ChangeFormationButton.gameObject.SetActive(false);
+        }
     }
 }

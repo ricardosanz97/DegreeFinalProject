@@ -9,6 +9,7 @@ public class UISquadSelectorController : GenericPanelController
     public Button contentionButton;
     public Button penetrationButton;
     public Button aroundPlayerButton;
+    public Button customButton;
 
     public static UISquadSelectorController Create(List<SquadConfiguration.SQUAD_ROL> squadFormation)
     {
@@ -73,20 +74,26 @@ public class UISquadSelectorController : GenericPanelController
         Destroy(this.gameObject);
     }
 
+    public void ButtonCustomPressed()
+    {
+        
+        ClosePanel();
+        Destroy(this.gameObject);
+    }
+
     public void HandleButtons()
     {
-
         if (formation != null)
         {
-            if (SquadConfiguration.ListsAreEquals(formation, FindObjectOfType<SquadConfiguration>().contentionSquad.listFormation))
+            if (SquadConfiguration.ListsAreEquals(formation, FindObjectOfType<SquadConfiguration>().basicContentionSquad.listFormation))
             {
                 contentionButton.gameObject.SetActive(false);
             }
-            else if (SquadConfiguration.ListsAreEquals(formation, FindObjectOfType<SquadConfiguration>().penetrationSquad.listFormation))
+            else if (SquadConfiguration.ListsAreEquals(formation, FindObjectOfType<SquadConfiguration>().basicPenetrationSquad.listFormation))
             {
                 penetrationButton.gameObject.SetActive(false);
             }
-            else if (SquadConfiguration.ListsAreEquals(formation, FindObjectOfType<SquadConfiguration>().aroundPlayerSquad.listFormation))
+            else if (SquadConfiguration.ListsAreEquals(formation, FindObjectOfType<SquadConfiguration>().basicAroundPlayerSquad.listFormation))
             {
                 aroundPlayerButton.gameObject.SetActive(false);
             }
@@ -97,6 +104,11 @@ public class UISquadSelectorController : GenericPanelController
                 penetrationButton.gameObject.SetActive(true);
                 aroundPlayerButton.gameObject.SetActive(true);
             }
+        }
+
+        else
+        {
+            customButton.gameObject.SetActive(false);
         }
 
     }

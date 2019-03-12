@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class SquadConfiguration : MonoBehaviour
 {
-    public Squad contentionSquad;
-    public Squad penetrationSquad;
-    public Squad aroundPlayerSquad;
+    public Squad basicContentionSquad;
+    public Squad basicPenetrationSquad;
+    public Squad basicAroundPlayerSquad;
+
+    public Squad contentionGiantsSquad;
 
     public enum SQUAD_ROL
     {
@@ -37,9 +39,9 @@ public class SquadConfiguration : MonoBehaviour
 
     private void Awake()
     {
-        contentionSquad = new Squad(SQUAD_LEVEL.First, SQUAD_FORMATION.Contention);
-        penetrationSquad = new Squad(SQUAD_LEVEL.First, SQUAD_FORMATION.Penetration);
-        aroundPlayerSquad = new Squad(SQUAD_LEVEL.First, SQUAD_FORMATION.AroundPlayer);
+        basicContentionSquad = new Squad(SQUAD_LEVEL.First, SQUAD_FORMATION.Contention);
+        basicPenetrationSquad = new Squad(SQUAD_LEVEL.First, SQUAD_FORMATION.Penetration);
+        basicAroundPlayerSquad = new Squad(SQUAD_LEVEL.First, SQUAD_FORMATION.AroundPlayer);
     }
 
     public static bool ListsAreEquals(List<SQUAD_ROL> list1, List<SQUAD_ROL> list2)
@@ -65,6 +67,35 @@ public class SquadConfiguration : MonoBehaviour
 
     }
 
+    public static bool CanUseDefaultSquads(List<SQUAD_ROL> list)
+    {
+        int numClose = 3;
+        int numDistance = 3;
+        int numGiant = 2;
+
+        int currentNumClose = 0;
+        int currentNumDistance = 0;
+        int currentNumGiant = 0;
+
+        for (int i = 0; i<list.Count; i++)
+        {
+            if (list[i] == SQUAD_ROL.Close)
+            {
+                currentNumClose++;
+            }    
+            else if (list[i] == SQUAD_ROL.Distance)
+            {
+                currentNumDistance++;
+            }
+            else if (list[i] == SQUAD_ROL.Giant)
+            {
+                currentNumGiant++;
+            }
+        }
+
+        return (currentNumClose == numClose && currentNumDistance == numDistance && currentNumGiant == numGiant);
+    }
+
     [System.Serializable]
     public class Squad
     {
@@ -77,6 +108,11 @@ public class SquadConfiguration : MonoBehaviour
         public int squadRows;
         public bool hasPlayer;
         public bool hasBody;
+
+        public Squad(List<SQUAD_ROL> listFormation)
+        {
+            
+        }
 
         public Squad(SQUAD_LEVEL level, SQUAD_FORMATION formation)
         {
