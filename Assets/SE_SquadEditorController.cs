@@ -27,6 +27,9 @@ public class SE_SquadEditorController : MonoBehaviour
     public SE_Button commanderButton;
     public SE_Slot commanderSlot;
 
+    public SE_Button objectButton;
+    public SE_Slot objectSlot;
+
     public bool selectingWrestler;
 
     private void Awake()
@@ -72,10 +75,12 @@ public class SE_SquadEditorController : MonoBehaviour
         switch (rol)
         {
             case SquadConfiguration.SQUAD_ROL.Commander:
-                commanderSlot.rol = SquadConfiguration.SQUAD_ROL.None;
-                commanderButton.transform.GetChild(0).GetComponent<Image>().sprite = null;
-                commanderButton.empty = true;
-
+                if (commanderButton != null)
+                {
+                    commanderSlot.rol = SquadConfiguration.SQUAD_ROL.None;
+                    commanderButton.transform.GetChild(0).GetComponent<Image>().sprite = null;
+                    commanderButton.empty = true;
+                }
                 commanderButton = currentButtonClicked;
                 commanderSlot = slots.Find((x)=>x.index.i == commanderButton.indexsMatrix.i && x.index.j == commanderButton.indexsMatrix.j);
 
@@ -89,6 +94,18 @@ public class SE_SquadEditorController : MonoBehaviour
                 break;
             case SquadConfiguration.SQUAD_ROL.Giant:
                 slotImage.sprite = Resources.Load<Sprite>("Sprites/Placeholder/Giant");
+                break;
+            case SquadConfiguration.SQUAD_ROL.Body:
+                if (objectButton != null)
+                {
+                    objectSlot.rol = SquadConfiguration.SQUAD_ROL.None;
+                    objectButton.transform.GetChild(0).GetComponent<Image>().sprite = null;
+                    objectButton.empty = true;
+                }
+                objectButton = currentButtonClicked;
+                objectSlot = slots.Find((x) => x.index.i == objectButton.indexsMatrix.i && x.index.j == objectButton.indexsMatrix.j);
+
+                slotImage.sprite = Resources.Load<Sprite>("Sprites/Placeholder/Body");
                 break;
         }
 
