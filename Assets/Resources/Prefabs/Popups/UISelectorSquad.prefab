@@ -115,7 +115,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 218318884018545914}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4552310443508705018}
+        m_MethodName: ButtonCustomPressed
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!1 &4552310442909408733
@@ -536,6 +547,7 @@ MonoBehaviour:
   contentionButton: {fileID: 4552310443239802635}
   penetrationButton: {fileID: 4552310444436576370}
   aroundPlayerButton: {fileID: 4552310444897392260}
+  customButton: {fileID: 8613332257169627483}
 --- !u!1 &4552310444269643936
 GameObject:
   m_ObjectHideFlags: 0

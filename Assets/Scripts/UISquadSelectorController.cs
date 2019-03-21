@@ -76,7 +76,7 @@ public class UISquadSelectorController : GenericPanelController
 
     public void ButtonCustomPressed()
     {
-        
+        SE_SquadEditorController.Create();
         ClosePanel();
         Destroy(this.gameObject);
     }
@@ -108,7 +108,7 @@ public class UISquadSelectorController : GenericPanelController
 
         else
         {
-            customButton.gameObject.SetActive(false);
+            customButton.gameObject.SetActive(true);
         }
 
     }

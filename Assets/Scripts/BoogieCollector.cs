@@ -168,10 +168,9 @@ public class BoogieCollector : Boogie
                     objectiveNotFoundTimerEnabled = true;
                 }
             }
-            currentState = CURRENT_STATE.CollectingElixir;
+
             //canFollowMarker = false;
             currentElixirStone = other.GetComponent<ElixirObstacleStone>();
-            currentElixirStone.bCollectorsIn++;
             StartCoroutine(OnCollectingElixir());
         }
 
@@ -308,27 +307,37 @@ public class BoogieCollector : Boogie
 
     IEnumerator OnCollectingElixir()
     {
-        _agent.isStopped = true;
-        currentElixirStone.elixirAvailable--;
-        if (currentElixirStone.elixirAvailable == 0)
+        if (currentElixirStone.elixirAvailable > 0)
         {
-            currentElixirStone.empty = true;
+            currentState = CURRENT_STATE.CollectingElixir;
+            currentElixirStone.bCollectorsIn++;
+            _agent.isStopped = true;
+            currentElixirStone.elixirAvailable--;
+            if (currentElixirStone.elixirAvailable == 0)
+            {
+                currentElixirStone.empty = true;
+            }
+            yield return new WaitForSeconds(5f);
+            if (BoogiesSpawner.BoogiesKnowCollectorMachinePosition)
+            {
+                canFollowMarker = false;
+                canCollect = false;
+            }
+            else
+            {
+                canFollowMarker = true;
+                canCollect = false;
+            }
+            currentElixirStone.bCollectorsIn--;
+            BringElixirToCollectorMachine();
             //change color
-        }
-        yield return new WaitForSeconds(5f);
-        if (BoogiesSpawner.BoogiesKnowCollectorMachinePosition)
-        {
-            canFollowMarker = false;
-            canCollect = false;
         }
         else
         {
-            canFollowMarker = true;
-            canCollect = false;
-            
+            currentElixirStone = null;
+            yield return null;
         }
-        currentElixirStone.bCollectorsIn--;
-        BringElixirToCollectorMachine();
+
     }
 
     private void BringElixirToCollectorMachine()

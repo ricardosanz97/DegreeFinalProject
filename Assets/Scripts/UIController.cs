@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.UI;
 
 public class UIController : Singleton<UIController>
 {
@@ -17,6 +18,7 @@ public class UIController : Singleton<UIController>
     public bool selectingBodyToCover = false;
     public bool selectingWrestlerToChange = false;
     public bool selectingSquadToJoin = false;
+    public bool writing = false;
 
     private void Start()
     {
@@ -174,6 +176,10 @@ public class UIController : Singleton<UIController>
 
     public void UIHandleKeyInput()
     {
+        if (writing)
+        {
+            return;
+        }
         if (Input.GetKeyDown(KeyCode.F))
         {
             if (FindObjectOfType<GenericPanelController>() != null)

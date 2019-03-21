@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 using UnityEngine.UI;
+using System.Diagnostics.Contracts;
 
 [System.Serializable]
 public class SE_Slot
@@ -17,7 +19,7 @@ public class SE_Slot
     }
 }
 
-public class SE_SquadEditorController : MonoBehaviour
+public class SE_SquadEditorController : GenericPanelController
 {
     public Transform matrix;
     public List<SE_Slot> slots;
@@ -31,6 +33,23 @@ public class SE_SquadEditorController : MonoBehaviour
     public SE_Slot objectSlot;
 
     public bool selectingWrestler;
+
+    public List<SquadConfiguration.SQUAD_ROL> squadList = new List<SquadConfiguration.SQUAD_ROL>();
+
+    public Text newSquadName;
+    public GameObject squadNamePopup;
+    public GameObject commanderNotSelectedPopup;
+    public GameObject squadAlreadyExistsPopup;
+
+    public static SE_SquadEditorController Create()
+    {
+        GameObject SE_SquadEditor = Instantiate(Resources.Load("Prefabs/Popups/CustomSquadEditor")) as GameObject;
+        SE_SquadEditorController SE_SquadEditorController = SE_SquadEditor.GetComponent<SE_SquadEditorController>();
+        SE_SquadEditor.transform.SetParent(GameObject.Find("MainCanvas").transform, false);
+        SE_SquadEditorController.OpenPanel();
+
+        return SE_SquadEditorController;
+    }
 
     private void Awake()
     {
@@ -126,5 +145,88 @@ public class SE_SquadEditorController : MonoBehaviour
             slots[i].rol = SquadConfiguration.SQUAD_ROL.None;
             slots[i].editorButton.empty = true;
         }
+    }
+
+    public void SaveButtonPressed()
+    {
+        squadList = new List<SquadConfiguration.SQUAD_ROL>();
+
+        for (int i = matrix.GetChild(0).childCount - 1; i >= 0; i--)
+        {
+            for (int j = 0; j < matrix.childCount; j++)
+            {
+                SquadConfiguration.SQUAD_ROL rol = slots.Find((x) => x.index.i == j && x.index.j == i).rol;
+                squadList.Add(rol);
+            }
+        }
+
+        bool hasCommander = false;
+        for (int i = 0; i < squadList.Count; i++)
+        {
+            if (squadList[i] == SquadConfiguration.SQUAD_ROL.Commander)
+            {
+                hasCommander = true;
+            }
+        }
+        if (!hasCommander)
+        {
+            commanderNotSelectedPopup.SetActive(true);
+        }
+        else
+        {
+            UIController.I.writing = true;
+            squadNamePopup.SetActive(true);
+        }
+    }
+
+    public void DefinitiveSaveButtonPressed()
+    {
+        Squad asset = ScriptableObject.CreateInstance<Squad>();
+
+        if (newSquadName.text == "")
+        {
+            asset.squadName = newSquadName.GetComponentInParent<InputField>().transform.Find("Placeholder").GetComponent<Text>().text;
+        }
+        else
+        {
+            asset.squadName = newSquadName.text;
+        }
+
+        asset.squadCost = 3;
+        asset.squadRol = squadList;
+
+        Object a = Resources.Load("Squads/" + asset.squadName);
+        if (a != null)
+        {
+            squadAlreadyExistsPopup.SetActive(true);
+            return;
+        }
+
+        AssetDatabase.CreateAsset(asset, "Assets/Resources/Squads/" + asset.squadName + ".asset");
+        AssetDatabase.SaveAssets();
+        this.ClosePanel();
+        squadNamePopup.SetActive(false);
+        UIController.I.writing = false;
+    }
+
+    public void CancelButtonPressed()
+    {
+        squadNamePopup.SetActive(false);
+        UIController.I.writing = false;
+    }
+
+    public void CloseButtonPressed()
+    {
+        this.ClosePanel();
+    }
+
+    public void OkCommanderNeededButtonPressed()
+    {
+        commanderNotSelectedPopup.SetActive(false);
+    }
+
+    public void OkSquadAlreadyExistsButtonPressed()
+    {
+        squadAlreadyExistsPopup.SetActive(false);
     }
 }
