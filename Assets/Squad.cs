@@ -7,5 +7,7 @@ public class Squad : ScriptableObject
 {
     public string squadName;
     public List<SquadConfiguration.SQUAD_ROL> squadRol;
-    public int squadCost;
+    public int numRows;
+    public int numCols;
+    //public int squadCost;
 }

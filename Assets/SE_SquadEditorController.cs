@@ -35,6 +35,8 @@ public class SE_SquadEditorController : GenericPanelController
     public bool selectingWrestler;
 
     public List<SquadConfiguration.SQUAD_ROL> squadList = new List<SquadConfiguration.SQUAD_ROL>();
+    public int numRows = 0;
+    public int numCols = 0;
 
     public Text newSquadName;
     public GameObject squadNamePopup;
@@ -150,12 +152,15 @@ public class SE_SquadEditorController : GenericPanelController
     public void SaveButtonPressed()
     {
         squadList = new List<SquadConfiguration.SQUAD_ROL>();
-
+        numRows = matrix.GetChild(0).childCount;
+        numCols = matrix.childCount;
+        Debug.Log("Num rows: " + numRows);
+        Debug.Log("Num cols: " + numCols);
         for (int i = matrix.GetChild(0).childCount - 1; i >= 0; i--)
         {
             for (int j = 0; j < matrix.childCount; j++)
             {
-                SquadConfiguration.SQUAD_ROL rol = slots.Find((x) => x.index.i == j && x.index.j == i).rol;
+                SquadConfiguration.SQUAD_ROL rol = slots.Find((x) => x.index.i == i && x.index.j == j).rol;
                 squadList.Add(rol);
             }
         }
@@ -192,8 +197,10 @@ public class SE_SquadEditorController : GenericPanelController
             asset.squadName = newSquadName.text;
         }
 
-        asset.squadCost = 3;
+        //asset.squadCost = 3;
         asset.squadRol = squadList;
+        asset.numRows = numRows;
+        asset.numCols = numCols;
 
         Object a = Resources.Load("Squads/" + asset.squadName);
         if (a != null)

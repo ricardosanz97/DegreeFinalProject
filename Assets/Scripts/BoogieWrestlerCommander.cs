@@ -19,6 +19,7 @@ public class BoogieWrestlerCommander : BoogieWrestler
     public List<BoogieWrestlerGiant> giantWrestlers;
     public List<BoogieWrestler> squadWrestlers;
     public SquadConfiguration.Index leaderIndex;
+    public SquadConfiguration.Index bodyIndex;
 
     public List<SquadConfiguration.SQUAD_ROL> currentSquadList;
 
@@ -133,7 +134,7 @@ public class BoogieWrestlerCommander : BoogieWrestler
 
     public void ChangeSquadFormation(SquadConfiguration.SQUAD_FORMATION formation)
     {
-        SquadConfiguration.Squad newSquad = new SquadConfiguration.Squad(SquadConfiguration.SQUAD_LEVEL.First, formation);
+        SquadConfiguration.Squad newSquad = new SquadConfiguration.Squad(formation);
         List<BoogieWrestler> wrestlers = new List<BoogieWrestler>();
 
         this.currentSquadList = newSquad.listFormation;

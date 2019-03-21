@@ -324,7 +324,9 @@ public class UIController : Singleton<UIController>
 
     public void OnSpawnSquadPositionSelected(Vector3 position)
     {
-        FindObjectOfType<BoogiesSpawner>().CreateSquad(FindObjectOfType<BoogiesSpawner>().currentFormationSelected, position);
+        //FindObjectOfType<BoogiesSpawner>().CreateSquad(FindObjectOfType<BoogiesSpawner>().currentFormationSelected, position);
+        FindObjectOfType<BoogiesSpawner>().SpawnSquad(position, FindObjectOfType<SquadConfiguration>().currentSquadSelected);
+        FindObjectOfType<SquadConfiguration>().currentSquadSelected = null;
         UIHideMouseSelector();
         OnGroundClicked -= OnSpawnSquadPositionSelected;
     }

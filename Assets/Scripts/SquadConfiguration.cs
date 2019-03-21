@@ -10,6 +10,8 @@ public class SquadConfiguration : MonoBehaviour
 
     public Squad contentionGiantsSquad;
 
+    public Squad currentSquadSelected;
+
     public enum SQUAD_ROL
     {
         None,
@@ -19,14 +21,6 @@ public class SquadConfiguration : MonoBehaviour
         Distance,
         Player,
         Body
-    }
-
-    public enum SQUAD_LEVEL
-    {
-        First,
-        Second,
-        Third,
-        Fourth
     }
 
     public enum SQUAD_FORMATION
@@ -39,9 +33,9 @@ public class SquadConfiguration : MonoBehaviour
 
     private void Awake()
     {
-        basicContentionSquad = new Squad(SQUAD_LEVEL.First, SQUAD_FORMATION.Contention);
-        basicPenetrationSquad = new Squad(SQUAD_LEVEL.First, SQUAD_FORMATION.Penetration);
-        basicAroundPlayerSquad = new Squad(SQUAD_LEVEL.First, SQUAD_FORMATION.AroundPlayer);
+        basicContentionSquad = new Squad(SQUAD_FORMATION.Contention);
+        basicPenetrationSquad = new Squad(SQUAD_FORMATION.Penetration);
+        basicAroundPlayerSquad = new Squad(SQUAD_FORMATION.AroundPlayer);
     }
 
     public static bool ListsAreEquals(List<SQUAD_ROL> list1, List<SQUAD_ROL> list2)
@@ -99,7 +93,6 @@ public class SquadConfiguration : MonoBehaviour
     [System.Serializable]
     public class Squad
     {
-        public SQUAD_LEVEL squadLevel;
         public SQUAD_FORMATION squadFormation;
         public List<SQUAD_ROL> listFormation;
         public Index leaderPosition;
@@ -109,25 +102,27 @@ public class SquadConfiguration : MonoBehaviour
         public bool hasPlayer;
         public bool hasBody;
 
-        public Squad(List<SQUAD_ROL> listFormation)
+        public Squad(List<SQUAD_ROL> listFormation, int numRows, int numCols)
         {
-            
+            this.listFormation = listFormation;
+            this.squadRows = numRows;
+            this.squadCols = numCols;
+            squad = CreateCustomSquad(listFormation, numRows, numCols);
         }
 
-        public Squad(SQUAD_LEVEL level, SQUAD_FORMATION formation)
+        public Squad(SQUAD_FORMATION formation)
         {
-            this.squadLevel = level;
             this.squadFormation = formation;
             switch (this.squadFormation)
             {
                 case SQUAD_FORMATION.Contention:
-                    BuildFirstContentionSquad();
+                    BuildContentionSquad();
                     break;
                 case SQUAD_FORMATION.Penetration:
-                    BuildFirstPenetrationSquad();
+                    BuildPenetrationSquad();
                     break;
                 case SQUAD_FORMATION.AroundPlayer:
-                    BuildFirstAroundPlayerSquad();
+                    BuildAroundPlayerSquad();
                     break;
                 case SQUAD_FORMATION.CoverBody:
                     BuildFirstCoverBodySquad();
@@ -135,7 +130,7 @@ public class SquadConfiguration : MonoBehaviour
             }
         }
 
-        private void BuildFirstContentionSquad()
+        private void BuildContentionSquad()
         {
             squadCols = 3;
             squadRows = 3;
@@ -171,7 +166,7 @@ public class SquadConfiguration : MonoBehaviour
             };
         }
 
-        private void BuildFirstPenetrationSquad()
+        private void BuildPenetrationSquad()
         {
             squadCols = 3;
             squadRows = 3;
@@ -207,7 +202,7 @@ public class SquadConfiguration : MonoBehaviour
             };
         }
 
-        private void BuildFirstAroundPlayerSquad()
+        private void BuildAroundPlayerSquad()
         {
             squadCols = 3;
             squadRows = 4;
@@ -295,6 +290,30 @@ public class SquadConfiguration : MonoBehaviour
                 SQUAD_ROL.Commander,
                 SQUAD_ROL.Giant
             };
+        }
+
+        public SquadSlot[,] CreateCustomSquad(List<SQUAD_ROL> squadRols, int numRows, int numCols)
+        {
+            SquadSlot[,] newSquad = new SquadSlot[numRows, numCols];
+
+            for (int i = 0; i<numRows; i++)
+            {
+                for (int j = 0; j<numCols; j++)
+                {
+                    newSquad[i, j] = new SquadSlot(squadRols[i * numCols + j]);
+                    if (newSquad[i,j].rol == SQUAD_ROL.Body)
+                    {
+                        hasBody = true;
+                    }
+                    if (newSquad[i,j].rol == SQUAD_ROL.Commander)
+                    {
+                        leaderPosition = new Index(i, j);
+                    }
+                    newSquad[i, j].position = new Index(i, j);
+                }
+            }
+
+            return newSquad;
         }
     }
 

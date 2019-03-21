@@ -224,15 +224,15 @@ public class BoogiesSpawner : MonoBehaviour
         switch (formation)
         {
             case 1:
-                SquadConfiguration.Squad squadFirst = new SquadConfiguration.Squad(SquadConfiguration.SQUAD_LEVEL.First, SquadConfiguration.SQUAD_FORMATION.Contention);
+                SquadConfiguration.Squad squadFirst = new SquadConfiguration.Squad(SquadConfiguration.SQUAD_FORMATION.Contention);
                 SpawnSquad(position, squadFirst);
                 break;
             case 2:
-                SquadConfiguration.Squad squadSecond = new SquadConfiguration.Squad(SquadConfiguration.SQUAD_LEVEL.First, SquadConfiguration.SQUAD_FORMATION.Penetration);
+                SquadConfiguration.Squad squadSecond = new SquadConfiguration.Squad(SquadConfiguration.SQUAD_FORMATION.Penetration);
                 SpawnSquad(position, squadSecond);
                 break;
             case 3:
-                SquadConfiguration.Squad squadThird = new SquadConfiguration.Squad(SquadConfiguration.SQUAD_LEVEL.First, SquadConfiguration.SQUAD_FORMATION.AroundPlayer);
+                SquadConfiguration.Squad squadThird = new SquadConfiguration.Squad(SquadConfiguration.SQUAD_FORMATION.AroundPlayer);
                 SpawnSquad(position, squadThird);
                 break;
         }
@@ -240,7 +240,7 @@ public class BoogiesSpawner : MonoBehaviour
         SetCanSpawnSquad(true);
     }
 
-    private void SpawnSquad(Vector3 position, SquadConfiguration.Squad squadConfig)
+    public void SpawnSquad(Vector3 position, SquadConfiguration.Squad squadConfig)
     {
         GameObject commander = Instantiate(Resources.Load("Prefabs/Wrestlers/BoogieWrestlerCommander"), position, Quaternion.identity) as GameObject;
         GameObject squadGO = new GameObject("Squad");

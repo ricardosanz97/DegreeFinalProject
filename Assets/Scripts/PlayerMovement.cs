@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : InteractableBody
 {
     private Animator _animator;
     private NavMeshAgent _agent;
