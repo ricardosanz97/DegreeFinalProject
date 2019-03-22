@@ -5,14 +5,10 @@ using UnityEngine.UI;
 
 public class UISquadSelectorController : GenericPanelController
 {
-    public List<SquadConfiguration.SQUAD_ROL> formation;
-    public Button contentionButton;
-    public Button penetrationButton;
-    public Button aroundPlayerButton;
     public Button customButton;
     public Transform parent;
 
-    public static UISquadSelectorController Create(List<SquadConfiguration.SQUAD_ROL> squadFormation)
+    public static UISquadSelectorController Create()
     {
         if (FindObjectOfType<UISquadSelectorController>() != null)
         {
@@ -21,7 +17,6 @@ public class UISquadSelectorController : GenericPanelController
         }
         GameObject UISquadSelector = Instantiate(Resources.Load("Prefabs/Popups/UISelectorSquad")) as GameObject;
         UISquadSelectorController UISquadSelectorController = UISquadSelector.GetComponent<UISquadSelectorController>();
-        UISquadSelectorController.formation = squadFormation;
         UISquadSelectorController.HandleButtons();
         UISquadSelectorController.transform.SetParent(GameObject.Find("MainCanvas").transform, false);
 
@@ -47,53 +42,6 @@ public class UISquadSelectorController : GenericPanelController
         return UISquadSelectorController;
     }
 
-    public void ButtonContentionSquadPressed()
-    {
-        if (formation == null)
-        {
-            UIController.I.HandleSpawnSquadLogic();
-        }
-        else
-        {
-            BoogiesSpawner.CommanderSelected.ChangeSquadFormation(SquadConfiguration.SQUAD_FORMATION.Contention);
-        }
-        ClosePanel();
-        Destroy(this.gameObject);
-        FindObjectOfType<BoogiesSpawner>().currentFormationSelected = 1;
-
-    }
-
-    public void ButtonPenetrationSquadPressed()
-    {
-        if (formation == null)
-        {
-            UIController.I.HandleSpawnSquadLogic();
-        }
-        else
-        {
-            BoogiesSpawner.CommanderSelected.ChangeSquadFormation(SquadConfiguration.SQUAD_FORMATION.Penetration);
-        }
-        ClosePanel();
-        Destroy(this.gameObject);
-        FindObjectOfType<BoogiesSpawner>().currentFormationSelected = 2;
-    }
-
-    public void ButtonAroundPlayerSquadPressed()
-    {
-        if (formation == null)
-        {
-            UIController.OnGroundClicked -= UIController.I.OnSpawnSquadPositionSelected;
-            FindObjectOfType<BoogiesSpawner>().CreateSquad(3, FindObjectOfType<BoogiesSpawner>().transform.position);
-        }
-        else
-        {
-            BoogiesSpawner.CommanderSelected.ChangeSquadFormation(SquadConfiguration.SQUAD_FORMATION.AroundPlayer);
-        }
-        FindObjectOfType<BoogiesSpawner>().currentFormationSelected = 3;
-        ClosePanel();
-        Destroy(this.gameObject);
-    }
-
     public void ButtonCustomPressed()
     {
         SE_SquadEditorController.Create();
@@ -103,33 +51,7 @@ public class UISquadSelectorController : GenericPanelController
 
     public void HandleButtons()
     {
-        if (formation != null)
-        {
-            if (SquadConfiguration.ListsAreEquals(formation, FindObjectOfType<SquadConfiguration>().basicContentionSquad.listFormation))
-            {
-                contentionButton.gameObject.SetActive(false);
-            }
-            else if (SquadConfiguration.ListsAreEquals(formation, FindObjectOfType<SquadConfiguration>().basicPenetrationSquad.listFormation))
-            {
-                penetrationButton.gameObject.SetActive(false);
-            }
-            else if (SquadConfiguration.ListsAreEquals(formation, FindObjectOfType<SquadConfiguration>().basicAroundPlayerSquad.listFormation))
-            {
-                aroundPlayerButton.gameObject.SetActive(false);
-            }
-
-            else
-            {
-                contentionButton.gameObject.SetActive(true);
-                penetrationButton.gameObject.SetActive(true);
-                aroundPlayerButton.gameObject.SetActive(true);
-            }
-        }
-
-        else
-        {
-            customButton.gameObject.SetActive(true);
-        }
+        customButton.gameObject.SetActive(true);
 
     }
 }

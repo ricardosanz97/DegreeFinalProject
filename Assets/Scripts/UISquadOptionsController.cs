@@ -41,9 +41,18 @@ public class UISquadOptionsController : GenericPanelController
 
     private void HandleButtonStatus()
     {
-        if (!SquadConfiguration.CanUseDefaultSquads(commander.currentSquadList))
+        if (commander.squadInfo.hasBody && commander.coveringBody == null)
         {
-            ChangeFormationButton.gameObject.SetActive(false);
+            //then, we can cover
+            CoverButton.gameObject.SetActive(true);
         }
+        else
+        {
+            CoverButton.gameObject.SetActive(false);
+        }
+
+        //1- de todas las formaciones, solo habilitamos poder cambiarnos a aquellas que tengan el mismo numero de boogies (del mismo tipo) que la nuestra. En caso que haya 0 iguales, pues desactivamos el botón
+        //2- solo podemos rotar en caso que no estemos cubriendo al player
+
     }
 }

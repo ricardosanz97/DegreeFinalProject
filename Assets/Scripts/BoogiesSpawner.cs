@@ -218,28 +218,6 @@ public class BoogiesSpawner : MonoBehaviour
         b.GetComponent<Boogie>().initialPoint = clickPoint;
     }
 
-    public void CreateSquad(int formation, Vector3 position)
-    {
-        //Vector3 position = FindObjectOfType<xMarkerBehavior>().transform.position;
-        switch (formation)
-        {
-            case 1:
-                SquadConfiguration.Squad squadFirst = new SquadConfiguration.Squad(SquadConfiguration.SQUAD_FORMATION.Contention);
-                SpawnSquad(position, squadFirst);
-                break;
-            case 2:
-                SquadConfiguration.Squad squadSecond = new SquadConfiguration.Squad(SquadConfiguration.SQUAD_FORMATION.Penetration);
-                SpawnSquad(position, squadSecond);
-                break;
-            case 3:
-                SquadConfiguration.Squad squadThird = new SquadConfiguration.Squad(SquadConfiguration.SQUAD_FORMATION.AroundPlayer);
-                SpawnSquad(position, squadThird);
-                break;
-        }
-
-        SetCanSpawnSquad(true);
-    }
-
     public void SpawnSquad(Vector3 position, SquadConfiguration.Squad squadConfig)
     {
         GameObject commander = Instantiate(Resources.Load("Prefabs/Wrestlers/BoogieWrestlerCommander"), position, Quaternion.identity) as GameObject;
@@ -251,12 +229,10 @@ public class BoogiesSpawner : MonoBehaviour
         int posI = squadConfig.leaderPosition.i;
         int posJ = squadConfig.leaderPosition.j;
 
+        commander.GetComponent<BoogieWrestlerCommander>().squadInfo = squadConfig;
         commander.GetComponent<BoogieWrestlerCommander>().currentSquadList = squadConfig.listFormation;
 
         commander.GetComponent<BoogieWrestlerCommander>().leaderIndex = new SquadConfiguration.Index(posI,posJ);
-        //commander.GetComponent<BoogieWrestler>().indexs = new SquadConfiguration.Index(posI, posJ);
-
-        commander.GetComponent<BoogieWrestlerCommander>().hasPlayer = squadConfig.hasPlayer;
 
         SquadConfiguration.SquadSlot[,] squadSlots = squadConfig.squad;
         int counter = 0;
@@ -291,7 +267,6 @@ public class BoogiesSpawner : MonoBehaviour
                 } 
             }
         }
-
         currentFormationSelected = 0;
     }
 }

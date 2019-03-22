@@ -4,12 +4,6 @@ using UnityEngine;
 
 public class SquadConfiguration : MonoBehaviour
 {
-    public Squad basicContentionSquad;
-    public Squad basicPenetrationSquad;
-    public Squad basicAroundPlayerSquad;
-
-    public Squad contentionGiantsSquad;
-
     public Squad currentSquadSelected;
 
     public enum SQUAD_ROL
@@ -23,26 +17,10 @@ public class SquadConfiguration : MonoBehaviour
         Body
     }
 
-    public enum SQUAD_FORMATION
-    {
-        Contention,
-        Penetration,
-        AroundPlayer,
-        CoverBody
-    }
-
-    private void Awake()
-    {
-        basicContentionSquad = new Squad(SQUAD_FORMATION.Contention);
-        basicPenetrationSquad = new Squad(SQUAD_FORMATION.Penetration);
-        basicAroundPlayerSquad = new Squad(SQUAD_FORMATION.AroundPlayer);
-    }
-
     public static bool ListsAreEquals(List<SQUAD_ROL> list1, List<SQUAD_ROL> list2)
     {
         if (list1.Count != list2.Count)
         {
-            Debug.Log("Counts don't match! ");
             return false;
         }
         else
@@ -51,56 +29,31 @@ public class SquadConfiguration : MonoBehaviour
             {
                 if (list1[i] != list2[i])
                 {
-                    Debug.Log("Position " + i + " doesn't match! ");
                     return false;
                 }
             }
         }
-        Debug.Log("Lists are equal. ");
         return true;
-
     }
 
-    public static bool CanUseDefaultSquads(List<SQUAD_ROL> list)
+    public static bool ListsAreNumberByWrestlersEqual(Squad a, Squad b)
     {
-        int numClose = 3;
-        int numDistance = 3;
-        int numGiant = 2;
-
-        int currentNumClose = 0;
-        int currentNumDistance = 0;
-        int currentNumGiant = 0;
-
-        for (int i = 0; i<list.Count; i++)
-        {
-            if (list[i] == SQUAD_ROL.Close)
-            {
-                currentNumClose++;
-            }    
-            else if (list[i] == SQUAD_ROL.Distance)
-            {
-                currentNumDistance++;
-            }
-            else if (list[i] == SQUAD_ROL.Giant)
-            {
-                currentNumGiant++;
-            }
-        }
-
-        return (currentNumClose == numClose && currentNumDistance == numDistance && currentNumGiant == numGiant);
+        return a.numClose == b.numClose && a.numDistance == b.numDistance && a.numGiant == b.numGiant && a != b;
     }
 
     [System.Serializable]
     public class Squad
     {
-        public SQUAD_FORMATION squadFormation;
         public List<SQUAD_ROL> listFormation;
-        public Index leaderPosition;
+        public Index leaderPosition; //when spawn the squad, the leader is always the commander.
+        public Index bodyPosition;
         public SquadSlot[,] squad;
         public int squadCols;
         public int squadRows;
-        public bool hasPlayer;
         public bool hasBody;
+        public int numClose;
+        public int numDistance;
+        public int numGiant;
 
         public Squad(List<SQUAD_ROL> listFormation, int numRows, int numCols)
         {
@@ -108,188 +61,6 @@ public class SquadConfiguration : MonoBehaviour
             this.squadRows = numRows;
             this.squadCols = numCols;
             squad = CreateCustomSquad(listFormation, numRows, numCols);
-        }
-
-        public Squad(SQUAD_FORMATION formation)
-        {
-            this.squadFormation = formation;
-            switch (this.squadFormation)
-            {
-                case SQUAD_FORMATION.Contention:
-                    BuildContentionSquad();
-                    break;
-                case SQUAD_FORMATION.Penetration:
-                    BuildPenetrationSquad();
-                    break;
-                case SQUAD_FORMATION.AroundPlayer:
-                    BuildAroundPlayerSquad();
-                    break;
-                case SQUAD_FORMATION.CoverBody:
-                    BuildFirstCoverBodySquad();
-                    break;
-            }
-        }
-
-        private void BuildContentionSquad()
-        {
-            squadCols = 3;
-            squadRows = 3;
-            squad = new SquadSlot[squadRows, squadCols];
-            squad[0, 0] = new SquadSlot(SQUAD_ROL.Distance);
-            squad[0, 1] = new SquadSlot(SQUAD_ROL.Distance);
-            squad[0, 2] = new SquadSlot(SQUAD_ROL.Distance);
-            squad[1, 0] = new SquadSlot(SQUAD_ROL.Close);
-            squad[1, 1] = new SquadSlot(SQUAD_ROL.Commander);
-            leaderPosition = new Index(1, 1);
-            squad[1, 2] = new SquadSlot(SQUAD_ROL.Close);
-            squad[2, 0] = new SquadSlot(SQUAD_ROL.Giant);
-            squad[2, 1] = new SquadSlot(SQUAD_ROL.Close);
-            squad[2, 2] = new SquadSlot(SQUAD_ROL.Giant);
-            for (int i = 0; i<squadRows; i++)
-            {
-                for (int j = 0; j<squadCols; j++)
-                {
-                    squad[i, j].position = new Index(i, j);
-                }
-            }
-            listFormation = new List<SQUAD_ROL>
-            {
-                SQUAD_ROL.Distance,
-                SQUAD_ROL.Distance,
-                SQUAD_ROL.Distance,
-                SQUAD_ROL.Close,
-                SQUAD_ROL.Commander,
-                SQUAD_ROL.Close,
-                SQUAD_ROL.Giant,
-                SQUAD_ROL.Close,
-                SQUAD_ROL.Giant
-            };
-        }
-
-        private void BuildPenetrationSquad()
-        {
-            squadCols = 3;
-            squadRows = 3;
-            squad = new SquadSlot[squadRows, squadCols];
-            squad[0, 0] = new SquadSlot(SQUAD_ROL.Giant);
-            squad[0, 1] = new SquadSlot(SQUAD_ROL.Distance);
-            squad[0, 2] = new SquadSlot(SQUAD_ROL.Giant);
-            squad[1, 0] = new SquadSlot(SQUAD_ROL.Distance);
-            squad[1, 1] = new SquadSlot(SQUAD_ROL.Commander);
-            leaderPosition = new Index(1, 1);
-            squad[1, 2] = new SquadSlot(SQUAD_ROL.Distance);
-            squad[2, 0] = new SquadSlot(SQUAD_ROL.Close);
-            squad[2, 1] = new SquadSlot(SQUAD_ROL.Close);
-            squad[2, 2] = new SquadSlot(SQUAD_ROL.Close);
-            for (int i = 0; i < squadRows; i++)
-            {
-                for (int j = 0; j < squadCols; j++)
-                {
-                    squad[i, j].position = new Index(i, j);
-                }
-            }
-            listFormation = new List<SQUAD_ROL>
-            {
-                SQUAD_ROL.Giant,
-                SQUAD_ROL.Distance,
-                SQUAD_ROL.Giant,
-                SQUAD_ROL.Distance,
-                SQUAD_ROL.Commander,
-                SQUAD_ROL.Distance,
-                SQUAD_ROL.Close,
-                SQUAD_ROL.Close,
-                SQUAD_ROL.Close
-            };
-        }
-
-        private void BuildAroundPlayerSquad()
-        {
-            squadCols = 3;
-            squadRows = 4;
-            squad = new SquadSlot[squadRows, squadCols];
-            squad[0, 0] = new SquadSlot(SQUAD_ROL.None);
-            squad[0, 1] = new SquadSlot(SQUAD_ROL.Close);
-            squad[0, 2] = new SquadSlot(SQUAD_ROL.None);
-            squad[1, 0] = new SquadSlot(SQUAD_ROL.Distance);
-            squad[1, 1] = new SquadSlot(SQUAD_ROL.Distance);
-            squad[1, 2] = new SquadSlot(SQUAD_ROL.Distance);
-            squad[2, 0] = new SquadSlot(SQUAD_ROL.Close);
-            squad[2, 1] = new SquadSlot(SQUAD_ROL.Player);
-            hasPlayer = true;
-            leaderPosition = new Index(2, 1);
-            squad[2, 2] = new SquadSlot(SQUAD_ROL.Close);
-            squad[3, 0] = new SquadSlot(SQUAD_ROL.Giant);
-            squad[3, 1] = new SquadSlot(SQUAD_ROL.Commander);
-            squad[3, 2] = new SquadSlot(SQUAD_ROL.Giant);
-            
-            
-            for (int i = 0; i < squadRows; i++)
-            {
-                for (int j = 0; j < squadCols; j++)
-                {
-                    squad[i, j].position = new Index(i, j);
-                }
-            }
-            listFormation = new List<SQUAD_ROL>
-            {
-                SQUAD_ROL.None,
-                SQUAD_ROL.Close,
-                SQUAD_ROL.None,
-                SQUAD_ROL.Distance,
-                SQUAD_ROL.Distance,
-                SQUAD_ROL.Distance,
-                SQUAD_ROL.Close,
-                SQUAD_ROL.Player,
-                SQUAD_ROL.Close,
-                SQUAD_ROL.Giant,
-                SQUAD_ROL.Commander,
-                SQUAD_ROL.Giant
-            };
-        }
-
-        private void BuildFirstCoverBodySquad()
-        {
-            squadCols = 3;
-            squadRows = 4;
-            squad = new SquadSlot[squadRows, squadCols];
-            squad[0, 0] = new SquadSlot(SQUAD_ROL.None);
-            squad[0, 1] = new SquadSlot(SQUAD_ROL.Close);
-            squad[0, 2] = new SquadSlot(SQUAD_ROL.None);
-            squad[1, 0] = new SquadSlot(SQUAD_ROL.Distance);
-            squad[1, 1] = new SquadSlot(SQUAD_ROL.Distance);
-            squad[1, 2] = new SquadSlot(SQUAD_ROL.Distance);
-            squad[2, 0] = new SquadSlot(SQUAD_ROL.Close);
-            squad[2, 1] = new SquadSlot(SQUAD_ROL.Body);
-            hasBody = true;
-            leaderPosition = new Index(2, 1);
-            squad[2, 2] = new SquadSlot(SQUAD_ROL.Close);
-            squad[3, 0] = new SquadSlot(SQUAD_ROL.Giant);
-            squad[3, 1] = new SquadSlot(SQUAD_ROL.Commander);
-            squad[3, 2] = new SquadSlot(SQUAD_ROL.Giant);
-
-
-            for (int i = 0; i < squadRows; i++)
-            {
-                for (int j = 0; j < squadCols; j++)
-                {
-                    squad[i, j].position = new Index(i, j);
-                }
-            }
-            listFormation = new List<SQUAD_ROL>
-            {
-                SQUAD_ROL.None,
-                SQUAD_ROL.Close,
-                SQUAD_ROL.None,
-                SQUAD_ROL.Distance,
-                SQUAD_ROL.Distance,
-                SQUAD_ROL.Distance,
-                SQUAD_ROL.Close,
-                SQUAD_ROL.Body,
-                SQUAD_ROL.Close,
-                SQUAD_ROL.Giant,
-                SQUAD_ROL.Commander,
-                SQUAD_ROL.Giant
-            };
         }
 
         public SquadSlot[,] CreateCustomSquad(List<SQUAD_ROL> squadRols, int numRows, int numCols)
@@ -303,6 +74,7 @@ public class SquadConfiguration : MonoBehaviour
                     newSquad[i, j] = new SquadSlot(squadRols[i * numCols + j]);
                     if (newSquad[i,j].rol == SQUAD_ROL.Body)
                     {
+                        bodyPosition = new Index(i, j);
                         hasBody = true;
                     }
                     if (newSquad[i,j].rol == SQUAD_ROL.Commander)
@@ -310,6 +82,18 @@ public class SquadConfiguration : MonoBehaviour
                         leaderPosition = new Index(i, j);
                     }
                     newSquad[i, j].position = new Index(i, j);
+                    switch (newSquad[i, j].rol)
+                    {
+                        case SQUAD_ROL.Close:
+                            numClose++;
+                            break;
+                        case SQUAD_ROL.Distance:
+                            numDistance++;
+                            break;
+                        case SQUAD_ROL.Giant:
+                            numDistance++;
+                            break;
+                    }
                 }
             }
 

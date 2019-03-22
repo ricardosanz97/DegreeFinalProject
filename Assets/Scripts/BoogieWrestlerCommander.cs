@@ -20,6 +20,7 @@ public class BoogieWrestlerCommander : BoogieWrestler
     public List<BoogieWrestler> squadWrestlers;
     public SquadConfiguration.Index leaderIndex;
     public SquadConfiguration.Index bodyIndex;
+    public SquadConfiguration.Squad squadInfo;
 
     public List<SquadConfiguration.SQUAD_ROL> currentSquadList;
 
@@ -28,10 +29,6 @@ public class BoogieWrestlerCommander : BoogieWrestler
     public InteractableBody coveringBody;
 
     public SQUAD_STATE currentSquadState = SQUAD_STATE.CoveringPosition;
-
-    //public int formation = 0;
-
-    public bool hasPlayer = false;
 
     public float distanceBetweenUs = 1.8f;
     public bool selectingPosition = false;
@@ -45,8 +42,20 @@ public class BoogieWrestlerCommander : BoogieWrestler
     public void InteractableBodySelected(InteractableBody body)
     {
         coveringBody = body;
+
+        SquadConfiguration.Index auxIndexs = new SquadConfiguration.Index(leaderIndex.i - bodyIndex.i, leaderIndex.j - bodyIndex.j);
+        
+
+        
+        //this.ChangeIndexsRelativeToLeader();
+        foreach (BoogieWrestler bw in squadWrestlers)
+        {
+            bw.leader = coveringBody.gameObject;
+            bw.indexs.i += auxIndexs.i;
+            bw.indexs.j += auxIndexs.j;
+        }
+
         currentSquadState = SQUAD_STATE.CoveringBody;
-        ChangeSquadFormation(SquadConfiguration.SQUAD_FORMATION.CoverBody);
         UIController.OnInteractableBodyPressed -= InteractableBodySelected;
         UIController.I.UIHideMouseSelector();
         UIController.I.selectingBodyToCover = false;
@@ -86,6 +95,10 @@ public class BoogieWrestlerCommander : BoogieWrestler
         Debug.Log("MY INDEXS = " + indexs.i + ", " + indexs.j);
         base.Start();
         GetSquadInformation();
+        bodyIndex = new SquadConfiguration.Index(squadInfo.bodyPosition.i, squadInfo.bodyPosition.j);
+        //bodyIndex.i -= leaderIndex.i;
+        //bodyIndex.j -= leaderIndex.j;
+        //bodyIndex = new SquadConfiguration.Index(squadInfo.bodyPosition.i - leaderIndex.i, squadInfo.bodyPosition.j - leaderIndex.j);
     }
 
     private void GetSquadInformation()
@@ -131,10 +144,9 @@ public class BoogieWrestlerCommander : BoogieWrestler
             }
         }
     }
-
+    /*
     public void ChangeSquadFormation(SquadConfiguration.SQUAD_FORMATION formation)
     {
-        SquadConfiguration.Squad newSquad = new SquadConfiguration.Squad(formation);
         List<BoogieWrestler> wrestlers = new List<BoogieWrestler>();
 
         this.currentSquadList = newSquad.listFormation;
@@ -143,13 +155,8 @@ public class BoogieWrestlerCommander : BoogieWrestler
         int posJ = newSquad.leaderPosition.j;
 
         leaderIndex = new SquadConfiguration.Index(posI, posJ);
-        this.hasPlayer = newSquad.hasPlayer;
 
-        if (this.hasPlayer)
-        {
-            leader = FindObjectOfType<BoogiesSpawner>().gameObject;
-        }
-        else if (newSquad.hasBody)
+        if (newSquad.hasBody)
         {
             leader = this.coveringBody.gameObject;
         }
@@ -257,6 +264,7 @@ public class BoogieWrestlerCommander : BoogieWrestler
         this.ChangeIndexsRelativeToLeader();
         this.TakeInitialPosition();
     }
+    */
 
     public void RemoveWrestlerSquad(BoogieWrestler bw)
     {

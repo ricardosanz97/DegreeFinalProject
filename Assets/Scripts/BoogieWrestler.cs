@@ -36,8 +36,7 @@ public class BoogieWrestler : Boogie
             },
             () =>
             {
-                Debug.Log("changing formation. ");
-                UISquadSelectorController.Create(this.commander.currentSquadList);
+                //TODO: changing formation
             },
             () =>
             {
@@ -46,7 +45,6 @@ public class BoogieWrestler : Boogie
             },
             () =>
             {
-                Debug.Log("cover boogie. ");
                 UIController.OnInteractableBodyPressed += commander.InteractableBodySelected;
                 UIController.I.selectingBodyToCover = true;
                 UIController.I.UIShowMouseSelector(SELECTION_TYPE.SquadCover);
@@ -262,8 +260,6 @@ public class BoogieWrestler : Boogie
         {
             bw.leader = this.gameObject;
         }
-
-        //commander.ChangeIndexsRelativeToLeader();
         commander.TakeInitialPosition();
     }
 
@@ -286,15 +282,8 @@ public class BoogieWrestler : Boogie
         commander = this.transform.parent.gameObject.GetComponentInChildren<BoogieWrestlerCommander>();
 
         currentWState = W_STATE.OnSquad;
-
-        if (commander.hasPlayer)
-        {
-            leader = FindObjectOfType<BoogiesSpawner>().gameObject;
-        }
-        else
-        {
-            leader = commander.gameObject;
-        }
+    
+        leader = commander.gameObject;
         ChangeIndexsRelativeToLeader();
         TakeInitialPosition();
     }
@@ -303,6 +292,12 @@ public class BoogieWrestler : Boogie
     {
         indexs.i -= commander.leaderIndex.i;
         indexs.j -= commander.leaderIndex.j;
+    }
+
+    public void ChangeIndexsRelativeToBody()
+    {
+        indexs.i -= commander.bodyIndex.i;
+        indexs.j -= commander.bodyIndex.j;
     }
 
     public void TakeInitialPosition() //take position in the squad.

@@ -224,7 +224,7 @@ public class UIController : Singleton<UIController>
                 UISpawnSquadDisabled();
             }
             Debug.Log("Open popup formations because we press G key");
-            UISquadSelectorController.Create(null);
+            UISquadSelectorController.Create();
         }
 
         if (Input.GetKeyDown(KeyCode.Escape))
