@@ -230,7 +230,7 @@ public class BoogiesSpawner : MonoBehaviour
         int posJ = squadConfig.leaderPosition.j;
 
         commander.GetComponent<BoogieWrestlerCommander>().squadInfo = squadConfig;
-        commander.GetComponent<BoogieWrestlerCommander>().currentSquadList = squadConfig.listFormation;
+        commander.GetComponent<BoogieWrestlerCommander>().currentSquadList = new List<SquadConfiguration.SQUAD_ROL>(squadConfig.listFormation);
 
         commander.GetComponent<BoogieWrestlerCommander>().leaderIndex = new SquadConfiguration.Index(posI,posJ);
 
@@ -257,13 +257,15 @@ public class BoogiesSpawner : MonoBehaviour
                         break;
                     case SquadConfiguration.SQUAD_ROL.Commander:
                         commander.GetComponent<BoogieWrestlerCommander>().indexs = squadSlots[i, j].position;
+                        commander.GetComponent<BoogieWrestler>().isLeaderPosition = true;
                         commander.GetComponent<BoogieWrestlerCommander>().listPosition = counter;
                         break;
                 }
                 counter++;
                 if (wrestlerSpawned != null)
                 {
-                    wrestlerSpawned.GetComponent<BoogieWrestler>().indexs = squadSlots[i, j].position;
+                    //wrestlerSpawned.GetComponent<BoogieWrestler>().initialIndexs = new SquadConfiguration.Index(squadSlots[i, j].position.i, squadSlots[i, j].position.j);
+                    wrestlerSpawned.GetComponent<BoogieWrestler>().indexs = new SquadConfiguration.Index(squadSlots[i, j].position.i, squadSlots[i, j].position.j);
                 } 
             }
         }

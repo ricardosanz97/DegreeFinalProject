@@ -31,7 +31,7 @@ public class SelectorMouseBehavior : MonoBehaviour
 
     public static SelectorMouseBehavior Create(SELECTION_TYPE type)
     {
-
+        Debug.Log("creating selectorMouseBehavior");
         GameObject selectorMouse = Instantiate(Resources.Load("Prefabs/UI/SelectorMouse")) as GameObject;
         SelectorMouseBehavior selectorMouseBehavior = selectorMouse.GetComponent<SelectorMouseBehavior>();
         switch (type)

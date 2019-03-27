@@ -11,10 +11,12 @@ public class UISquadOptionsController : GenericPanelController
     public Button ChangeFormationButton;
     public Button RotateFormationButton;
     public Button CoverButton;
+    public Button UncoverButton;
+    public Button ResetDefaultFormationButton;
     public Button CancelButton;
     public BoogieWrestlerCommander commander;
 
-    public static UISquadOptionsController Create(BoogieWrestlerCommander bwc, Action callbackButtonMoveOrStop, Action callbackButtonFormation, Action callbackButtonRotate, Action callbackButtonCover)
+    public static UISquadOptionsController Create(BoogieWrestlerCommander bwc, Action callbackButtonMoveOrStop, Action callbackButtonFormation, Action callbackButtonRotate, Action callbackButtonCover, Action callbackButtonUncover, Action callbackButtonResetDefaultFormation)
     {
         if (FindObjectOfType<UISquadOptionsController>() != null)
         {
@@ -28,6 +30,8 @@ public class UISquadOptionsController : GenericPanelController
         UISquadOptionsController.ChangeFormationButton.onClick.AddListener(() => { callbackButtonFormation(); UISquadOptionsController.ClosePanel(); });
         UISquadOptionsController.RotateFormationButton.onClick.AddListener(() => { callbackButtonRotate(); });
         UISquadOptionsController.CoverButton.onClick.AddListener(() => { callbackButtonCover(); UISquadOptionsController.ClosePanel(); });
+        UISquadOptionsController.UncoverButton.onClick.AddListener(() => { callbackButtonUncover(); UISquadOptionsController.ClosePanel(); });
+        UISquadOptionsController.ResetDefaultFormationButton.onClick.AddListener(() => { callbackButtonResetDefaultFormation(); UISquadOptionsController.ClosePanel(); });
         UISquadOptionsController.CancelButton.onClick.AddListener(() => { UISquadOptionsController.ClosePanel(); Destroy(UISquadOptionsController.gameObject); });
         UISquadOptionsController.commander = bwc;
         UISquadOptionsController.HandleButtonStatus();
@@ -51,8 +55,26 @@ public class UISquadOptionsController : GenericPanelController
             CoverButton.gameObject.SetActive(false);
         }
 
-        //1- de todas las formaciones, solo habilitamos poder cambiarnos a aquellas que tengan el mismo numero de boogies (del mismo tipo) que la nuestra. En caso que haya 0 iguales, pues desactivamos el botón
-        //2- solo podemos rotar en caso que no estemos cubriendo al player
+        //TODO: 1- de todas las formaciones, solo habilitamos poder cambiarnos a aquellas que tengan el mismo numero de boogies (del mismo tipo) que la nuestra. En caso que haya 0 iguales, pues desactivamos el botón
+        //TODO: 2- solo podemos rotar en caso que no estemos cubriendo al player
+
+        if (commander.coveringBody)
+        {
+            UncoverButton.gameObject.SetActive(true);
+        }
+        else
+        {
+            UncoverButton.gameObject.SetActive(false);
+        }
+
+        if (SquadConfiguration.ListsAreEquals(commander.currentSquadList, commander.squadInfo.listFormation))
+        {
+            ResetDefaultFormationButton.gameObject.SetActive(false);
+        }
+        else
+        {
+            ResetDefaultFormationButton.gameObject.SetActive(true);
+        }
 
     }
 }

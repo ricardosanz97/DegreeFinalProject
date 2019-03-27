@@ -5,10 +5,11 @@ using UnityEngine.UI;
 
 public class UISquadSelectorController : GenericPanelController
 {
+    public BoogieWrestlerCommander commander;
     public Button customButton;
     public Transform parent;
 
-    public static UISquadSelectorController Create()
+    public static UISquadSelectorController Create(BoogieWrestlerCommander commander = null)
     {
         if (FindObjectOfType<UISquadSelectorController>() != null)
         {
@@ -17,25 +18,50 @@ public class UISquadSelectorController : GenericPanelController
         }
         GameObject UISquadSelector = Instantiate(Resources.Load("Prefabs/Popups/UISelectorSquad")) as GameObject;
         UISquadSelectorController UISquadSelectorController = UISquadSelector.GetComponent<UISquadSelectorController>();
-        UISquadSelectorController.HandleButtons();
         UISquadSelectorController.transform.SetParent(GameObject.Find("MainCanvas").transform, false);
-
+        UISquadSelectorController.commander = commander;
+        UISquadSelectorController.HandleButtons();
+        
         ScriptableObject[] customSquads = Resources.LoadAll<ScriptableObject>("Squads/");
-        foreach (ScriptableObject customSquad in customSquads)
-        {
-            Squad newSquad = AssetDatabase.LoadAssetAtPath("Assets/Resources/Squads/" + customSquad.name + ".asset" , typeof(ScriptableObject)) as Squad;
 
-            GameObject squadGO = Instantiate(UISquadSelectorController.customButton.gameObject);
-            squadGO.transform.SetParent(UISquadSelectorController.parent, false);
-            squadGO.GetComponentInChildren<Text>().text = newSquad.squadName;
-            squadGO.GetComponent<Button>().onClick = new Button.ButtonClickedEvent();
-            squadGO.GetComponent<Button>().onClick.AddListener(() => 
+        if (commander == null) //spawning squad
+        {
+            foreach (ScriptableObject customSquad in customSquads)
             {
-                UIController.I.HandleSpawnSquadLogic();
-                Debug.Log("this is " + newSquad.squadName + ". It has " + newSquad.numRows + "rows and " + newSquad.numCols + " cols.");
+                Squad newSquad = AssetDatabase.LoadAssetAtPath("Assets/Resources/Squads/" + customSquad.name + ".asset", typeof(ScriptableObject)) as Squad;
+
+                GameObject squadGO = Instantiate(UISquadSelectorController.customButton.gameObject);
+                squadGO.transform.SetParent(UISquadSelectorController.parent, false);
+                squadGO.GetComponentInChildren<Text>().text = newSquad.squadName;
+                squadGO.GetComponent<Button>().onClick = new Button.ButtonClickedEvent();
+                squadGO.GetComponent<Button>().onClick.AddListener(() =>
+                {
+                    UIController.I.HandleSpawnSquadLogic();
+                    SquadConfiguration.Squad squadConfig = new SquadConfiguration.Squad(newSquad.squadRol, newSquad.numRows, newSquad.numCols);
+                    FindObjectOfType<SquadConfiguration>().currentSquadSelected = new SquadConfiguration.Squad(newSquad.squadRol, newSquad.numRows, newSquad.numCols);
+                });
+            }
+        }
+        else //changing squad
+        {
+            foreach (ScriptableObject customSquad in customSquads)
+            {
+                Squad newSquad = AssetDatabase.LoadAssetAtPath("Assets/Resources/Squads/" + customSquad.name + ".asset", typeof(ScriptableObject)) as Squad;
                 SquadConfiguration.Squad squadConfig = new SquadConfiguration.Squad(newSquad.squadRol, newSquad.numRows, newSquad.numCols);
-                FindObjectOfType<SquadConfiguration>().currentSquadSelected = squadConfig;
-            });
+
+                if (SquadConfiguration.ListsAreNumberByWrestlersEqual(squadConfig, commander.squadInfo) && squadConfig.hasBody && commander.squadInfo.hasBody && squadConfig != commander.squadInfo)
+                {
+                    GameObject squadGO = Instantiate(UISquadSelectorController.customButton.gameObject);
+                    squadGO.transform.SetParent(UISquadSelectorController.parent, false);
+                    squadGO.GetComponentInChildren<Text>().text = newSquad.squadName;
+                    squadGO.GetComponent<Button>().onClick = new Button.ButtonClickedEvent();
+                    squadGO.GetComponent<Button>().onClick.AddListener(() =>
+                    {
+                        commander.ChangeSquadFormation(squadConfig);
+                        FindObjectOfType<SquadConfiguration>().currentSquadSelected = new SquadConfiguration.Squad(newSquad.squadRol, newSquad.numRows, newSquad.numCols);
+                    });
+                }
+            }
         }
 
         UISquadSelectorController.OpenPanel();
@@ -51,7 +77,13 @@ public class UISquadSelectorController : GenericPanelController
 
     public void HandleButtons()
     {
-        customButton.gameObject.SetActive(true);
-
+        if (commander != null)
+        {
+            customButton.gameObject.SetActive(false);
+        }
+        else
+        {
+            customButton.gameObject.SetActive(true);
+        }
     }
 }

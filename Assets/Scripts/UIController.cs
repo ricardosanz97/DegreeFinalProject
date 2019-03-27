@@ -100,6 +100,11 @@ public class UIController : Singleton<UIController>
             }
             if (Input.GetMouseButtonDown(0) && (hit.transform.GetComponent<InteractableBody>()))
             {
+                if ((hit.transform.GetComponent<BoogieWrestler>() && hit.transform.GetComponent<BoogieWrestler>().leader == hit.transform.gameObject) || 
+                    (hit.transform.GetComponent<BoogieWrestler>() && hit.transform.GetComponent<BoogieWrestler>().commander == null))
+                {
+                    return;
+                }
                 OnInteractableBodyPressed?.Invoke(hit.transform.gameObject.GetComponent<InteractableBody>());  
             }
         }
@@ -114,7 +119,7 @@ public class UIController : Singleton<UIController>
         if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Npc")) && !selectingSquadToJoin && !selectingBodyToCover && selectingWrestlerToChange)
         {
             BoogieWrestler bw = hit.transform.GetComponent<BoogieWrestler>() ?? null;
-            if (bw == null || bw.currentWState != W_STATE.OnSquad || bw.leader == bw.gameObject)//if is not a boogie wrestler or it is not in a squad or it is a squad leader...
+            if (bw == null || bw.currentWState != W_STATE.OnSquad)//if is not a boogie wrestler or it is not in a squad or it is a squad leader...
             {
                 SelectorMouseBehavior.Destroy();
                 return;
@@ -305,6 +310,7 @@ public class UIController : Singleton<UIController>
     {
         if (SelectorMouseBehavior.IsActive())
         {
+            Debug.Log("destroying selectorMouse");
             SelectorMouseBehavior.Destroy();
         }
     }

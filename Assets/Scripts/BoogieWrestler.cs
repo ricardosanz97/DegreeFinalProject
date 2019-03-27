@@ -15,10 +15,13 @@ public class BoogieWrestler : Boogie
 {
     public WRESTLER_TYPE wrestlerType;
     public W_STATE currentWState;
+    public SquadConfiguration.Index initialIndexs;
     public SquadConfiguration.Index indexs;
+    public SquadConfiguration.Index lastPos;
     public BoogieWrestlerCommander commander;
     public int listPosition;
     public GameObject leader;
+    public bool isLeaderPosition;
 
     public virtual void WrestlerClicked(int clickButton)
     { 
@@ -30,17 +33,15 @@ public class BoogieWrestler : Boogie
             commander,
             () =>
             {
-                Debug.Log("moving squad. ");
                 UIController.I.UIShowMouseSelector(SELECTION_TYPE.SquadMovingPosition);
                 UIController.OnMoveSquadPositionSelected += commander.MoveToPosition;
             },
             () =>
             {
-                //TODO: changing formation
+                UISquadSelectorController.Create(this.commander);
             },
             () =>
             {
-                Debug.Log("rotation formation. ");
                 this.leader.transform.Rotate(new Vector3(0, 1, 0) * 90f);
             },
             () =>
@@ -48,15 +49,21 @@ public class BoogieWrestler : Boogie
                 UIController.OnInteractableBodyPressed += commander.InteractableBodySelected;
                 UIController.I.selectingBodyToCover = true;
                 UIController.I.UIShowMouseSelector(SELECTION_TYPE.SquadCover);
+            },
+            () =>
+            {
+                commander.UncoverBody();
+            },
+            () =>
+            {
+                commander.ResetDefaultFormation();
             }
             );
         }
         else if (clickButton == 0 && currentWState != W_STATE.OnSquad)
         {
-            Debug.Log("hola");
             UIIndividualWrestlerOptionsController.Create(() =>
             {
-                Debug.Log("join squad. ");
                 UIController.I.selectingSquadToJoin = true;
                 UIController.OnSelectingSquadJoin += SquadSelected;
             },
@@ -82,46 +89,35 @@ public class BoogieWrestler : Boogie
 
     public virtual bool JoinSquad(BoogieWrestlerCommander bwc)
     {
-        for (int i = 0; i<bwc.currentSquadList.Count; i++)
+        SquadConfiguration.Index newIndexs = new SquadConfiguration.Index(bwc.neededIndexs[Random.Range(0, bwc.neededIndexs.Count)].i, bwc.neededIndexs[Random.Range(0, bwc.neededIndexs.Count)].j);
+        bwc.neededIndexs.Remove(bwc.neededIndexs.Find((x) => x.i == newIndexs.i && x.j == newIndexs.j));
+        this.indexs = new SquadConfiguration.Index(newIndexs.i, newIndexs.j);
+        this.commander = bwc;
+        this.leader = bwc.leader.gameObject;
+        this.transform.SetParent(bwc.transform.parent);
+        bwc.squadWrestlers.Add(this);
+        switch (this.wrestlerType)
         {
-            if (bwc.currentSquadList[i] == SquadConfiguration.SQUAD_ROL.None)
-            {
-                SquadConfiguration.Index newIndexs = bwc.neededIndexs[Random.Range(0, bwc.neededIndexs.Count)];
-                bwc.neededIndexs.Remove(newIndexs);
-                this.indexs = new SquadConfiguration.Index(newIndexs.i, newIndexs.j);
-                this.commander = bwc;
-                this.leader = bwc.leader.gameObject;
-                this.transform.SetParent(bwc.transform.parent);
-                bwc.squadWrestlers.Add(this);
-                switch (this.wrestlerType)
-                {
-                    case WRESTLER_TYPE.Close:
-                        commander.currentSquadList[i] = SquadConfiguration.SQUAD_ROL.Close;
-                        break;
-                    case WRESTLER_TYPE.Distance:
-                        commander.currentSquadList[i] = SquadConfiguration.SQUAD_ROL.Distance;
-                        break;
-                    case WRESTLER_TYPE.Giant:
-                        commander.currentSquadList[i] = SquadConfiguration.SQUAD_ROL.Giant;
-                        break;
-                }
-
-                bwc.neededIndexs.Remove(this.indexs);
-                this.listPosition = i;
-                this.currentWState = W_STATE.OnSquad;
-                UIController.I.selectingSquadToJoin = false;
-                UIController.OnSelectingSquadJoin -= SquadSelected;
-                UIController.I.UIHideMouseSelector();
-                return true;
-            }
+            case WRESTLER_TYPE.Close:
+                bwc.currentSquadList[listPosition] = SquadConfiguration.SQUAD_ROL.Close;
+                break;
+            case WRESTLER_TYPE.Distance:
+                bwc.currentSquadList[listPosition] = SquadConfiguration.SQUAD_ROL.Distance;
+                break;
+            case WRESTLER_TYPE.Giant:
+                bwc.currentSquadList[listPosition] = SquadConfiguration.SQUAD_ROL.Giant;
+                break;
         }
-        return false;
-        
+        bwc.neededIndexs.Remove(bwc.neededIndexs.Find((x) => x.i == this.indexs.i && x.j == this.indexs.j));
+        this.currentWState = W_STATE.OnSquad;
+        UIController.I.selectingSquadToJoin = false;
+        UIController.OnSelectingSquadJoin -= SquadSelected;
+        UIController.I.UIHideMouseSelector();
+        return true;
     }
 
     private void CancelEventSubscriptions()
     {
-
         if (UIController.I.OnInteractableBodyPressedNull()) UIController.OnInteractableBodyPressed -= commander.InteractableBodySelected;
         if (UIController.I.OnMoveSquadPositionSelectedNull()) UIController.OnMoveSquadPositionSelected -= commander.MoveToPosition;
     }
@@ -136,7 +132,7 @@ public class BoogieWrestler : Boogie
         listPosition = -1;
         currentWState = W_STATE.FollowingPlayer;
         this.transform.SetParent(null);
-        commander.neededIndexs.Add(this.indexs);
+        commander.neededIndexs.Add(new SquadConfiguration.Index(this.indexs.i, this.indexs.j));
         if (leader == this.gameObject)
         {
             foreach (BoogieWrestler bw in this.commander.squadWrestlers)
@@ -165,34 +161,19 @@ public class BoogieWrestler : Boogie
 
     public void BreakFormation()
     {
-        commander.currentSquadList[listPosition] = SquadConfiguration.SQUAD_ROL.None;
-        listPosition = -1;
-        currentWState = W_STATE.CoveringPosition;
-        this.transform.SetParent(null);
-        commander.neededIndexs.Add(this.indexs);
         if (leader == this.gameObject)
         {
-            foreach (BoogieWrestler bw in this.commander.squadWrestlers)
-            {
-                if (bw != this)
-                {
-                    bw.leader = this.commander.gameObject;
-                    bw.ChangeIndexsRelativeToLeader();
-                }
-                else
-                {
-                    commander.RemoveWrestlerSquad(this);
-                }
-            }
-            leader = null;
-            commander = null;
+            return;
         }
-        else
-        {
-            commander.RemoveWrestlerSquad(this);
-            leader = null;
-            commander = null;
-        }
+        commander.currentSquadList[listPosition] = SquadConfiguration.SQUAD_ROL.None;
+        //listPosition = -1;
+        currentWState = W_STATE.CoveringPosition;
+        this.transform.SetParent(null);
+        commander.neededIndexs.Add(new SquadConfiguration.Index(this.indexs.i, this.indexs.j));
+
+        commander.RemoveWrestlerSquad(this);
+        leader = null;
+        commander = null;
     }
 
     public void ChangePosition()
@@ -205,14 +186,29 @@ public class BoogieWrestler : Boogie
 
     public void ChangeSelectedWrestler(BoogieWrestler otherWrestler)
     {
-        if ((this.commander != otherWrestler && !this.commander.squadWrestlers.Contains(otherWrestler)) || otherWrestler == this)//if it is not from our squad.
+        Debug.Log("other = " + otherWrestler.wrestlerType.ToString());
+        Debug.Log("we = " + this.wrestlerType.ToString());
+        if (this.commander != otherWrestler && !this.commander.squadWrestlers.Contains(otherWrestler))//if it is not from our squad.
         {
+            Debug.Log("hola1");
             return;
         }
-        if (otherWrestler.wrestlerType == WRESTLER_TYPE.Commander && this.commander != otherWrestler)
+        if (otherWrestler == this)//if it is not from our squad.
         {
+            Debug.Log("hola2");
             return;
         }
+
+        SquadConfiguration.SQUAD_ROL myRol = this.commander.currentSquadList[this.listPosition];
+        SquadConfiguration.SQUAD_ROL hisRol = otherWrestler.commander.currentSquadList[otherWrestler.listPosition];
+
+        Debug.Log("hola");
+        this.commander.currentSquadList[this.listPosition] = hisRol;
+        otherWrestler.commander.currentSquadList[otherWrestler.listPosition] = myRol;
+
+        int auxListPos = this.listPosition;
+        this.listPosition = otherWrestler.listPosition;
+        otherWrestler.listPosition = auxListPos;
 
         UIController.I.selectingWrestlerToChange = false;
         UIController.I.UIHideMouseSelector();
@@ -221,46 +217,74 @@ public class BoogieWrestler : Boogie
         int i = this.indexs.i;
         int j = this.indexs.j;
 
-        int auxListPosition = this.listPosition;
-
-        SquadConfiguration.SQUAD_ROL myRol = commander.currentSquadList[this.listPosition];
-        SquadConfiguration.SQUAD_ROL hisRol = otherWrestler.commander.currentSquadList[otherWrestler.listPosition];
-
         this.indexs = new SquadConfiguration.Index(otherWrestler.indexs.i, otherWrestler.indexs.j);
-        commander.currentSquadList[this.listPosition] = hisRol;
-        commander.currentSquadList[otherWrestler.listPosition] = myRol;
 
-        this.listPosition = otherWrestler.listPosition;
         otherWrestler.indexs = new SquadConfiguration.Index(i, j);
-        otherWrestler.listPosition = auxListPosition;
+
+        bool aux = this.isLeaderPosition;
+        this.isLeaderPosition = otherWrestler.isLeaderPosition;
+        otherWrestler.isLeaderPosition = aux;
+        if (otherWrestler.gameObject == commander.leader || this.gameObject == commander.leader)
+        {
+            Debug.Log("aqui entra");
+            if (otherWrestler.gameObject == commander.leader)
+            {
+                //otherWrestler.isLeaderPosition = false;
+                //this.isLeaderPosition = true;
+                commander.leader = this.gameObject;
+            }
+            else if (this.gameObject == commander.leader)
+            {
+                //this.isLeaderPosition = false;
+                //otherWrestler.isLeaderPosition = true;
+                commander.leader = otherWrestler.gameObject;
+            }
+            SquadConfiguration.Index leadIndexs = new SquadConfiguration.Index(commander.leader.GetComponent<BoogieWrestler>().indexs.i, commander.leader.GetComponent<BoogieWrestler>().indexs.j);
+            foreach (BoogieWrestler bw in commander.squadWrestlers)
+            {
+                bw.leader = commander.leader;
+                bw.indexs.i -= leadIndexs.i;
+                bw.indexs.j -= leadIndexs.j;
+            }
+        }
     }
 
     public void AssignAsLeader()
     {
-        BoogieWrestler oldLeader = this.leader.GetComponent<BoogieWrestler>();
-        int i = oldLeader.indexs.i;
-        int j = oldLeader.indexs.j;
-
-        SquadConfiguration.SQUAD_ROL myRol = this.commander.currentSquadList[this.listPosition];
-        SquadConfiguration.SQUAD_ROL hisRol = oldLeader.commander.currentSquadList[oldLeader.listPosition];
-
-        this.commander.currentSquadList[listPosition] = hisRol;
-        this.commander.currentSquadList[oldLeader.listPosition] = myRol;
-
-        int auxListPos = listPosition;
-        this.listPosition = oldLeader.listPosition;
-        oldLeader.listPosition = auxListPos;
-        oldLeader.indexs = new SquadConfiguration.Index(this.indexs.i, this.indexs.j);
-        this.indexs = new SquadConfiguration.Index(i, j);
-
-        this.commander.leader = this.gameObject;
-
-
-        foreach (BoogieWrestler bw in commander.squadWrestlers)
+        if (commander.coveringBody == null)
         {
-            bw.leader = this.gameObject;
+            BoogieWrestler oldLeader = this.leader.GetComponent<BoogieWrestler>();
+            if (oldLeader == this)
+            {
+                return;
+            }
+            ChangeSelectedWrestler(oldLeader);
         }
-        commander.TakeInitialPosition();
+
+        else
+        {
+            SquadConfiguration.Index oldIndexs = new SquadConfiguration.Index(this.indexs.i, this.indexs.j);
+            
+            foreach (BoogieWrestler bw in commander.squadWrestlers)
+            {
+                if (bw == commander)
+                {
+                    bw.leader = this.commander.gameObject;
+                    continue;
+                }
+                if (commander.coveringBody.GetComponent<BoogieWrestler>() != null && commander.coveringBody.GetComponent<BoogieWrestler>() == bw)
+                {
+                    bw.leader = this.commander.gameObject;
+                    continue;
+                }
+                bw.leader = this.commander.gameObject;
+                bw.indexs.i -= commander.indexs.i;
+                bw.indexs.j -= commander.indexs.j;
+            }
+            commander.coveringBody = null;
+            commander.indexs = new SquadConfiguration.Index(0, 0);
+            AssignAsLeader();
+        }
     }
 
     public override void OnObjectiveSelected()
@@ -285,6 +309,7 @@ public class BoogieWrestler : Boogie
     
         leader = commander.gameObject;
         ChangeIndexsRelativeToLeader();
+        initialIndexs = new SquadConfiguration.Index(indexs.i, indexs.j);
         TakeInitialPosition();
     }
 

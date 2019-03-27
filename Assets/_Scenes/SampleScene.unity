@@ -4895,56 +4895,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ea66fcd8b2265a42aca2bfdea1cd245, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  basicContentionSquad:
-    squadFormation: 0
-    listFormation: 
-    leaderPosition:
-      i: 0
-      j: 0
-    squadCols: 0
-    squadRows: 0
-    hasPlayer: 0
-    hasBody: 0
-  basicPenetrationSquad:
-    squadFormation: 0
-    listFormation: 
-    leaderPosition:
-      i: 0
-      j: 0
-    squadCols: 0
-    squadRows: 0
-    hasPlayer: 0
-    hasBody: 0
-  basicAroundPlayerSquad:
-    squadFormation: 0
-    listFormation: 
-    leaderPosition:
-      i: 0
-      j: 0
-    squadCols: 0
-    squadRows: 0
-    hasPlayer: 0
-    hasBody: 0
-  contentionGiantsSquad:
-    squadFormation: 0
-    listFormation: 
-    leaderPosition:
-      i: 0
-      j: 0
-    squadCols: 0
-    squadRows: 0
-    hasPlayer: 0
-    hasBody: 0
   currentSquadSelected:
-    squadFormation: 0
     listFormation: 
     leaderPosition:
       i: 0
       j: 0
+    bodyPosition:
+      i: 0
+      j: 0
     squadCols: 0
     squadRows: 0
-    hasPlayer: 0
     hasBody: 0
+    numClose: 0
+    numDistance: 0
+    numGiant: 0
 --- !u!4 &1732086128
 Transform:
   m_ObjectHideFlags: 0
