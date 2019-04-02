@@ -9,5 +9,6 @@ public class Squad : ScriptableObject
     public List<SquadConfiguration.SQUAD_ROL> squadRol;
     public int numRows;
     public int numCols;
+    public WrestlersConfiguration customConfiguration;
     //public int squadCost;
 }

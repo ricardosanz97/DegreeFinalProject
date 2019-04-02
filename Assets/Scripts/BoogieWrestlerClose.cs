@@ -10,7 +10,6 @@ public class BoogieWrestlerClose : BoogieWrestler
         base.WrestlerClicked(clickButton);
         if (clickButton == 1 && currentWState == W_STATE.OnSquad)
         {
-            Debug.Log("hola soy " + gameObject.name);
             UISquadIndividualOptionsController.Create(
             () =>
             {

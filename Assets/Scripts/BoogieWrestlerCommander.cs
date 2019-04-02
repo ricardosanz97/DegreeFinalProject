@@ -1,9 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 using System.Linq;
-using UnityEngine.Events;
-using System;
+using UnityEngine;
 
 public enum SQUAD_STATE
 {
@@ -18,21 +15,21 @@ public class BoogieWrestlerCommander : BoogieWrestler
     public List<BoogieWrestlerDistance> distanceWrestlers;
     public List<BoogieWrestlerClose> closeWrestlers;
     public List<BoogieWrestlerGiant> giantWrestlers;
-    public List<BoogieWrestler> squadWrestlers;
-    public SquadConfiguration.Index leaderIndex;
-    public SquadConfiguration.Index bodyIndex;
+    [HideInInspector]public List<BoogieWrestler> squadWrestlers;
+    [HideInInspector]public SquadConfiguration.Index leaderIndex;
+    [HideInInspector]public SquadConfiguration.Index bodyIndex;
     public SquadConfiguration.Squad squadInfo;
 
-    public List<SquadConfiguration.SQUAD_ROL> currentSquadList;
+    [HideInInspector]public List<SquadConfiguration.SQUAD_ROL> currentSquadList;
 
-    public List<SquadConfiguration.Index> neededIndexs;
+    [HideInInspector]public List<SquadConfiguration.Index> neededIndexs;
 
     public InteractableBody coveringBody;
 
     public SQUAD_STATE currentSquadState = SQUAD_STATE.CoveringPosition;
 
-    public float distanceBetweenUs = 1.8f;
-    public bool selectingPosition = false;
+    public float wrestlersOffset = 1.8f;
+    [HideInInspector]public bool selectingPosition = false;
 
     public void SetInitialPoint(Vector3 position)
     {
@@ -72,7 +69,7 @@ public class BoogieWrestlerCommander : BoogieWrestler
 
     public void ChangeSquadFormation(SquadConfiguration.Squad newSquadInfo)
     {
-        squadInfo = new SquadConfiguration.Squad(newSquadInfo.name, newSquadInfo.listFormation, newSquadInfo.squadCols, newSquadInfo.squadRows);
+        squadInfo = new SquadConfiguration.Squad(newSquadInfo.name, newSquadInfo.listFormation, newSquadInfo.squadCols, newSquadInfo.squadRows, newSquadInfo.customSquadConfiguration);
         currentSquadList = new List<SquadConfiguration.SQUAD_ROL>(squadInfo.listFormation);
         SquadConfiguration.SquadSlot[,] squadSlots = squadInfo.squad;
         leaderIndex = new SquadConfiguration.Index(newSquadInfo.leaderPosition.i, newSquadInfo.leaderPosition.j);

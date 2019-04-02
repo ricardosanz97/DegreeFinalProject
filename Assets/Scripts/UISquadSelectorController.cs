@@ -37,8 +37,9 @@ public class UISquadSelectorController : GenericPanelController
                 squadGO.GetComponent<Button>().onClick.AddListener(() =>
                 {
                     UIController.I.HandleSpawnSquadLogic();
-                    SquadConfiguration.Squad squadConfig = new SquadConfiguration.Squad(newSquad.squadName, newSquad.squadRol, newSquad.numRows, newSquad.numCols);
-                    FindObjectOfType<SquadConfiguration>().currentSquadSelected = new SquadConfiguration.Squad(newSquad.squadName, newSquad.squadRol, newSquad.numRows, newSquad.numCols);
+                    SquadConfiguration.Squad squadConfig = new SquadConfiguration.Squad(newSquad.squadName, newSquad.squadRol, newSquad.numRows, newSquad.numCols, newSquad.customConfiguration);
+                    FindObjectOfType<SquadConfiguration>().currentSquadSelected = new SquadConfiguration.Squad(newSquad.squadName, newSquad.squadRol, newSquad.numRows, newSquad.numCols, newSquad.customConfiguration);
+                    UISquadSelectorController.ClosePanel();
                 });
             }
         }
@@ -47,7 +48,7 @@ public class UISquadSelectorController : GenericPanelController
             foreach (ScriptableObject customSquad in customSquads)
             {
                 Squad newSquad = AssetDatabase.LoadAssetAtPath("Assets/Resources/Squads/" + customSquad.name + ".asset", typeof(ScriptableObject)) as Squad;
-                SquadConfiguration.Squad squadConfig = new SquadConfiguration.Squad(newSquad.squadName, newSquad.squadRol, newSquad.numRows, newSquad.numCols);
+                SquadConfiguration.Squad squadConfig = new SquadConfiguration.Squad(newSquad.squadName, newSquad.squadRol, newSquad.numRows, newSquad.numCols, newSquad.customConfiguration);
 
                 if (SquadConfiguration.ListsAreNumberByWrestlersEqual(squadConfig, commander.squadInfo) && squadConfig.hasBody == commander.squadInfo.hasBody && squadConfig.name != commander.squadInfo.name)
                 {
@@ -59,7 +60,8 @@ public class UISquadSelectorController : GenericPanelController
                     squadGO.GetComponent<Button>().onClick.AddListener(() =>
                     {
                         commander.ChangeSquadFormation(squadConfig);
-                        FindObjectOfType<SquadConfiguration>().currentSquadSelected = new SquadConfiguration.Squad(newSquad.squadName, newSquad.squadRol, newSquad.numRows, newSquad.numCols);
+                        FindObjectOfType<SquadConfiguration>().currentSquadSelected = new SquadConfiguration.Squad(newSquad.squadName, newSquad.squadRol, newSquad.numRows, newSquad.numCols, newSquad.customConfiguration);
+                        UISquadSelectorController.ClosePanel();
                     });
                 }
             }

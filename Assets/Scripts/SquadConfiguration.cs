@@ -66,12 +66,15 @@ public class SquadConfiguration : MonoBehaviour
         public int numDistance;
         public int numGiant;
 
-        public Squad(string name, List<SQUAD_ROL> listFormation, int numRows, int numCols)
+        public WrestlersConfiguration customSquadConfiguration;
+
+        public Squad(string name, List<SQUAD_ROL> listFormation, int numRows, int numCols, WrestlersConfiguration customSquadConfig)
         {
             this.name = name;
             this.listFormation = listFormation;
             this.squadRows = numRows;
             this.squadCols = numCols;
+            this.customSquadConfiguration = customSquadConfig;
             squad = CreateCustomSquad(listFormation, numRows, numCols);
         }
 

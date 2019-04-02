@@ -27,6 +27,14 @@ public class BoogiesSpawner : MonoBehaviour
     public int currentFormationSelected = 0;
     public BoogieWrestlerCommander commanderSquadSelected = null;
 
+
+    #region configurations
+    public CollectorsConfiguration collectorsConfig;
+    public ExplorersConfiguration explorersConfig;
+    public CleanersConfiguration cleanersConfig;
+    public WrestlersConfiguration wrestlersConfig;
+    #endregion
+
     public bool boogiesCleanersKnowCollectorMachinePosition = true;
 
     public float radiusSpawn = 2f;

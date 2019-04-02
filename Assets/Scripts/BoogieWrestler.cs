@@ -11,17 +11,46 @@ public enum W_STATE
     Attacking
 }
 
+public enum TEAM
+{
+    A,
+    B
+}
+
 public class BoogieWrestler : Boogie
 {
     public WRESTLER_TYPE wrestlerType;
     public W_STATE currentWState;
-    public SquadConfiguration.Index initialIndexs;
-    public SquadConfiguration.Index indexs;
-    public SquadConfiguration.Index lastPos;
+    [HideInInspector]public SquadConfiguration.Index initialIndexs;
+    [HideInInspector]public SquadConfiguration.Index indexs;
+    [HideInInspector]public SquadConfiguration.Index lastPos;
     public BoogieWrestlerCommander commander;
-    public int listPosition;
+    [HideInInspector]public int listPosition;
     public GameObject leader;
-    public bool isLeaderPosition;
+    [HideInInspector]public bool isLeaderPosition;
+
+    public TEAM team;
+    public float health;
+    public float attackSpeed;
+    public float visionDistance;
+    public float attackRange;
+    public float attackDamage;
+
+    private void AssignConfiguration()
+    {
+        WrestlersConfiguration Wcfg = FindObjectOfType<BoogiesSpawner>().wrestlersConfig;
+        switch (wrestlerType)
+        {
+            case WRESTLER_TYPE.Close:
+                break;
+            case WRESTLER_TYPE.Distance:
+                break;
+            case WRESTLER_TYPE.Commander:
+                break;
+            case WRESTLER_TYPE.Giant:
+                break;
+        }
+    }
 
     public virtual void WrestlerClicked(int clickButton)
     { 
@@ -346,7 +375,7 @@ public class BoogieWrestler : Boogie
             this.transform.rotation = leader.transform.rotation;
         }
         
-        Vector3 offset = new Vector3(indexs.j * commander.distanceBetweenUs, this.transform.position.y, indexs.i * commander.distanceBetweenUs);
+        Vector3 offset = new Vector3(indexs.j * commander.wrestlersOffset, this.transform.position.y, indexs.i * commander.wrestlersOffset);
         randomPoint = leader.transform.position + this.transform.TransformDirection(offset);
         _agent.SetDestination(randomPoint);
     }

@@ -5,8 +5,8 @@ using UnityEngine;
 public class BoogieExplorer : Boogie
 {
     public PathBehavior currentPath;
-    public Vector3 initialPosition;
-    public Vector3 distanceTraveled;
+    [HideInInspector]public Vector3 initialPosition;
+    [HideInInspector]public Vector3 distanceTraveled;
     public CURRENT_STATE currentState;
     public int currentCorridorIndex;
     public ClueBehavior clueCarried;
@@ -35,10 +35,26 @@ public class BoogieExplorer : Boogie
 
     private void Start()
     {
+        AssignConfiguration();
+
         type = BoogieType.Explorer;
         randomPoint = GetRandomPointAroundCircle(initialPoint);
         _agent.SetDestination(randomPoint);
         currentState = CURRENT_STATE.FindingMultipathBegin;
+
+        StartCoroutine(HandleSpeed());
+    }
+
+    private void AssignConfiguration()
+    {
+        ExplorersConfiguration Ccfg = FindObjectOfType<BoogiesSpawner>().explorersConfig;
+        maxTimeToFindObjective = Ccfg.maxTimeToFindObjective;
+        timeToCheckIfWorkFinished = Ccfg.timeToCheckIfWorkWinished;
+
+        minSpeed = Ccfg.minSpeed;
+        maxSpeed = Ccfg.maxSpeed;
+        probabilityChangeSpeed = Ccfg.probabilityVariateSpeed;
+        timeToChangeSpeed = Ccfg.timeTryVariateSpeed;
     }
 
     private void Update()
@@ -229,7 +245,7 @@ public class BoogieExplorer : Boogie
             backToPlayer = true;
             BackToPlayer();
         }
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(timeToCheckIfWorkFinished);
         StartCoroutine(CheckIfWorkFinished());
     }
 

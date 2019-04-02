@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c8861e13c366486bb01b0398764ff17, type: 3}
+  m_Name: DefaultWrestlersConfiguration
+  m_EditorClassIdentifier: 
+  commmanderHealth: 100
+  giantHealth: 150
+  closeHealth: 70
+  distanceHealth: 50
+  commanderAttackSpeed: 1.5
+  giantAttackSpeed: 2
+  closeAttackSpeed: 1
+  distanceAttackSpeed: 1.2
+  commanderVisionDistance: 10
+  giantVisonDistance: 4
+  closeVisionDistance: 6
+  distanceVisionDistance: 9
+  commanderAttackRange: 1
+  giantAttackRange: 1
+  closeAttackRange: 1
+  distanceAttackRange: 5
+  commanderAttackDamage: 5
+  giantAttackDamage: 3
+  closeAttackDamage: 4
+  distanceAttackDamage: 3
+  minOffset: 1.5
+  maxOffset: 2
+  probabilityVariateOffset: 0.5
+  timeVariateOffset: 4
+  distanceMinSpeed: 9
+  distanceMaxSpeed: 14
+  distanceProbabilityVariateSpeed: 0.75
+  commanderMinSpeed: 10
+  commanderMaxSpeed: 10
+  comamnderProbabilityVariateSpeed: 0
+  giantMinSpeed: 6
+  giantMaxSpeed: 7
+  giantProbabilityVariateSpeed: 0.2
+  closeMinSpeed: 8
+  closeMaxSpeed: 12
+  closeProbabilityVariateSpeed: 0.6
+  timeVariateSpeed: 3
+  CommanderPreferences: 00000000030000000200000001000000
+  GiantPreferences: 03000000020000000100000000000000
+  ClosePreferences: 01000000020000000100000000000000
+  DistanceWrestlers: 02000000030000000000000001000000

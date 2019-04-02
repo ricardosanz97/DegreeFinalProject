@@ -5880,6 +5880,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4efe35893f0f2e640b23bbb9ca1d8128, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  popupOpened: 0
   selectingBodyToCover: 0
   selectingWrestlerToChange: 0
   selectingSquadToJoin: 0
@@ -6458,6 +6459,10 @@ MonoBehaviour:
     type: 3}
   currentFormationSelected: 0
   commanderSquadSelected: {fileID: 0}
+  collectorsConfig: {fileID: 11400000, guid: 4d3643bbc69df4da89fadebdc2fa8dff, type: 2}
+  explorersConfig: {fileID: 11400000, guid: 91b684304341e41a78aecd2e818cdea7, type: 2}
+  cleanersConfig: {fileID: 11400000, guid: 86aecdf309cad4bb8903189cd7494b10, type: 2}
+  wrestlersConfig: {fileID: 11400000, guid: c51382484e4ce479fb476d8810f2347d, type: 2}
   boogiesCleanersKnowCollectorMachinePosition: 0
   radiusSpawn: 2
   positionAccepted: 0
@@ -7225,6 +7230,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7240834849975408808, guid: 8cb72a3cf84b1bf4c92714cb89c318e3, type: 3}
+    - {fileID: 4703291145620535002, guid: 8cb72a3cf84b1bf4c92714cb89c318e3, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 8cb72a3cf84b1bf4c92714cb89c318e3, type: 3}
 --- !u!1001 &7982849866178854784
 PrefabInstance:

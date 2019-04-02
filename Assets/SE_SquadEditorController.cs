@@ -39,9 +39,11 @@ public class SE_SquadEditorController : GenericPanelController
     public int numCols = 0;
 
     public Text newSquadName;
+    public Dropdown dropdownOptions;
     public GameObject squadNamePopup;
     public GameObject commanderNotSelectedPopup;
     public GameObject squadAlreadyExistsPopup;
+
 
     public static SE_SquadEditorController Create()
     {
@@ -55,6 +57,13 @@ public class SE_SquadEditorController : GenericPanelController
 
     private void Awake()
     {
+        ScriptableObject[] customConfigurations = Resources.LoadAll<ScriptableObject>("Configurations/WrestlersConfigurations/");
+        foreach (ScriptableObject so in customConfigurations)
+        {
+            Dropdown.OptionData newOptionData = new Dropdown.OptionData(so.name);
+            dropdownOptions.options.Add(newOptionData);
+            
+        }
         SetSlots();   
     }
 
@@ -187,6 +196,8 @@ public class SE_SquadEditorController : GenericPanelController
     public void DefinitiveSaveButtonPressed()
     {
         Squad asset = ScriptableObject.CreateInstance<Squad>();
+        string configName = dropdownOptions.transform.Find("Label").GetComponent<Text>().text;
+        asset.customConfiguration = Resources.Load<WrestlersConfiguration>("Configurations/WrestlersConfigurations/" + configName);
 
         if (newSquadName.text == "")
         {

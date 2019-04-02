@@ -6,15 +6,35 @@ using DG.Tweening;
 
 public class BoogieCleaner : Boogie
 {
+    public float timeToChargeAgain;
+    public float timeToUnchargeAgain;
     public bool canCharge = true;
     public bool canDeposit = false;
     public DebrisObstaclePart carriedObject;
 
     private void Start()
     {
+        AssignConfiguration();
+
         type = BoogieType.Cleaner;
         randomPoint = GetRandomPointAroundCircle(initialPoint);
         _agent.SetDestination(randomPoint);
+
+        StartCoroutine(HandleSpeed());
+    }
+
+    private void AssignConfiguration()
+    {
+        CleanersConfiguration Ccfg = FindObjectOfType<BoogiesSpawner>().cleanersConfig;
+        maxTimeToFindObjective = Ccfg.maxTimeToFindObjective;
+        timeToCheckIfWorkFinished = Ccfg.timeToCheckIfWorkWinished;
+        timeToChargeAgain = Ccfg.timeToChargeAgain;
+        timeToUnchargeAgain = Ccfg.timeToUnchargeAgain;
+
+        minSpeed = Ccfg.minSpeed;
+        maxSpeed = Ccfg.maxSpeed;
+        probabilityChangeSpeed = Ccfg.probabilityVariateSpeed;
+        timeToChangeSpeed = Ccfg.timeTryVariateSpeed;
     }
 
     private void Update()
@@ -97,20 +117,20 @@ public class BoogieCleaner : Boogie
 
         IEnumerator TimeToCanChargeAgainElapse()
         {
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(timeToChargeAgain);
             canCharge = true;
         }
 
         IEnumerator TimeToCanUnchargeAgainElapse()
         {
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(timeToUnchargeAgain);
             canDeposit = true;
         }
     }
 
     public IEnumerator CheckIfWorkFinished()
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(timeToCheckIfWorkFinished);
         int counter = 0;
         DebrisObstaclePart[] parts = currentObjective.GetComponent<DebrisObstacle>().debrisParts;
         for (int i = 0; i < parts.Length; i++)

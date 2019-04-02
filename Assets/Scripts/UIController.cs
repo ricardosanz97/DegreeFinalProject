@@ -16,10 +16,13 @@ public class UIController : Singleton<UIController>
     public static event Action<BoogieWrestlerCommander> OnSelectingSquadJoin;
     public static event Action<Vector3> OnMovePositionSelected;
 
+    public bool popupOpened = false;
     public bool selectingBodyToCover = false;
     public bool selectingWrestlerToChange = false;
     public bool selectingSquadToJoin = false;
     public bool writing = false;
+
+    public List<GenericPanelController> popupsOpened;
 
     private void Start()
     {
@@ -31,6 +34,15 @@ public class UIController : Singleton<UIController>
     {
         UIHandleClick();
         UIHandleKeyInput();
+
+        if (popupsOpened.Count > 0)
+        {
+            popupOpened = true;
+        }
+        else
+        {
+            popupOpened = false;
+        }
     }
 
     public bool OnMoveSquadPositionSelectedNull()
@@ -45,8 +57,6 @@ public class UIController : Singleton<UIController>
     public void ResetEvents()
     {
         OnGroundClicked = null;
-        OnSpawnBoogiesEnabled = null;
-        OnSpawnSquadEnabled = null;
         OnWrestlerClicked = null;
         OnMoveSquadPositionSelected = null;
         OnInteractableBodyPressed = null;
@@ -57,6 +67,11 @@ public class UIController : Singleton<UIController>
 
     public void UIHandleClick()
     {
+        if (popupOpened)
+        {
+            return;
+        }
+
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
@@ -196,6 +211,10 @@ public class UIController : Singleton<UIController>
         }
         if (Input.GetKeyDown(KeyCode.F))
         {
+            if (popupOpened)
+            {
+                return;
+            }
             if (FindObjectOfType<GenericPanelController>() != null)
             {
                 Destroy(FindObjectOfType<GenericPanelController>().gameObject);

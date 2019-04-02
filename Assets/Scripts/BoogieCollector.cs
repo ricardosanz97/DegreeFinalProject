@@ -6,7 +6,13 @@ using DG.Tweening;
 
 public class BoogieCollector : Boogie
 {
-    public float timeToCollect = 5f;
+    public float timeToCollect;
+    public float timeToCollectAgain;
+    public float timeToFollowMarkerAgain;
+    public float minTimeChangeDirection;
+    public float maxTimeChangeDirection;
+    public float probabilityChangeDirection;
+    public float timeToReleaseMarker;
     public bool canCollect = true;
     public bool canFollowMarker = true;
     public bool followingMarker = false;
@@ -36,8 +42,6 @@ public class BoogieCollector : Boogie
         CollectorMachine
     }
 
-    
-
     public override void Awake()
     {
         base.Awake();
@@ -45,11 +49,33 @@ public class BoogieCollector : Boogie
 
     private void Start()
     {
+        AssignConfiguration();
+
         type = BoogieType.Collector;
         randomPoint = GetRandomPointAroundCircle(initialPoint);
         _agent.SetDestination(randomPoint);
         currentState = CURRENT_STATE.WanderingAroundCircle;
         StartCoroutine(HandleChangeDirectionRandomly());
+
+        StartCoroutine(HandleSpeed());
+    }
+
+    private void AssignConfiguration()
+    {
+        CollectorsConfiguration Ccfg = FindObjectOfType<BoogiesSpawner>().collectorsConfig;
+        maxTimeToFindObjective = Ccfg.maxTimeToFindObjective;
+        timeToCheckIfWorkFinished = Ccfg.timeToCheckIfWorkWinished;
+        timeToCollect = Ccfg.timeToCollect;
+        timeToCollectAgain = Ccfg.timeToCollectAgain;
+        timeToFollowMarkerAgain = Ccfg.timeToFollowMarkerAgain;
+        minTimeChangeDirection = Ccfg.minTimeChangeDirection;
+        maxTimeToFindObjective = Ccfg.maxTimeChangeDirection;
+        probabilityChangeDirection = Ccfg.probabilityChangeDirection;
+
+        minSpeed = Ccfg.minSpeed;
+        maxSpeed = Ccfg.maxSpeed;
+        probabilityChangeSpeed = Ccfg.probabilityVariateSpeed;
+        timeToChangeSpeed = Ccfg.timeTryVariateSpeed;
     }
 
     private void Update()
@@ -123,13 +149,13 @@ public class BoogieCollector : Boogie
 
     IEnumerator HandleCanCollectTrue()
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(timeToCollectAgain);
         canCollect = true;
     }
 
     IEnumerator HandleCanFollowMarkerTrue()
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(timeToFollowMarkerAgain);
         canFollowMarker = true;
     }
 
@@ -283,7 +309,11 @@ public class BoogieCollector : Boogie
     {
         while (true)
         {
-            yield return new WaitForSeconds(Random.Range(2f, 4f));
+            yield return new WaitForSeconds(Random.Range(minTimeChangeDirection, maxTimeChangeDirection));
+            if (Random.value > probabilityChangeDirection)
+            {
+                yield return null;
+            }
             if (Wandering() || 
                 (currentState == CURRENT_STATE.FollowingMarkersToElixirStone && currentMarker == null) || 
                 (currentState == CURRENT_STATE.FollowingMarkersToElixirStone && currentMarker != null && currentMarker.GetComponent<MarkerBehaviour>().previousMarker == null) ||
@@ -317,7 +347,7 @@ public class BoogieCollector : Boogie
             {
                 currentElixirStone.empty = true;
             }
-            yield return new WaitForSeconds(5f);
+            yield return new WaitForSeconds(timeToCollect);
             if (BoogiesSpawner.BoogiesKnowCollectorMachinePosition)
             {
                 canFollowMarker = false;
@@ -365,7 +395,7 @@ public class BoogieCollector : Boogie
         markers.Add(lastMarker.GetComponent<MarkerBehaviour>());    
         while (currentElixirStone != null)
         {
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(timeToReleaseMarker);
             GameObject currentMarker = Instantiate(marker, transform.position, Quaternion.identity);
             MarkerBehaviour mb = currentMarker.GetComponent<MarkerBehaviour>();
             mb.markerCreator = this;
@@ -389,7 +419,7 @@ public class BoogieCollector : Boogie
     IEnumerator CheckIfWorkFinished()
     {
         Debug.Log("checking. ");
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(timeToCheckIfWorkFinished);
         if (CollectorMachineBehavior.ElixirGot == currentObjective.GetComponent<ElixirObstacle>().totalElixirAvailable)
         {
             BackToPlayer();
