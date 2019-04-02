@@ -14,6 +14,7 @@ public class UIController : Singleton<UIController>
     public static event Action<InteractableBody> OnInteractableBodyPressed;
     public static event Action<BoogieWrestler> OnSelectingWrestlerChange;
     public static event Action<BoogieWrestlerCommander> OnSelectingSquadJoin;
+    public static event Action<Vector3> OnMovePositionSelected;
 
     public bool selectingBodyToCover = false;
     public bool selectingWrestlerToChange = false;
@@ -51,6 +52,7 @@ public class UIController : Singleton<UIController>
         OnInteractableBodyPressed = null;
         OnSelectingWrestlerChange = null;
         OnSelectingSquadJoin = null;
+        OnMovePositionSelected = null;
     }
 
     public void UIHandleClick()
@@ -68,6 +70,7 @@ public class UIController : Singleton<UIController>
             {
                 OnGroundClicked?.Invoke(hit.point);
                 OnMoveSquadPositionSelected?.Invoke(hit.point);
+                OnMovePositionSelected?.Invoke(hit.point);
             }
         }
         if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Npc")) && hit.transform.gameObject.GetComponent<BoogieWrestler>() && !selectingSquadToJoin && !selectingBodyToCover && !selectingWrestlerToChange)
@@ -112,6 +115,7 @@ public class UIController : Singleton<UIController>
         {
             if (SelectorMouseBehavior.IsActive())
             {
+                Debug.Log("destroyed");
                 SelectorMouseBehavior.Destroy();
             }
         }
@@ -121,6 +125,7 @@ public class UIController : Singleton<UIController>
             BoogieWrestler bw = hit.transform.GetComponent<BoogieWrestler>() ?? null;
             if (bw == null || bw.currentWState != W_STATE.OnSquad)//if is not a boogie wrestler or it is not in a squad or it is a squad leader...
             {
+                Debug.Log("destroyed");
                 SelectorMouseBehavior.Destroy();
                 return;
             }
@@ -143,6 +148,7 @@ public class UIController : Singleton<UIController>
         {
             if (SelectorMouseBehavior.IsActive())
             {
+                Debug.Log("destroyed");
                 SelectorMouseBehavior.Destroy();
             }
         }
@@ -152,6 +158,7 @@ public class UIController : Singleton<UIController>
             BoogieWrestlerCommander bwc = hit.transform.GetComponent<BoogieWrestlerCommander>() ?? null;
             if (bwc == null)
             {
+                Debug.Log("destroyed");
                 SelectorMouseBehavior.Destroy();
                 return;
             }
@@ -169,14 +176,16 @@ public class UIController : Singleton<UIController>
                 OnSelectingSquadJoin?.Invoke(bwc);
             }
         }
-
+        /*
         else if (!selectingSquadToJoin)
         {
             if (SelectorMouseBehavior.IsActive())
             {
+                Debug.Log("destroyed");
                 SelectorMouseBehavior.Destroy();
             }
         }
+        */
     }
 
     public void UIHandleKeyInput()
@@ -259,6 +268,7 @@ public class UIController : Singleton<UIController>
                 this.selectingWrestlerToChange = false;
                 if (SelectorMouseBehavior.IsActive())
                 {
+                    Debug.Log("destroy");
                     SelectorMouseBehavior.Destroy();
                 }
             }
@@ -268,6 +278,7 @@ public class UIController : Singleton<UIController>
             }
             if (SelectorMouseBehavior.IsActive())
             {
+                Debug.Log("destroyed");
                 SelectorMouseBehavior.Destroy();
                 
             }

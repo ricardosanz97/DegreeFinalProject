@@ -4897,6 +4897,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentSquadSelected:
     listFormation: 
+    name: 
     leaderPosition:
       i: 0
       j: 0

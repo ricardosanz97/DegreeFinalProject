@@ -73,13 +73,27 @@ public class BoogieWrestler : Boogie
             },
             () =>
             {
-                Debug.Log("move position. ");
+                UIController.I.UIShowMouseSelector(SELECTION_TYPE.SquadMovingPosition);
+                UIController.OnMovePositionSelected += MoveToPosition;
             },
             ()=>
             {
                 Debug.Log("attack. ");
             });
         }
+    }
+
+    private void MoveToPosition(Vector3 point)
+    {
+       // UIController.OnMovePositionSelected -= MoveToPosition;
+        randomPoint = point;
+        if (FindObjectOfType<xMarkerBehavior>() != null)
+        {
+            Destroy(FindObjectOfType<xMarkerBehavior>().gameObject);
+        }
+        UIController.I.UIShowXMarker(randomPoint);
+        _agent.SetDestination(randomPoint);
+        this.currentWState = W_STATE.Moving;
     }
 
     private void SquadSelected (BoogieWrestlerCommander bwc)
@@ -202,7 +216,7 @@ public class BoogieWrestler : Boogie
         SquadConfiguration.SQUAD_ROL myRol = this.commander.currentSquadList[this.listPosition];
         SquadConfiguration.SQUAD_ROL hisRol = otherWrestler.commander.currentSquadList[otherWrestler.listPosition];
 
-        Debug.Log("hola");
+        Debug.Log("CHANGING WRESTLERS POSITIONS: " + this.listPosition + ", " + otherWrestler.listPosition);
         this.commander.currentSquadList[this.listPosition] = hisRol;
         otherWrestler.commander.currentSquadList[otherWrestler.listPosition] = myRol;
 
@@ -353,5 +367,16 @@ public class BoogieWrestler : Boogie
     public virtual void Update()
     {
         if (currentWState == W_STATE.OnSquad && this.leader != this.gameObject) TakeInitialPosition();
+        if (currentWState != W_STATE.OnSquad)
+        {
+            if (Vector3.Distance(this.transform.position, randomPoint) <= 0.5f)
+            {
+                this.currentWState = W_STATE.CoveringPosition;
+                if (FindObjectOfType<xMarkerBehavior>() != null)
+                {
+                    Destroy(FindObjectOfType<xMarkerBehavior>().gameObject);
+                }
+            }
+        }
     }
 }

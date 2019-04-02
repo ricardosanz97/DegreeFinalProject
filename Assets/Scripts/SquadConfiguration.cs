@@ -38,13 +38,24 @@ public class SquadConfiguration : MonoBehaviour
 
     public static bool ListsAreNumberByWrestlersEqual(Squad a, Squad b)
     {
-        return a.numClose == b.numClose && a.numDistance == b.numDistance && a.numGiant == b.numGiant && a != b;
+        bool areEqual = a.numClose == b.numClose && a.numDistance == b.numDistance && a.numGiant == b.numGiant && a != b;
+        if (areEqual)
+        {
+            Debug.Log(a.name + " is equal to " + b.name);
+            return true;
+        }
+        else
+        {
+            Debug.Log(a.name + " is not equal to " + b.name);
+            return false;
+        }
     }
 
     [System.Serializable]
     public class Squad
     {
         public List<SQUAD_ROL> listFormation;
+        public string name;
         public Index leaderPosition; //when spawn the squad, the leader is always the commander.
         public Index bodyPosition;
         public SquadSlot[,] squad;
@@ -55,8 +66,9 @@ public class SquadConfiguration : MonoBehaviour
         public int numDistance;
         public int numGiant;
 
-        public Squad(List<SQUAD_ROL> listFormation, int numRows, int numCols)
+        public Squad(string name, List<SQUAD_ROL> listFormation, int numRows, int numCols)
         {
+            this.name = name;
             this.listFormation = listFormation;
             this.squadRows = numRows;
             this.squadCols = numCols;
@@ -91,7 +103,7 @@ public class SquadConfiguration : MonoBehaviour
                             numDistance++;
                             break;
                         case SQUAD_ROL.Giant:
-                            numDistance++;
+                            numGiant++;
                             break;
                     }
                 }

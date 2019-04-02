@@ -72,7 +72,43 @@ public class BoogieWrestlerCommander : BoogieWrestler
 
     public void ChangeSquadFormation(SquadConfiguration.Squad newSquadInfo)
     {
-
+        squadInfo = new SquadConfiguration.Squad(newSquadInfo.name, newSquadInfo.listFormation, newSquadInfo.squadCols, newSquadInfo.squadRows);
+        currentSquadList = new List<SquadConfiguration.SQUAD_ROL>(squadInfo.listFormation);
+        SquadConfiguration.SquadSlot[,] squadSlots = squadInfo.squad;
+        leaderIndex = new SquadConfiguration.Index(newSquadInfo.leaderPosition.i, newSquadInfo.leaderPosition.j);
+        List<BoogieWrestler> wrestlersLeft = new List<BoogieWrestler>(this.squadWrestlers);
+        int counter = 0;
+        for (int i = 0; i<squadInfo.squadRows; i++)
+        {
+            for (int j = 0; j<squadInfo.squadCols; j++)
+            {
+                BoogieWrestler bw = null;
+                switch (squadSlots[i, j].rol)
+                {
+                    case SquadConfiguration.SQUAD_ROL.Distance:
+                        bw = wrestlersLeft.Find((x) => x.wrestlerType == WRESTLER_TYPE.Distance);
+                        break;
+                    case SquadConfiguration.SQUAD_ROL.Close:
+                        bw = wrestlersLeft.Find((x) => x.wrestlerType == WRESTLER_TYPE.Close);
+                        break;
+                    case SquadConfiguration.SQUAD_ROL.Giant:
+                        bw = wrestlersLeft.Find((x) => x.wrestlerType == WRESTLER_TYPE.Giant);
+                        break;
+                    case SquadConfiguration.SQUAD_ROL.Commander:
+                        bw = wrestlersLeft.Find((x) => x.wrestlerType == WRESTLER_TYPE.Commander);
+                        bw.isLeaderPosition = true;
+                        break;
+                }
+                if (bw != null)
+                {
+                    bw.indexs = new SquadConfiguration.Index(i, j);
+                    bw.listPosition = counter;
+                    wrestlersLeft.Remove(bw);
+                    bw.Start();
+                }
+                counter++;
+            }
+        }
     }
 
     public void ResetDefaultFormation()
@@ -100,6 +136,7 @@ public class BoogieWrestlerCommander : BoogieWrestler
         }
         else
         {
+            //TODO: esto se podria cambiar por un ChangeFormation(commander.squadInfo);
             auxBw = squadWrestlers.Find((x) => x.isLeaderPosition);
             Debug.Log(auxBw.wrestlerType.ToString());
             this.UncoverBody();
@@ -141,7 +178,10 @@ public class BoogieWrestlerCommander : BoogieWrestler
         Debug.Log("MY INDEXS = " + indexs.i + ", " + indexs.j);
         base.Start();
         GetSquadInformation();
-        bodyIndex = new SquadConfiguration.Index(squadInfo.bodyPosition.i, squadInfo.bodyPosition.j);
+        if (squadInfo.hasBody)
+        {
+            bodyIndex = new SquadConfiguration.Index(squadInfo.bodyPosition.i, squadInfo.bodyPosition.j);
+        }
     }
 
     private void GetSquadInformation()
