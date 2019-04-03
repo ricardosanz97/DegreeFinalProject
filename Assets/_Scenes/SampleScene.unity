@@ -4910,6 +4910,7 @@ MonoBehaviour:
     numClose: 0
     numDistance: 0
     numGiant: 0
+    customSquadConfiguration: {fileID: 0}
 --- !u!4 &1732086128
 Transform:
   m_ObjectHideFlags: 0
@@ -5885,6 +5886,7 @@ MonoBehaviour:
   selectingWrestlerToChange: 0
   selectingSquadToJoin: 0
   writing: 0
+  popupsOpened: []
 --- !u!4 &2042790233
 Transform:
   m_ObjectHideFlags: 0
@@ -6462,7 +6464,7 @@ MonoBehaviour:
   collectorsConfig: {fileID: 11400000, guid: 4d3643bbc69df4da89fadebdc2fa8dff, type: 2}
   explorersConfig: {fileID: 11400000, guid: 91b684304341e41a78aecd2e818cdea7, type: 2}
   cleanersConfig: {fileID: 11400000, guid: 86aecdf309cad4bb8903189cd7494b10, type: 2}
-  wrestlersConfig: {fileID: 11400000, guid: c51382484e4ce479fb476d8810f2347d, type: 2}
+  wrestlersConfig: {fileID: 11400000, guid: a8321d00dd2c6304495e4a320bada341, type: 2}
   boogiesCleanersKnowCollectorMachinePosition: 0
   radiusSpawn: 2
   positionAccepted: 0

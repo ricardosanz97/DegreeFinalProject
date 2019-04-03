@@ -10,28 +10,36 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6c8861e13c366486bb01b0398764ff17, type: 3}
-  m_Name: Contention
+  m_Name: DefaultWrestlers
   m_EditorClassIdentifier: 
-  commmanderHealth: 10303
-  giantHealth: 1503
-  closeHealth: 3
-  distanceHealth: 3
-  commanderAttackSpeed: 3
+  commanderHealth: 100
+  giantHealth: 150
+  closeHealth: 70
+  distanceHealth: 50
+  commanderAttackSpeed: 1.5
   giantAttackSpeed: 2
-  closeAttackSpeed: 3
-  distanceAttackSpeed: 3
-  commanderVisionDistance: 10
-  giantVisonDistance: 4
+  closeAttackSpeed: 1
+  distanceAttackSpeed: 1.2
+  commanderVisionDistance: 8
+  giantVisionDistance: 4
   closeVisionDistance: 6
-  distanceVisionDistance: 93
+  distanceVisionDistance: 10
+  commanderFieldView: 60
+  giantFieldView: 90
+  closeFieldView: 55
+  distanceFieldView: 45
   commanderAttackRange: 1
   giantAttackRange: 1
-  closeAttackRange: 3
+  closeAttackRange: 1
   distanceAttackRange: 5
-  commanderAttackDamage: 3
+  commanderAttackDamage: 5
   giantAttackDamage: 3
   closeAttackDamage: 4
   distanceAttackDamage: 3
+  closeTimeFindTargets: 0.5
+  distanceTimeFindTargets: 0.5
+  giantTimeFindTargets: 1.2
+  commanderTimeFindTargets: 1
   minOffset: 1.5
   maxOffset: 2
   probabilityVariateOffset: 0.5
@@ -39,17 +47,25 @@ MonoBehaviour:
   distanceMinSpeed: 9
   distanceMaxSpeed: 14
   distanceProbabilityVariateSpeed: 0.75
+  distanceTimeVariateSpeed: 2
   commanderMinSpeed: 10
   commanderMaxSpeed: 10
-  comamnderProbabilityVariateSpeed: 0
+  commanderProbabilityVariateSpeed: 0
+  commanderTimeVariateSpeed: 3.5
   giantMinSpeed: 6
   giantMaxSpeed: 7
   giantProbabilityVariateSpeed: 0.2
+  giantTimeVariateSpeed: 4
   closeMinSpeed: 8
   closeMaxSpeed: 12
   closeProbabilityVariateSpeed: 0.6
+  closeTimeVariateSpeed: 2.5
   timeVariateSpeed: 3
+  closeProbabilityPreferences: 0.85
+  giantProbabilityPreferences: 0.7
+  commanderProbabilityPreferences: 0.8
+  distanceProbabilityPreferences: 0.6
   CommanderPreferences: 00000000030000000200000001000000
   GiantPreferences: 03000000020000000100000000000000
   ClosePreferences: 01000000020000000100000000000000
-  DistanceWrestlers: 02000000030000000000000001000000
+  DistancePreferences: 02000000030000000000000001000000

@@ -7,7 +7,8 @@ public enum SQUAD_STATE
     Moving,
     CoveringPosition,
     CoveringPlayer,
-    CoveringBody
+    CoveringBody,
+    RunningAway
 }
 
 public class BoogieWrestlerCommander : BoogieWrestler
@@ -171,8 +172,7 @@ public class BoogieWrestlerCommander : BoogieWrestler
 
     public override void Start()
     {
-        Debug.Log("LEADER INDEXS = " + leaderIndex.i + ", " + leaderIndex.j);
-        Debug.Log("MY INDEXS = " + indexs.i + ", " + indexs.j);
+        this.transform.rotation = FindObjectOfType<BoogiesSpawner>().transform.rotation;
         base.Start();
         GetSquadInformation();
         if (squadInfo.hasBody)
@@ -227,7 +227,11 @@ public class BoogieWrestlerCommander : BoogieWrestler
         this.currentSquadState = SQUAD_STATE.Moving;
         UIController.I.UIShowXMarker(clickPosition);
         randomPoint = clickPosition;
-        leader.GetComponent<BoogieWrestler>()._agent.SetDestination(randomPoint);
+        //leader.GetComponent<BoogieWrestler>()._agent.SetDestination(randomPoint);
+        foreach (BoogieWrestler bw in squadWrestlers)
+        {
+            bw.MoveHere(randomPoint);
+        }
     }
 
     public void UncoverBody()

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 169111895603301246}
   - component: {fileID: 169111895603301245}
   - component: {fileID: 169111895603301244}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Cube (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -103,7 +103,7 @@ GameObject:
   - component: {fileID: 169111895607847226}
   - component: {fileID: 169111895607847225}
   - component: {fileID: 169111895607847224}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -194,7 +194,7 @@ GameObject:
   - component: {fileID: 169111895652428947}
   - component: {fileID: 169111895652428946}
   - component: {fileID: 169111895652428945}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -284,7 +284,7 @@ GameObject:
   - component: {fileID: 169111895699703967}
   - component: {fileID: 169111895699703952}
   - component: {fileID: 169111895699703953}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: PathB
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -344,7 +344,7 @@ GameObject:
   - component: {fileID: 169111895700472140}
   - component: {fileID: 169111895700472139}
   - component: {fileID: 169111895700472138}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -434,7 +434,7 @@ GameObject:
   - component: {fileID: 169111895791314649}
   - component: {fileID: 169111895791314651}
   - component: {fileID: 169111895791314650}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: PathA
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -491,7 +491,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 169111895805868007}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Walls
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -529,7 +529,7 @@ GameObject:
   - component: {fileID: 169111895831609411}
   - component: {fileID: 169111895831609410}
   - component: {fileID: 169111895831609409}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -617,7 +617,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 169111895842004573}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Walls
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -653,7 +653,7 @@ GameObject:
   m_Component:
   - component: {fileID: 169111895877856816}
   - component: {fileID: 169111895877856817}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Multipath
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -704,7 +704,7 @@ GameObject:
   - component: {fileID: 169111895901040631}
   - component: {fileID: 169111895901040584}
   - component: {fileID: 169111895901040585}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: TriggerBegin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -761,7 +761,7 @@ GameObject:
   - component: {fileID: 169111895921513398}
   - component: {fileID: 169111895921513352}
   - component: {fileID: 169111895921513399}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: TriggerBegin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -819,7 +819,7 @@ GameObject:
   - component: {fileID: 169111895978721058}
   - component: {fileID: 169111895978721057}
   - component: {fileID: 169111895978721056}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -910,7 +910,7 @@ GameObject:
   - component: {fileID: 169111895995300447}
   - component: {fileID: 169111895995300446}
   - component: {fileID: 169111895995300445}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -998,7 +998,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 169111896005393945}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Path (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1034,7 +1034,7 @@ GameObject:
   - component: {fileID: 169111896006677009}
   - component: {fileID: 169111896006677010}
   - component: {fileID: 169111896006677011}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: TriggerEnd
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1089,7 +1089,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 169111896023812561}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Walls
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1126,7 +1126,7 @@ GameObject:
   - component: {fileID: 169111896028832148}
   - component: {fileID: 169111896028832149}
   - component: {fileID: 169111896028832150}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: TriggerEnd
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1183,7 +1183,7 @@ GameObject:
   - component: {fileID: 169111896031737228}
   - component: {fileID: 169111896031737230}
   - component: {fileID: 169111896031737229}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: TriggerBegin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1240,7 +1240,7 @@ GameObject:
   - component: {fileID: 169111896088335674}
   - component: {fileID: 169111896088335675}
   - component: {fileID: 169111896088335676}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: TriggerEnd
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1296,7 +1296,7 @@ GameObject:
   m_Component:
   - component: {fileID: 169111896137389321}
   - component: {fileID: 169111896137389322}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Corridors
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1333,7 +1333,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c18cefaef64aec4988e0627af4e8ca3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FirstCorridor: 0
+  FirstPath: 0
   CorridorCorrectIndex: 0
   PathIndex: 0
   LastCorridorCorrectIndex: -1
@@ -1353,7 +1353,7 @@ GameObject:
   - component: {fileID: 169111896197780018}
   - component: {fileID: 169111896197780020}
   - component: {fileID: 169111896197780019}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: PathA
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1413,7 +1413,7 @@ GameObject:
   - component: {fileID: 169111896243637680}
   - component: {fileID: 169111896243637695}
   - component: {fileID: 169111896243637694}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1504,7 +1504,7 @@ GameObject:
   - component: {fileID: 169111896366045952}
   - component: {fileID: 169111896366045967}
   - component: {fileID: 169111896366045966}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1595,7 +1595,7 @@ GameObject:
   - component: {fileID: 169111896385722843}
   - component: {fileID: 169111896385722842}
   - component: {fileID: 169111896385722841}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1686,7 +1686,7 @@ GameObject:
   - component: {fileID: 169111896387953787}
   - component: {fileID: 169111896387953786}
   - component: {fileID: 169111896387953785}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1774,7 +1774,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 169111896394788319}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Path (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1810,7 +1810,7 @@ GameObject:
   - component: {fileID: 169111896412260626}
   - component: {fileID: 169111896412260628}
   - component: {fileID: 169111896412260627}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: PathB
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1869,7 +1869,7 @@ GameObject:
   - component: {fileID: 169111896453255286}
   - component: {fileID: 169111896453255287}
   - component: {fileID: 169111896453255240}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: TriggerBegin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1927,7 +1927,7 @@ GameObject:
   - component: {fileID: 169111896519158741}
   - component: {fileID: 169111896519158740}
   - component: {fileID: 169111896519158739}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2018,7 +2018,7 @@ GameObject:
   - component: {fileID: 169111896550051442}
   - component: {fileID: 169111896550051441}
   - component: {fileID: 169111896550051440}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2107,7 +2107,7 @@ GameObject:
   m_Component:
   - component: {fileID: 169111896553881699}
   - component: {fileID: 169111896553881700}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Corridors
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2144,7 +2144,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c18cefaef64aec4988e0627af4e8ca3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FirstCorridor: 0
+  FirstPath: 0
   CorridorCorrectIndex: 0
   PathIndex: 0
   LastCorridorCorrectIndex: -1
@@ -2164,7 +2164,7 @@ GameObject:
   - component: {fileID: 169111896555582078}
   - component: {fileID: 169111896555582064}
   - component: {fileID: 169111896555582079}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: PathC
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2221,7 +2221,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 169111896582766460}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Path (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2257,7 +2257,7 @@ GameObject:
   - component: {fileID: 169111896586523052}
   - component: {fileID: 169111896586523054}
   - component: {fileID: 169111896586523053}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: PathA
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2316,7 +2316,7 @@ GameObject:
   - component: {fileID: 169111896591468396}
   - component: {fileID: 169111896591468397}
   - component: {fileID: 169111896591468398}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: TriggerEnd
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2372,7 +2372,7 @@ GameObject:
   m_Component:
   - component: {fileID: 169111896620185720}
   - component: {fileID: 169111896620185721}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Corridors
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2409,7 +2409,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c18cefaef64aec4988e0627af4e8ca3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FirstCorridor: 0
+  FirstPath: 0
   CorridorCorrectIndex: 0
   PathIndex: 0
   LastCorridorCorrectIndex: -1
@@ -2429,7 +2429,7 @@ GameObject:
   - component: {fileID: 169111896636612900}
   - component: {fileID: 169111896636612902}
   - component: {fileID: 169111896636612901}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: PathC
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2486,7 +2486,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 169111896729804939}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Walls
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2524,7 +2524,7 @@ GameObject:
   - component: {fileID: 169111896738872271}
   - component: {fileID: 169111896738872270}
   - component: {fileID: 169111896738872269}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2615,7 +2615,7 @@ GameObject:
   - component: {fileID: 169111896819867603}
   - component: {fileID: 169111896819867602}
   - component: {fileID: 169111896819867601}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2705,7 +2705,7 @@ GameObject:
   - component: {fileID: 169111896868388153}
   - component: {fileID: 169111896868388155}
   - component: {fileID: 169111896868388154}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: PathD
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2765,7 +2765,7 @@ GameObject:
   - component: {fileID: 169111896872713834}
   - component: {fileID: 169111896872713833}
   - component: {fileID: 169111896872713832}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2856,7 +2856,7 @@ GameObject:
   - component: {fileID: 169111896877494765}
   - component: {fileID: 169111896877494764}
   - component: {fileID: 169111896877494763}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2945,7 +2945,7 @@ GameObject:
   m_Component:
   - component: {fileID: 169111896888971884}
   - component: {fileID: 169111896888971885}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Corridors
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2982,7 +2982,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c18cefaef64aec4988e0627af4e8ca3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FirstCorridor: 0
+  FirstPath: 0
   CorridorCorrectIndex: 0
   PathIndex: 0
   LastCorridorCorrectIndex: -1
@@ -3002,7 +3002,7 @@ GameObject:
   - component: {fileID: 169111896949173517}
   - component: {fileID: 169111896949173519}
   - component: {fileID: 169111896949173518}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: PathB
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3061,7 +3061,7 @@ GameObject:
   - component: {fileID: 169111896952691466}
   - component: {fileID: 169111896952691467}
   - component: {fileID: 169111896952691468}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: PathA
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3120,7 +3120,7 @@ GameObject:
   - component: {fileID: 169111896958270425}
   - component: {fileID: 169111896958270427}
   - component: {fileID: 169111896958270426}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: PathD
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3180,7 +3180,7 @@ GameObject:
   - component: {fileID: 169111896983207186}
   - component: {fileID: 169111896983207185}
   - component: {fileID: 169111896983207184}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3268,7 +3268,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 169111896989535036}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Path
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3305,7 +3305,7 @@ GameObject:
   - component: {fileID: 169111897020284195}
   - component: {fileID: 169111897020284194}
   - component: {fileID: 169111897020284193}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3395,7 +3395,7 @@ GameObject:
   - component: {fileID: 169111897036265209}
   - component: {fileID: 169111897036265211}
   - component: {fileID: 169111897036265210}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: PathC
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3454,7 +3454,7 @@ GameObject:
   - component: {fileID: 169111897081131989}
   - component: {fileID: 169111897081131991}
   - component: {fileID: 169111897081131990}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: PathB
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3513,7 +3513,7 @@ GameObject:
   - component: {fileID: 169111897130535744}
   - component: {fileID: 169111897130535745}
   - component: {fileID: 169111897130535746}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: TriggerEnd
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3570,7 +3570,7 @@ GameObject:
   - component: {fileID: 169111897148711401}
   - component: {fileID: 169111897148711403}
   - component: {fileID: 169111897148711402}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: PathD
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3630,7 +3630,7 @@ GameObject:
   - component: {fileID: 169111897203922459}
   - component: {fileID: 169111897203922458}
   - component: {fileID: 169111897203922457}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3720,7 +3720,7 @@ GameObject:
   - component: {fileID: 169111897205159920}
   - component: {fileID: 169111897205159922}
   - component: {fileID: 169111897205159921}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: PathD
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3778,7 +3778,7 @@ GameObject:
   m_Component:
   - component: {fileID: 169111897263414484}
   - component: {fileID: 169111897263414485}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Corridors
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3815,7 +3815,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c18cefaef64aec4988e0627af4e8ca3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FirstCorridor: 0
+  FirstPath: 0
   CorridorCorrectIndex: 0
   PathIndex: 0
   LastCorridorCorrectIndex: -1
@@ -3836,7 +3836,7 @@ GameObject:
   - component: {fileID: 169111897280457448}
   - component: {fileID: 169111897280458007}
   - component: {fileID: 169111897280458006}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3926,7 +3926,7 @@ GameObject:
   - component: {fileID: 169111897282113705}
   - component: {fileID: 169111897282113706}
   - component: {fileID: 169111897282113707}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: PathD
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3986,7 +3986,7 @@ GameObject:
   - component: {fileID: 169111897350874114}
   - component: {fileID: 169111897350874113}
   - component: {fileID: 169111897350874112}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4077,7 +4077,7 @@ GameObject:
   - component: {fileID: 169111897353453859}
   - component: {fileID: 169111897353453858}
   - component: {fileID: 169111897353453857}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4167,7 +4167,7 @@ GameObject:
   - component: {fileID: 169111897375144309}
   - component: {fileID: 169111897375144311}
   - component: {fileID: 169111897375144310}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: PathC
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4224,7 +4224,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 169111897396487147}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Walls
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4259,7 +4259,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 169111897403267528}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Path (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4296,7 +4296,7 @@ GameObject:
   - component: {fileID: 169111897498389939}
   - component: {fileID: 169111897498389938}
   - component: {fileID: 169111897498389937}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4385,7 +4385,7 @@ GameObject:
   m_Component:
   - component: {fileID: 169111897514824812}
   - component: {fileID: 169111897514824813}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Paths
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4431,7 +4431,9 @@ MonoBehaviour:
   currentPlayerIndex: 0
   distanceTraveled: {x: 0, y: 0, z: 0}
   initialPosition: {x: 0, y: 0, z: 0}
+  clues: []
   combination: 
+  playerCompleteMultipath: 0
 --- !u!1 &169111897520952323
 GameObject:
   m_ObjectHideFlags: 0
@@ -4444,7 +4446,7 @@ GameObject:
   - component: {fileID: 169111897520952327}
   - component: {fileID: 169111897520952326}
   - component: {fileID: 169111897520952325}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4535,7 +4537,7 @@ GameObject:
   - component: {fileID: 169111897563473963}
   - component: {fileID: 169111897563473962}
   - component: {fileID: 169111897563473961}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4625,7 +4627,7 @@ GameObject:
   - component: {fileID: 169111897584024082}
   - component: {fileID: 169111897584024084}
   - component: {fileID: 169111897584024083}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: PathB
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4684,7 +4686,7 @@ GameObject:
   - component: {fileID: 169111897669062884}
   - component: {fileID: 169111897669062885}
   - component: {fileID: 169111897669062886}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: PathC
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4743,7 +4745,7 @@ GameObject:
   - component: {fileID: 169111897669693270}
   - component: {fileID: 169111897669693224}
   - component: {fileID: 169111897669693271}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: PathA
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4803,7 +4805,7 @@ GameObject:
   - component: {fileID: 169111897671817782}
   - component: {fileID: 169111897671817781}
   - component: {fileID: 169111897671817780}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4893,7 +4895,7 @@ GameObject:
   - component: {fileID: 169111897681924280}
   - component: {fileID: 169111897681924281}
   - component: {fileID: 169111897681924282}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: TriggerBegin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4951,7 +4953,7 @@ GameObject:
   - component: {fileID: 169111897692939341}
   - component: {fileID: 169111897692939340}
   - component: {fileID: 169111897692939339}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Cube (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

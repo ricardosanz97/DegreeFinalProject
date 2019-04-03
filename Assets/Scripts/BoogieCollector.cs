@@ -21,7 +21,7 @@ public class BoogieCollector : Boogie
     private GameObject lastMarker;
     private GameObject currentMarker;
     private GameObject lastMarkerSpawned;
-    private bool coroutineChangeDirectionStarted = false;
+    //private bool coroutineChangeDirectionStarted = false;
     [HideInInspector]public List<MarkerBehaviour> markers;
     public CURRENT_STATE currentState;
 

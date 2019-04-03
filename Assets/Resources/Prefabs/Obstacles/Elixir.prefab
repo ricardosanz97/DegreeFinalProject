@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3259814783067510827}
   - component: {fileID: 3259814783067510828}
   - component: {fileID: 3259814783067510839}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: CollectorMachine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -136,7 +136,7 @@ GameObject:
   - component: {fileID: 3259814783186487127}
   - component: {fileID: 3259814783186487112}
   - component: {fileID: 3259814783186487113}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: ElixirStone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -244,7 +244,7 @@ GameObject:
   - component: {fileID: 3259814784168936371}
   - component: {fileID: 3259814784168936372}
   - component: {fileID: 3259814784168936369}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: ElixirStone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -350,7 +350,7 @@ GameObject:
   - component: {fileID: 3259814784248720852}
   - component: {fileID: 3259814784248720851}
   - component: {fileID: 3259814784248720850}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Elixir
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -418,7 +418,7 @@ GameObject:
   - component: {fileID: 3259814784359885692}
   - component: {fileID: 3259814784359885693}
   - component: {fileID: 3259814784359885694}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: ElixirStone
   m_TagString: Untagged
   m_Icon: {fileID: 0}

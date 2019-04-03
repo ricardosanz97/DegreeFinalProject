@@ -230,6 +230,7 @@ public class BoogiesSpawner : MonoBehaviour
     {
         GameObject commander = Instantiate(Resources.Load("Prefabs/Wrestlers/BoogieWrestlerCommander"), position, Quaternion.identity) as GameObject;
         GameObject squadGO = new GameObject("Squad");
+        squadGO.AddComponent<SquadTeam>();
         squadGO.transform.position = position;
         squadGO.layer = LayerMask.NameToLayer("Squad");
         commander.transform.SetParent(squadGO.transform);
