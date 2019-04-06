@@ -28,10 +28,10 @@ MonoBehaviour:
   giantFieldView: 90
   closeFieldView: 55
   distanceFieldView: 45
-  commanderAttackRange: 1
-  giantAttackRange: 1
-  closeAttackRange: 1
-  distanceAttackRange: 5
+  commanderAttackRange: 1.5
+  giantAttackRange: 1.5
+  closeAttackRange: 1.5
+  distanceAttackRange: 7
   commanderAttackDamage: 5
   giantAttackDamage: 3
   closeAttackDamage: 4
@@ -44,6 +44,18 @@ MonoBehaviour:
   maxOffset: 2
   probabilityVariateOffset: 0.5
   timeVariateOffset: 4
+  closeMinTimeChange: 5
+  closeMaxTimeChange: 10
+  distanceMinTimeChange: 5
+  distanceMaxTimeChange: 10
+  giantMinTimeChange: 2
+  giantMaxTimeChange: 5
+  commanderMinTimeChange: 4
+  commanderMaxTimeChange: 9
+  closeProbChange: 0.5
+  distanceProbChange: 0.5
+  giantProbChange: 0.75
+  commanderProbChange: 0.6
   distanceMinSpeed: 9
   distanceMaxSpeed: 14
   distanceProbabilityVariateSpeed: 0.75

@@ -130,7 +130,6 @@ public class UIController : Singleton<UIController>
         {
             if (SelectorMouseBehavior.IsActive())
             {
-                Debug.Log("destroyed");
                 SelectorMouseBehavior.Destroy();
             }
         }
@@ -140,7 +139,6 @@ public class UIController : Singleton<UIController>
             BoogieWrestler bw = hit.transform.GetComponent<BoogieWrestler>() ?? null;
             if (bw == null || bw.currentWState != W_STATE.OnSquad)//if is not a boogie wrestler or it is not in a squad or it is a squad leader...
             {
-                Debug.Log("destroyed");
                 SelectorMouseBehavior.Destroy();
                 return;
             }
@@ -163,7 +161,6 @@ public class UIController : Singleton<UIController>
         {
             if (SelectorMouseBehavior.IsActive())
             {
-                Debug.Log("destroyed");
                 SelectorMouseBehavior.Destroy();
             }
         }
@@ -173,7 +170,6 @@ public class UIController : Singleton<UIController>
             BoogieWrestlerCommander bwc = hit.transform.GetComponent<BoogieWrestlerCommander>() ?? null;
             if (bwc == null)
             {
-                Debug.Log("destroyed");
                 SelectorMouseBehavior.Destroy();
                 return;
             }

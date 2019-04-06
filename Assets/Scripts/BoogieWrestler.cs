@@ -2,10 +2,12 @@
 using System.Collections;
 using UnityEngine.AI;
 using System.Collections.Generic;
+using DG.Tweening;
 
 public enum W_STATE
 {
     OnSquad,
+    JoiningSquad,
     Moving,
     FollowingPlayer,
     CoveringPosition,
@@ -24,6 +26,18 @@ public enum TEAM
     B
 }
 
+public enum STATE
+{
+    OnSquadObserving,
+    OnSquadAttacking,
+    OnSquadCovering,
+    OnSquadMoving,
+    AloneObserving,
+    AloneAttacking,
+    AloneFollowingPlayer,
+    AloneMoving
+}
+
 public class BoogieWrestler : Boogie
 {
     public WRESTLER_TYPE wrestlerType;
@@ -39,24 +53,29 @@ public class BoogieWrestler : Boogie
 
     public TEAM team;
     public float health;
-    public float attackSpeed;
-    public float visionDistance;
-    public float fieldView;
-    public float attackRange;
-    public float attackDamage;
+    [HideInInspector] public float attackSpeed;
+    [HideInInspector] public float visionDistance;
+    [HideInInspector] public float fieldView;
+    [HideInInspector] public float attackRange;
+    [HideInInspector] public float attackDamage;
 
-    public float minOffset;
-    public float maxOffset;
-    public float probabilityVariateOffset;
-    public float timeVariateOffset;
+    [HideInInspector] public float minOffset;
+    [HideInInspector] public float maxOffset;
+    [HideInInspector] public float probabilityVariateOffset;
+    [HideInInspector] public float timeVariateOffset;
 
-    public float timeToFindTargets;
+    [HideInInspector] public float timeToFindTargets;
 
-    public float probabilityPreferences;
+    [HideInInspector] public float minTimeChangeObjective;
+    [HideInInspector] public float maxTimeChangeObjective;
+    [HideInInspector] public float probChangeObjective;
+
+    [HideInInspector] public float probabilityPreferences;
     public WRESTLER_TYPE[] Preferences;
 
-    public List<Transform> visibleTargets = new List<Transform>();
+    [HideInInspector] public List<Transform> visibleTargets = new List<Transform>();
     public BoogieWrestler wrestlerSelected = null;
+    public List<BoogieWrestler> wrestlersAttackingMe = new List<BoogieWrestler>();
 
     private void AssignConfiguration()
     {
@@ -83,6 +102,10 @@ public class BoogieWrestler : Boogie
                 probabilityPreferences = Wcfg.closeProbabilityPreferences;
                 Preferences = Wcfg.ClosePreferences;
                 timeToFindTargets = Wcfg.closeTimeFindTargets;
+                minTimeChangeObjective = Wcfg.closeMinTimeChange;
+                maxTimeChangeObjective = Wcfg.closeMaxTimeChange;
+                probChangeObjective = Wcfg.closeProbChange;
+
                 break;
             case WRESTLER_TYPE.Distance:
                 health = Wcfg.distanceHealth;
@@ -98,6 +121,9 @@ public class BoogieWrestler : Boogie
                 probabilityPreferences = Wcfg.distanceProbabilityPreferences;
                 Preferences = Wcfg.DistancePreferences;
                 timeToFindTargets = Wcfg.distanceTimeFindTargets;
+                minTimeChangeObjective = Wcfg.distanceMinTimeChange;
+                maxTimeChangeObjective = Wcfg.distanceMaxTimeChange;
+                probChangeObjective = Wcfg.distanceProbChange;
                 break;
             case WRESTLER_TYPE.Commander:
                 health = Wcfg.commanderHealth;
@@ -113,6 +139,9 @@ public class BoogieWrestler : Boogie
                 probabilityPreferences = Wcfg.commanderProbabilityPreferences;
                 Preferences = Wcfg.CommanderPreferences;
                 timeToFindTargets = Wcfg.commanderTimeFindTargets;
+                minTimeChangeObjective = Wcfg.commanderMinTimeChange;
+                maxTimeChangeObjective = Wcfg.commanderMaxTimeChange;
+                probChangeObjective = Wcfg.commanderProbChange;
                 break;
             case WRESTLER_TYPE.Giant:
                 health = Wcfg.giantHealth;
@@ -128,6 +157,9 @@ public class BoogieWrestler : Boogie
                 probabilityPreferences = Wcfg.giantProbabilityPreferences;
                 Preferences = Wcfg.CommanderPreferences;
                 timeToFindTargets = Wcfg.giantTimeFindTargets;
+                minTimeChangeObjective = Wcfg.giantMinTimeChange;
+                maxTimeChangeObjective = Wcfg.giantMaxTimeChange;
+                probChangeObjective = Wcfg.giantProbChange;
                 break;
         }
 
@@ -139,6 +171,8 @@ public class BoogieWrestler : Boogie
         GetComponent<FieldOfView>().viewRadius = visionDistance;
         GetComponent<FieldOfView>().viewAngle = fieldView;
         GetComponent<FieldOfView>().StartVision(timeToFindTargets);
+
+        //_agent.stoppingDistance = attackRange;
     }
 
     public virtual void WrestlerClicked(int clickButton)
@@ -242,6 +276,7 @@ public class BoogieWrestler : Boogie
         }
         bwc.neededIndexs.Remove(bwc.neededIndexs.Find((x) => x.i == this.indexs.i && x.j == this.indexs.j));
         this.currentWState = W_STATE.OnSquad;
+
         UIController.I.selectingSquadToJoin = false;
         UIController.OnSelectingSquadJoin -= SquadSelected;
         UIController.I.UIHideMouseSelector();
@@ -261,7 +296,7 @@ public class BoogieWrestler : Boogie
     public void FollowPlayer()
     {
         commander.currentSquadList[listPosition] = SquadConfiguration.SQUAD_ROL.None;
-        listPosition = -1;
+        //listPosition = -1;
         currentWState = W_STATE.FollowingPlayer;
         this.transform.SetParent(null);
         commander.neededIndexs.Add(new SquadConfiguration.Index(this.indexs.i, this.indexs.j));
@@ -298,7 +333,6 @@ public class BoogieWrestler : Boogie
             return;
         }
         commander.currentSquadList[listPosition] = SquadConfiguration.SQUAD_ROL.None;
-        //listPosition = -1;
         currentWState = W_STATE.CoveringPosition;
         this.transform.SetParent(null);
         commander.neededIndexs.Add(new SquadConfiguration.Index(this.indexs.i, this.indexs.j));
@@ -318,23 +352,17 @@ public class BoogieWrestler : Boogie
 
     public void ChangeSelectedWrestler(BoogieWrestler otherWrestler)
     {
-        Debug.Log("other = " + otherWrestler.wrestlerType.ToString());
-        Debug.Log("we = " + this.wrestlerType.ToString());
         if (this.commander != otherWrestler && !this.commander.squadWrestlers.Contains(otherWrestler))//if it is not from our squad.
         {
-            Debug.Log("hola1");
             return;
         }
         if (otherWrestler == this)//if it is not from our squad.
         {
-            Debug.Log("hola2");
             return;
         }
 
         SquadConfiguration.SQUAD_ROL myRol = this.commander.currentSquadList[this.listPosition];
         SquadConfiguration.SQUAD_ROL hisRol = otherWrestler.commander.currentSquadList[otherWrestler.listPosition];
-
-        Debug.Log("CHANGING WRESTLERS POSITIONS: " + this.listPosition + ", " + otherWrestler.listPosition);
         this.commander.currentSquadList[this.listPosition] = hisRol;
         otherWrestler.commander.currentSquadList[otherWrestler.listPosition] = myRol;
 
@@ -361,14 +389,10 @@ public class BoogieWrestler : Boogie
             Debug.Log("aqui entra");
             if (otherWrestler.gameObject == commander.leader)
             {
-                //otherWrestler.isLeaderPosition = false;
-                //this.isLeaderPosition = true;
                 commander.leader = this.gameObject;
             }
             else if (this.gameObject == commander.leader)
             {
-                //this.isLeaderPosition = false;
-                //otherWrestler.isLeaderPosition = true;
                 commander.leader = otherWrestler.gameObject;
             }
             SquadConfiguration.Index leadIndexs = new SquadConfiguration.Index(commander.leader.GetComponent<BoogieWrestler>().indexs.i, commander.leader.GetComponent<BoogieWrestler>().indexs.j);
@@ -392,7 +416,6 @@ public class BoogieWrestler : Boogie
             }
             ChangeSelectedWrestler(oldLeader);
         }
-
         else
         {
             SquadConfiguration.Index oldIndexs = new SquadConfiguration.Index(this.indexs.i, this.indexs.j);
@@ -442,7 +465,7 @@ public class BoogieWrestler : Boogie
         leader = commander.gameObject;
         ChangeIndexsRelativeToLeader();
         initialIndexs = new SquadConfiguration.Index(indexs.i, indexs.j);
-        TakeInitialPosition();
+        TakeSquadPosition();
 
         AssignConfiguration();
     }
@@ -459,13 +482,13 @@ public class BoogieWrestler : Boogie
         indexs.j -= commander.bodyIndex.j;
     }
 
-    public void TakeInitialPosition() //take position in the squad.
+    public void TakeSquadPosition() //take position in the squad.
     {
         if (commander.currentSquadState == SQUAD_STATE.Moving)
         {
             return;
         }
-        if (leader != null)
+        if (leader != null && currentWState == W_STATE.OnSquad)
         {
             this.transform.rotation = leader.transform.rotation;
         }
@@ -486,23 +509,26 @@ public class BoogieWrestler : Boogie
     {
         while (currentWState == W_STATE.FollowingPlayer)
         {
+            Debug.Log("following player");
             Vector3 playerPos = FindObjectOfType<BoogiesSpawner>().gameObject.transform.position;
             Vector3 randomPos = new Vector3(Random.Range(playerPos.x - 5f, playerPos.x + 5f), playerPos.y, Random.Range(playerPos.z - 5f, playerPos.z + 5f));
             randomPoint = randomPos;
             _agent.SetDestination(randomPoint);
             yield return new WaitForSeconds(Random.Range(1.5f, 3f));
-            yield return null;
         }
     }
 
     public virtual void Update()
     {
-        if (currentWState == W_STATE.OnSquad && state == ON_SQUAD_STATE.Observing && this.leader != this.gameObject) TakeInitialPosition();
-        if (currentWState != W_STATE.OnSquad)
+        if ((currentWState == W_STATE.OnSquad || currentWState == W_STATE.JoiningSquad) && state == ON_SQUAD_STATE.Observing && this.leader != this.gameObject) TakeSquadPosition();
+        if (currentWState != W_STATE.OnSquad && currentWState != W_STATE.FollowingPlayer)
         {
             if (Vector3.Distance(this.transform.position, randomPoint) <= 0.5f)
             {
-                this.currentWState = W_STATE.CoveringPosition;
+                if (currentWState == W_STATE.Moving)
+                {
+                    this.currentWState = W_STATE.CoveringPosition;
+                }
                 if (FindObjectOfType<xMarkerBehavior>() != null)
                 {
                     Destroy(FindObjectOfType<xMarkerBehavior>().gameObject);
@@ -510,25 +536,83 @@ public class BoogieWrestler : Boogie
             }
         }
 
-        if (this.state == ON_SQUAD_STATE.Observing)
+        if (this.currentWState == W_STATE.OnSquad && this.state == ON_SQUAD_STATE.Observing)
         {
             if (commander.visibleTargets.Count > 0)
             {
-                StartCoroutine(ChooseAnEnemy());
+                this.state = ON_SQUAD_STATE.Attacking;
+                Debug.Log("iniciamos coroutinas. ");
+                StartCoroutine(FindAnEnemy());
+                StartCoroutine(ChooseEnemyObjective());
+                StartCoroutine(AttackEnemy());
+                StartCoroutine(GoToEnemy());
+                //StartCoroutine(HandleRotation());
             }
         }
 
-        if (this.state == ON_SQUAD_STATE.Attacking)
+        if (this.currentWState == W_STATE.OnSquad && this.state == ON_SQUAD_STATE.Attacking)
         {
-            _agent.SetDestination(wrestlerSelected.transform.position);
+            if (wrestlerSelected != null)
+            {
+                Vector3 direction = wrestlerSelected.transform.position - this.transform.position;
+                direction.y = 0;
+                transform.rotation = Quaternion.LookRotation(direction, Vector3.up);
+                Debug.Log("Distance: " + Vector3.Distance(this.transform.position, wrestlerSelected.transform.position));
+            }
+        }
+
+        if (this.currentWState == W_STATE.OnSquad && (this.state == ON_SQUAD_STATE.Attacking || this.state == ON_SQUAD_STATE.Observing)){
+            if (wrestlerSelected == null)
+            {
+                if (wrestlersAttackingMe.Count > 0)
+                {
+                    this.state = ON_SQUAD_STATE.Attacking;
+                    BoogieWrestler bw =  wrestlersAttackingMe[Random.Range(0, wrestlersAttackingMe.Count)];
+                    EnemySelected(bw);
+                }
+            }
         }
 
         //TODO: this is for debuging
-        this.team = GetComponentInParent<SquadTeam>().team;
+        if (this.currentWState == W_STATE.OnSquad) this.team = GetComponentInParent<SquadTeam>().team;
     }
 
-    IEnumerator ChooseAnEnemy()
+    IEnumerator HandleRotation()
     {
+        while (true)
+        {
+            yield return new WaitForSeconds(Random.Range(3f, 6f));
+            if (_agent.stoppingDistance > 0)
+            {
+                _agent.stoppingDistance = 0f;
+            }
+            else
+            {
+                _agent.stoppingDistance = attackRange;
+            }
+        }
+    }
+
+    IEnumerator GoToEnemy()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(0.3f);
+            if (wrestlerSelected != null)
+            {
+                _agent.SetDestination(wrestlerSelected.transform.position);
+            }
+        }
+    }
+
+    IEnumerator FindAnEnemy()
+    {
+        if (wrestlerSelected != null)
+        {
+            wrestlerSelected.wrestlersAttackingMe.Remove(this);
+            wrestlerSelected = null;
+        }
+
         yield return new WaitForSeconds(Random.Range(0.1f, 1f));
         if (this.visibleTargets.Count > 0)
         {
@@ -540,21 +624,44 @@ public class BoogieWrestler : Boogie
         }
     }
 
+    IEnumerator ChooseEnemyObjective()
+    {
+        while (true)
+        {
+            if (state == ON_SQUAD_STATE.Attacking)
+            {
+                float time = Random.Range(minTimeChangeObjective, maxTimeChangeObjective);
+                yield return new WaitForSeconds(time);
+
+                if (Random.value > probChangeObjective)
+                {
+                    yield return null;
+                }
+                else
+                {
+                    StartCoroutine(FindAnEnemy());
+                }
+            }
+            yield return null;
+        }
+    }
+
     void TryFindingInOurList(int i)
     {
         if (Random.value <= probabilityPreferences)
         {
-            if (i > Preferences.Length)
+            if (i >= Preferences.Length)
             {
                 return;
             }
             Transform aTry = this.visibleTargets.Find((x) => x.GetComponent<BoogieWrestler>().wrestlerType == Preferences[i]);
             if (aTry != null)
             {
-                wrestlerSelected = aTry.GetComponent<BoogieWrestler>();
-                state = ON_SQUAD_STATE.Attacking;
-                _agent.SetDestination(wrestlerSelected.transform.position);
-                return;
+                if (wrestlerSelected == null)
+                {
+                    EnemySelected(aTry.GetComponent<BoogieWrestler>());
+                    return;
+                }
             }
             else
             {
@@ -569,7 +676,7 @@ public class BoogieWrestler : Boogie
 
     void TryFindingInCommonList(int i)
     {
-        if (Random.value > probabilityPreferences)
+        if (Random.value > probabilityPreferences || this.visibleTargets.Count == 0)
         {
             //find in common
             if (i >= Preferences.Length)
@@ -579,10 +686,11 @@ public class BoogieWrestler : Boogie
             Transform aTry = this.commander.visibleTargets.Find((x) => x.GetComponent<BoogieWrestler>().wrestlerType == Preferences[i]);
             if (aTry != null)
             {
-                wrestlerSelected = aTry.GetComponent<BoogieWrestler>();
-                state = ON_SQUAD_STATE.Attacking;
-                _agent.SetDestination(wrestlerSelected.transform.position);
-                return;
+                if (wrestlerSelected == null)
+                {
+                    EnemySelected(aTry.GetComponent<BoogieWrestler>());
+                    return;
+                }
             }
             else
             {
@@ -592,6 +700,86 @@ public class BoogieWrestler : Boogie
         else
         {
             TryFindingInOurList(0);
+        }
+    }
+
+    void EnemySelected(BoogieWrestler bw)
+    {
+        wrestlerSelected = bw;
+        //_agent.stoppingDistance = attackRange;
+        bw.wrestlersAttackingMe.Add(this);
+    }
+
+    IEnumerator AttackEnemy()
+    {
+        while (true)
+        {
+            if (wrestlerSelected != null)
+            {
+                float distance = Vector3.Distance(this.transform.position, wrestlerSelected.transform.position);
+                if (distance <= attackRange)
+                {
+                    yield return new WaitForSeconds(attackSpeed);
+                    Attack();
+                }
+            }
+            yield return null;
+        }
+    }
+
+    void Attack()
+    {
+        if (wrestlerSelected != null)
+        {
+            GetDamage(attackDamage);
+            //StartCoroutine(wrestlerSelected.GetDamage((wrestlerSelected.transform.position - this.transform.position).normalized, attackDamage));
+        }
+    }
+
+    void GetDamage(float amount)
+    {
+        this.health -= amount;
+        if (health <= 0)
+        {
+            Die();
+        }
+    }
+
+    void Die()
+    {
+        _agent.enabled = false;
+        wrestlerSelected.wrestlersAttackingMe.Remove(this);
+        wrestlerSelected = null;
+
+        //si era el commander y el commander era el leader darle leader a otro random (o el que mas vida tenga)
+        //a partir de este momento no se pueden mover, solo pueden cubrirse entre ellos pero no moverse.
+        if (this.commander != this) //si no era commander
+        {
+            commander.currentSquadList[listPosition] = SquadConfiguration.SQUAD_ROL.None;
+            commander.squadWrestlers.Remove(this);
+            switch (wrestlerType){
+                case WRESTLER_TYPE.Close:
+                    commander.closeWrestlers.RemoveAt(0);
+                    break;
+                case WRESTLER_TYPE.Distance:
+                    commander.distanceWrestlers.RemoveAt(0);
+                    break;
+                case WRESTLER_TYPE.Giant:
+                    commander.giantWrestlers.RemoveAt(0);
+                    break;
+            }
+
+            if (this.leader == this.gameObject)
+            {
+                BoogieWrestler newLeader = commander.GetHealthestWrestler();
+                newLeader.AssignAsLeader();
+            }
+
+            this.GetComponent<Collider>().enabled = false;
+            this.transform.DOMoveY(-10f, 5f).OnComplete(()=>
+            {
+                Destroy(this.gameObject);
+            });
         }
     }
 }

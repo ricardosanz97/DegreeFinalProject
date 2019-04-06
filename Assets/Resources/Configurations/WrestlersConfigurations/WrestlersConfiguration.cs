@@ -33,10 +33,10 @@ public class WrestlersConfiguration : ScriptableObject
     #endregion
 
     #region attackRange
-    public float commanderAttackRange = 1f;
-    public float giantAttackRange = 1f;
-    public float closeAttackRange = 1f;
-    public float distanceAttackRange = 5f;
+    public float commanderAttackRange = 1.5f;
+    public float giantAttackRange = 1.5f;
+    public float closeAttackRange = 1.5f;
+    public float distanceAttackRange = 7f;
     #endregion
 
     #region attackDamage
@@ -77,7 +77,8 @@ public class WrestlersConfiguration : ScriptableObject
     [Range(0f, 1f)]
     public float giantProbChange = 0.75f;
     [Range(0f, 1f)]
-    public float commanderProbChange = 0.6f; 
+    public float commanderProbChange = 0.6f;
+    #endregion
 
     #region speed
     public float distanceMinSpeed = 9f;

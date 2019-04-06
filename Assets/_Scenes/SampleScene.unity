@@ -6464,7 +6464,7 @@ MonoBehaviour:
   collectorsConfig: {fileID: 11400000, guid: 4d3643bbc69df4da89fadebdc2fa8dff, type: 2}
   explorersConfig: {fileID: 11400000, guid: 91b684304341e41a78aecd2e818cdea7, type: 2}
   cleanersConfig: {fileID: 11400000, guid: 86aecdf309cad4bb8903189cd7494b10, type: 2}
-  wrestlersConfig: {fileID: 11400000, guid: a8321d00dd2c6304495e4a320bada341, type: 2}
+  wrestlersConfig: {fileID: 11400000, guid: f0efa73b7929b41ce97ef152a93686e6, type: 2}
   boogiesCleanersKnowCollectorMachinePosition: 0
   radiusSpawn: 2
   positionAccepted: 0

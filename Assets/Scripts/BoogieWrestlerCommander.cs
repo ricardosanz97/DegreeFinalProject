@@ -13,13 +13,13 @@ public enum SQUAD_STATE
 
 public class BoogieWrestlerCommander : BoogieWrestler
 {
-    public List<BoogieWrestlerDistance> distanceWrestlers;
-    public List<BoogieWrestlerClose> closeWrestlers;
-    public List<BoogieWrestlerGiant> giantWrestlers;
-    [HideInInspector]public List<BoogieWrestler> squadWrestlers;
+    [HideInInspector]public List<BoogieWrestlerDistance> distanceWrestlers;
+    [HideInInspector]public List<BoogieWrestlerClose> closeWrestlers;
+    [HideInInspector]public List<BoogieWrestlerGiant> giantWrestlers;
+    public List<BoogieWrestler> squadWrestlers;
     [HideInInspector]public SquadConfiguration.Index leaderIndex;
     [HideInInspector]public SquadConfiguration.Index bodyIndex;
-    public SquadConfiguration.Squad squadInfo;
+    [HideInInspector]public SquadConfiguration.Squad squadInfo;
 
     [HideInInspector]public List<SquadConfiguration.SQUAD_ROL> currentSquadList;
 
@@ -158,14 +158,8 @@ public class BoogieWrestlerCommander : BoogieWrestler
                 //BreakFormation();
             }
             ,
-            () =>
-            {
-                ChangePosition();
-            },
-            () =>
-            {
-                AssignAsLeader();
-            }
+            ChangePosition,
+            AssignAsLeader
             );
         }
     }
@@ -227,7 +221,6 @@ public class BoogieWrestlerCommander : BoogieWrestler
         this.currentSquadState = SQUAD_STATE.Moving;
         UIController.I.UIShowXMarker(clickPosition);
         randomPoint = clickPosition;
-        //leader.GetComponent<BoogieWrestler>()._agent.SetDestination(randomPoint);
         foreach (BoogieWrestler bw in squadWrestlers)
         {
             bw.MoveHere(randomPoint);
@@ -247,14 +240,6 @@ public class BoogieWrestlerCommander : BoogieWrestler
         if (!commander.GetComponent<BoogieWrestler>().isLeaderPosition)
         {
             BoogieWrestler boogieOnLeaderPos = commander.squadWrestlers.Find((x) => x.isLeaderPosition);
-            /*
-            Debug.Log(boogieOnLeaderPos.wrestlerType.ToString());
-            Debug.Log("pasa por aqui");
-            this.commander.indexs = new SquadConfiguration.Index(boogieOnLeaderPos.indexs.i, boogieOnLeaderPos.indexs.j);
-            boogieOnLeaderPos.indexs = new SquadConfiguration.Index(auxIndexs.i, auxIndexs.j);
-            boogieOnLeaderPos.isLeaderPosition = false;
-            commander.isLeaderPosition = true;
-            */
             boogieOnLeaderPos.ChangeSelectedWrestler(this);
         }
 
@@ -282,4 +267,20 @@ public class BoogieWrestlerCommander : BoogieWrestler
         giantWrestlers.Clear();
         GetSquadInformation();
     }
+
+    public BoogieWrestler GetHealthestWrestler()
+    {
+        float maxHealth = 0;
+        BoogieWrestler healthest = null;
+        for (int i = 0; i<squadWrestlers.Count; i++)
+        {
+            if (squadWrestlers[i].health > maxHealth)
+            {
+                maxHealth = squadWrestlers[i].health;
+                healthest = squadWrestlers[i];
+            }
+        }
+        return healthest;
+    }
+
 }
