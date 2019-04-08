@@ -137,7 +137,12 @@ public class UIController : Singleton<UIController>
         if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Npc")) && !selectingSquadToJoin && !selectingBodyToCover && selectingWrestlerToChange)
         {
             BoogieWrestler bw = hit.transform.GetComponent<BoogieWrestler>() ?? null;
-            if (bw == null || bw.currentWState != W_STATE.OnSquad)//if is not a boogie wrestler or it is not in a squad or it is a squad leader...
+            if (bw == null || 
+            (bw.currentState != STATE.OnSquadMoving 
+             && bw.currentState != STATE.OnSquadCovering 
+             && bw.currentState != STATE.OnSquadAttacking 
+             && bw.currentState != STATE.OnSquadObserving 
+             && bw.currentState != STATE.OnSquadRunningAway))//if is not a boogie wrestler or it is not in a squad or it is a squad leader...
             {
                 SelectorMouseBehavior.Destroy();
                 return;

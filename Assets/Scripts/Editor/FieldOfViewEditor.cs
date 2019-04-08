@@ -24,6 +24,11 @@ public class FieldOfViewEditor : Editor
         }
         foreach (Transform visibleTarget in fow.bw.visibleTargets)
         {
+            if (visibleTarget == null)
+            {
+                //TODO: esto se tendría que mejorar, es un poco sucio
+                continue;
+            }
             Handles.DrawLine(fow.transform.position, visibleTarget.position);
         }
     }

@@ -1,15 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using UnityEngine;
-
-public enum SQUAD_STATE
-{
-    Moving,
-    CoveringPosition,
-    CoveringPlayer,
-    CoveringBody,
-    RunningAway
-}
 
 public class BoogieWrestlerCommander : BoogieWrestler
 {
@@ -27,10 +19,10 @@ public class BoogieWrestlerCommander : BoogieWrestler
 
     public InteractableBody coveringBody;
 
-    public SQUAD_STATE currentSquadState = SQUAD_STATE.CoveringPosition;
-
     public float wrestlersOffset = 1.8f;
     [HideInInspector]public bool selectingPosition = false;
+
+    private bool coroutineStarted = false;
 
     public void SetInitialPoint(Vector3 position)
     {
@@ -51,6 +43,7 @@ public class BoogieWrestlerCommander : BoogieWrestler
         //this.ChangeIndexsRelativeToLeader();
         foreach (BoogieWrestler bw in squadWrestlers)
         {
+            bw.currentState = STATE.OnSquadCovering;
             bw.leader = coveringBody.gameObject;
             bw.indexs.i += auxIndexs.i;
             bw.indexs.j += auxIndexs.j;
@@ -62,7 +55,6 @@ public class BoogieWrestlerCommander : BoogieWrestler
             i.j += auxIndexs.j;
         }
 
-        currentSquadState = SQUAD_STATE.CoveringBody;
         UIController.OnInteractableBodyPressed -= InteractableBodySelected;
         UIController.I.UIHideMouseSelector();
         UIController.I.selectingBodyToCover = false;
@@ -151,11 +143,11 @@ public class BoogieWrestlerCommander : BoogieWrestler
             UISquadIndividualOptionsController.Create(
             () =>
             {
-                //FollowPlayer();
+                //TODO: no mostrar este botón (follow player)
             },
             () =>
             {
-                //BreakFormation();
+                //TODO: no mostrar este botón (break formation)
             }
             ,
             ChangePosition,
@@ -218,11 +210,11 @@ public class BoogieWrestlerCommander : BoogieWrestler
         {
             Destroy(FindObjectOfType<xMarkerBehavior>().gameObject);
         }
-        this.currentSquadState = SQUAD_STATE.Moving;
         UIController.I.UIShowXMarker(clickPosition);
         randomPoint = clickPosition;
         foreach (BoogieWrestler bw in squadWrestlers)
         {
+            bw.currentState = STATE.OnSquadMoving;
             bw.MoveHere(randomPoint);
         }
     }
@@ -244,18 +236,45 @@ public class BoogieWrestlerCommander : BoogieWrestler
         }
 
         this.AssignAsLeader();
+
+        foreach (BoogieWrestler bw in squadWrestlers)
+        {
+            bw.currentState = STATE.OnSquadObserving;
+        }
     }
 
     public override void Update()
     {
         base.Update();
-        if (currentSquadState == SQUAD_STATE.Moving && Vector3.Distance(this.transform.position, randomPoint) <= 0.5f)
+
+        this.visibleTargets.RemoveAll((x) => x == null || x.GetComponent<BoogieWrestler>() == null);
+
+        if (currentState == STATE.OnSquadMoving && Vector3.Distance(this.transform.position, randomPoint) <= 0.5f)
         {
-            this.currentSquadState = SQUAD_STATE.CoveringPosition;
+            if (coveringBody != null)
+            {
+                foreach (BoogieWrestler bw in squadWrestlers)
+                {
+                    bw.currentState = STATE.OnSquadCovering;
+                }
+            }
+            else
+            {
+                foreach (BoogieWrestler bw in squadWrestlers)
+                {
+                    bw.currentState = STATE.OnSquadObserving;
+                }
+            }
             if (FindObjectOfType <xMarkerBehavior>() != null)
             {
                 Destroy(FindObjectOfType<xMarkerBehavior>().gameObject);
             }
+        }
+
+        if (!coroutineStarted && currentState == STATE.OnSquadAttacking)
+        {
+            StartCoroutine(CheckForNewEnemies());
+            coroutineStarted = true;
         }
     }
 
@@ -283,4 +302,28 @@ public class BoogieWrestlerCommander : BoogieWrestler
         return healthest;
     }
 
+    IEnumerator CheckForNewEnemies()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(0.5f);
+            if (currentState == STATE.OnSquadAttacking)
+            {
+                if (this.visibleTargets.Count > 0)
+                {
+                    foreach (Transform t in commander.visibleTargets)
+                    {
+                        foreach (BoogieWrestler bw in t.GetComponent<BoogieWrestler>().commander.squadWrestlers)
+                        {
+                            if (!this.GetComponentInParent<SquadTeam>().enemyWrestlers.Contains(bw))
+                            {
+                                this.GetComponentInParent<SquadTeam>().enemyWrestlers.Add(bw);
+                            }
+                        }
+                    }
+                }
+            }
+            yield return null;
+        }
+    }
 }

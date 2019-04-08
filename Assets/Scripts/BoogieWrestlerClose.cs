@@ -7,26 +7,16 @@ public class BoogieWrestlerClose : BoogieWrestler
     public override void WrestlerClicked(int clickButton)
     {
         base.WrestlerClicked(clickButton);
-        if (clickButton == 1 && currentWState == W_STATE.OnSquad)
+        if (clickButton == 1 &&
+            (currentState == STATE.OnSquadMoving || currentState == STATE.OnSquadAttacking
+            || currentState == STATE.OnSquadCovering || currentState == STATE.OnSquadObserving
+            || currentState == STATE.OnSquadRunningAway))
         {
             UISquadIndividualOptionsController.Create(
-            () =>
-            {
-                FollowPlayer();
-            },
-            () =>
-            {
-                BreakFormation();
-            }
-            ,
-            () =>
-            {
-                ChangePosition();
-            },
-            ()=>
-            {
-                AssignAsLeader();
-            }
+            FollowPlayer,
+            BreakFormation,
+            ChangePosition,
+            AssignAsLeader
             );
         }
     }
