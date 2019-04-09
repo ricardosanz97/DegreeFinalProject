@@ -11,7 +11,10 @@ public class BoogieWrestlerCommander : BoogieWrestler
     public List<BoogieWrestler> squadWrestlers;
     [HideInInspector]public SquadConfiguration.Index leaderIndex;
     [HideInInspector]public SquadConfiguration.Index bodyIndex;
-    [HideInInspector]public SquadConfiguration.Squad squadInfo;
+    /*[HideInInspector]*/public SquadConfiguration.Squad squadInfo;
+
+    public List<BoogieWrestler> needHelpBoogies = new List<BoogieWrestler>();
+    private bool CheckCoveringEnabled = false;
 
     [HideInInspector]public List<SquadConfiguration.SQUAD_ROL> currentSquadList;
 
@@ -23,6 +26,13 @@ public class BoogieWrestlerCommander : BoogieWrestler
     [HideInInspector]public bool selectingPosition = false;
 
     private bool coroutineStarted = false;
+    public float timeCoverAgain;
+
+    public override void SetConfiguration()
+    {
+        base.SetConfiguration();
+        timeCoverAgain = Random.Range(minTimeCoverAgain, maxTimeCoverAgain);
+    }
 
     public void SetInitialPoint(Vector3 position)
     {
@@ -41,8 +51,16 @@ public class BoogieWrestlerCommander : BoogieWrestler
             body.GetComponent<BoogieWrestler>().lastPos = new SquadConfiguration.Index(body.GetComponent<BoogieWrestler>().indexs.i, body.GetComponent<BoogieWrestler>().indexs.j);
         }
         //this.ChangeIndexsRelativeToLeader();
+        Debug.Log("change state to squadCovering");
         foreach (BoogieWrestler bw in squadWrestlers)
         {
+            if (bw.wrestlerSelected != null)
+            {
+                bw.wrestlerSelected = null;
+            }
+            bw.visibleTargets.Clear();
+            bw._agent.stoppingDistance = 0f;
+
             bw.currentState = STATE.OnSquadCovering;
             bw.leader = coveringBody.gameObject;
             bw.indexs.i += auxIndexs.i;
@@ -180,6 +198,7 @@ public class BoogieWrestlerCommander : BoogieWrestler
     {
         if (leader.GetComponent<BoogieWrestler>() == null)
         {
+            Debug.Log("LEADER = COMMANDER");
             leader = commander.gameObject;
             SquadConfiguration.Index auxIndexs = new SquadConfiguration.Index(this.indexs.i, this.indexs.j);
             
@@ -214,7 +233,17 @@ public class BoogieWrestlerCommander : BoogieWrestler
         randomPoint = clickPosition;
         foreach (BoogieWrestler bw in squadWrestlers)
         {
-            bw.currentState = STATE.OnSquadMoving;
+            if (bw.commander.coveringBody != null)
+            {
+                Debug.Log("ON SQUAD MOVING COVERING");
+                bw.currentState = STATE.OnSquadCoveringMoving;
+            }
+            else
+            {
+                Debug.Log("ON SQUAD MOVING");
+                bw.currentState = STATE.OnSquadMoving;
+            }
+          
             bw.MoveHere(randomPoint);
         }
     }
@@ -243,16 +272,75 @@ public class BoogieWrestlerCommander : BoogieWrestler
         }
     }
 
+    public void INeedHelp(BoogieWrestler bw)
+    {
+        if (needHelpBoogies.Contains(bw))
+        {
+            return;
+        }
+        Debug.Log("lets add to the needed help list " + bw.wrestlerType);
+        needHelpBoogies.Add(bw);
+        if (!CheckCoveringEnabled)
+        {
+            StartCoroutine(CoverLowWrestler());
+            CheckCoveringEnabled = true;
+        }
+        
+    }
+
+    private BoogieWrestler GetLowestBoogie()
+    {
+        float lowest = Mathf.Infinity;
+        BoogieWrestler lowestWrestler = null;
+        for (int i = 0; i<needHelpBoogies.Count; i++)
+        {
+            if ((needHelpBoogies[i].health/needHelpBoogies[i].initialHealth) < lowest)
+            {
+                lowest = needHelpBoogies[i].health/needHelpBoogies[i].initialHealth;
+                lowestWrestler = needHelpBoogies[i];
+            }
+        }
+        return lowestWrestler;
+    }
+
+    IEnumerator CoverLowWrestler()
+    {
+        while (true)
+        {
+            Debug.Log("Getting lowest boogie. ");
+            BoogieWrestler needsMoreHelp = GetLowestBoogie();
+            if (needsMoreHelp != null)
+            {
+                foreach (BoogieWrestler bw in squadWrestlers)
+                {
+                    if (bw.currentState != STATE.OnSquadCoveringMoving && bw.currentState != STATE.OnSquadCovering)
+                    {
+                        bw.currentState = STATE.OnSquadCovering;
+                    }
+                }
+                Debug.Log("Lowest boogie is " + needsMoreHelp.wrestlerType.ToString());
+                if (this.coveringBody != null)
+                {
+                    this.UncoverBody();
+                }
+               
+                InteractableBodySelected(needsMoreHelp);
+            }
+            yield return new WaitForSeconds(timeCoverAgain);
+        }
+    }
+
     public override void Update()
     {
         base.Update();
 
         this.visibleTargets.RemoveAll((x) => x == null || x.GetComponent<BoogieWrestler>() == null);
 
-        if (currentState == STATE.OnSquadMoving && Vector3.Distance(this.transform.position, randomPoint) <= 0.5f)
+        if ((currentState == STATE.OnSquadMoving || currentState == STATE.OnSquadCoveringMoving) && Vector3.Distance(this.transform.position, randomPoint) <= 0.5f)
         {
             if (coveringBody != null)
             {
+                Debug.Log("change state to OnSquadCovering");
                 foreach (BoogieWrestler bw in squadWrestlers)
                 {
                     bw.currentState = STATE.OnSquadCovering;

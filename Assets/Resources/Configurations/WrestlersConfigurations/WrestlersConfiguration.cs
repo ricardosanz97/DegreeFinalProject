@@ -5,17 +5,17 @@ using UnityEngine;
 public class WrestlersConfiguration : ScriptableObject
 {
     #region health
-    public float commanderHealth = 100;
-    public float giantHealth = 150;
-    public float closeHealth = 70;
-    public float distanceHealth = 50;
+    public float commanderHealth = 250;
+    public float giantHealth = 200;
+    public float closeHealth = 150;
+    public float distanceHealth = 120;
     #endregion
 
     #region attackSpeed
-    public float commanderAttackSpeed = 1.5f;
-    public float giantAttackSpeed = 2f;
-    public float closeAttackSpeed = 1f;
-    public float distanceAttackSpeed = 1.2f;
+    public float commanderAttackSpeed = 3f;
+    public float giantAttackSpeed = 4f;
+    public float closeAttackSpeed = 2.5f;
+    public float distanceAttackSpeed = 4f;
     #endregion
 
     #region visionDistance
@@ -33,9 +33,6 @@ public class WrestlersConfiguration : ScriptableObject
     #endregion
 
     #region attackRange
-    public float commanderAttackRange = 1.5f;
-    public float giantAttackRange = 1.5f;
-    public float closeAttackRange = 1.5f;
     public float distanceAttackRange = 7f;
     #endregion
 
@@ -105,7 +102,7 @@ public class WrestlersConfiguration : ScriptableObject
     public float timeVariateSpeed = 3f;
     #endregion
 
-    #region preferences
+    #region probabilityPreferences
     public float closeProbabilityPreferences = 0.85f;
     public float giantProbabilityPreferences = 0.7f;
     public float commanderProbabilityPreferences = 0.8f;
@@ -141,5 +138,14 @@ public class WrestlersConfiguration : ScriptableObject
         BoogieWrestler.WRESTLER_TYPE.Commander,
         BoogieWrestler.WRESTLER_TYPE.Distance
     };
+    #endregion
+
+    #region emergencyParameters
+    public float percentHpCoverClose = 0.6f;
+    public float percentHpCoverDistance = 0.6f;
+    public float percentHpCoverCommander = 0.5f;
+    public float percentHpCoverGiant = 0.4f;
+    public float minTimeCoverAgain = 6f;
+    public float maxTimeCoverAgain = 12f;
     #endregion
 }

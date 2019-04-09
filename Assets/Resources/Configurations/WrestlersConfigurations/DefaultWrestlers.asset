@@ -12,14 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c8861e13c366486bb01b0398764ff17, type: 3}
   m_Name: DefaultWrestlers
   m_EditorClassIdentifier: 
-  commanderHealth: 100
-  giantHealth: 150
-  closeHealth: 70
-  distanceHealth: 50
-  commanderAttackSpeed: 1.5
-  giantAttackSpeed: 2
-  closeAttackSpeed: 1
-  distanceAttackSpeed: 1.2
+  commanderHealth: 250
+  giantHealth: 200
+  closeHealth: 150
+  distanceHealth: 120
+  commanderAttackSpeed: 3
+  giantAttackSpeed: 4
+  closeAttackSpeed: 2.5
+  distanceAttackSpeed: 4
   commanderVisionDistance: 8
   giantVisionDistance: 4
   closeVisionDistance: 6
@@ -28,9 +28,6 @@ MonoBehaviour:
   giantFieldView: 90
   closeFieldView: 55
   distanceFieldView: 45
-  commanderAttackRange: 1.5
-  giantAttackRange: 1.5
-  closeAttackRange: 1.5
   distanceAttackRange: 7
   commanderAttackDamage: 5
   giantAttackDamage: 3
@@ -79,5 +76,9 @@ MonoBehaviour:
   distanceProbabilityPreferences: 0.6
   CommanderPreferences: 00000000030000000200000001000000
   GiantPreferences: 03000000020000000100000000000000
-  ClosePreferences: 01000000020000000300000000000000
+  ClosePreferences: 01000000020000000100000000000000
   DistancePreferences: 02000000030000000000000001000000
+  percentHpCoverClose: 0.6
+  percentHpCoverDistance: 0.6
+  percentHpCoverCommander: 0.5
+  percentHpCoverGiant: 0.4

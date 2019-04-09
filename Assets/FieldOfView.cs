@@ -29,11 +29,12 @@ public class FieldOfView : MonoBehaviour
 
     void FindVisibleTargets()
     {
-        if (bw == null)
+        bw.visibleTargets.Clear();
+        if (bw == null || bw.currentState == STATE.OnSquadCovering)
         {
             return;
         }
-        bw.visibleTargets.Clear();
+        
         Collider[] targetsInViewRadius = Physics.OverlapSphere(transform.position, viewRadius, targetMask);
         for (int i = 0; i<targetsInViewRadius.Length; i++)
         {

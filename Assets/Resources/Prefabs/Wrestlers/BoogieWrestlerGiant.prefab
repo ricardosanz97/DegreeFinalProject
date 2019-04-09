@@ -68,7 +68,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 1013227023}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.47
+  m_Radius: 0.51
   m_Speed: 5
   m_Acceleration: 60
   avoidancePriority: 50
@@ -78,7 +78,7 @@ NavMeshAgent:
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 1.84
-  m_BaseOffset: 0.25
+  m_BaseOffset: 0.53
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 2
 --- !u!54 &3887739311187424516
@@ -248,6 +248,7 @@ MonoBehaviour:
   isLeaderPosition: 0
   team: 0
   currentState: 0
+  initialHealth: 0
   health: 0
   attackSpeed: 0
   visionDistance: 0
@@ -263,6 +264,10 @@ MonoBehaviour:
   maxTimeChangeObjective: 0
   probChangeObjective: 0
   probabilityPreferences: 0
+  minTimeCoverAgain: 0
+  maxTimeCoverAgain: 0
+  closeEnoughToAttack: 0
+  percentHpToCover: 0
   Preferences: 
   visibleTargets: []
   wrestlerSelected: {fileID: 0}
