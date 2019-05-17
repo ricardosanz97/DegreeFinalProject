@@ -10,9 +10,10 @@ public class UIIndividualWrestlerOptionsController : GenericPanelController
     public Button FollowPlayerButton;
     public Button MovePositionButton;
     public Button AttackPosotionButton;
+    public Button BackToPlayerButton;
     public Button CancelButton;
 
-    public static UIIndividualWrestlerOptionsController Create(Action callbackJoinSquad, Action callbackFollowPlayer, Action callbackMovePosition, Action callbackAttack)
+    public static UIIndividualWrestlerOptionsController Create(Action callbackJoinSquad, Action callbackFollowPlayer, Action callbackMovePosition, Action callbackBackToPlayer)
     {
         if (FindObjectOfType<UIIndividualWrestlerOptionsController>() != null)
         {
@@ -25,7 +26,7 @@ public class UIIndividualWrestlerOptionsController : GenericPanelController
         UIIndividualWrestlerController.JoinSquadButton.onClick.AddListener(() => { callbackJoinSquad(); UIIndividualWrestlerController.ClosePanel(); });
         UIIndividualWrestlerController.FollowPlayerButton.onClick.AddListener(() => { callbackFollowPlayer(); UIIndividualWrestlerController.ClosePanel(); });
         UIIndividualWrestlerController.MovePositionButton.onClick.AddListener(() => { callbackMovePosition(); UIIndividualWrestlerController.ClosePanel(); });
-        UIIndividualWrestlerController.AttackPosotionButton.onClick.AddListener(() => { callbackAttack(); UIIndividualWrestlerController.ClosePanel(); });
+        UIIndividualWrestlerController.BackToPlayerButton.onClick.AddListener(() => { callbackBackToPlayer(); UIIndividualWrestlerController.ClosePanel(); });
         UIIndividualWrestlerController.CancelButton.onClick.AddListener(() => { UIIndividualWrestlerController.ClosePanel(); });
 
         UIIndividualWrestlerController.transform.SetParent(GameObject.Find("MainCanvas").transform, false);

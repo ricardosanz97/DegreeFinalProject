@@ -11,8 +11,9 @@ public enum BoogieType
     Collector
 }
 
-public abstract class Boogie : InteractableBody
+public abstract class Boogie : AttackTarget
 {
+    #region parameters
     public BoogieType type;
     [HideInInspector]public Vector3 initialPoint;
     [HideInInspector]public Vector3 randomPoint;
@@ -20,18 +21,33 @@ public abstract class Boogie : InteractableBody
     public float maxTimeToFindObjective;
     public float timeToCheckIfWorkFinished;
     [HideInInspector]public bool objectiveNotFoundTimerEnabled = false;
-    [HideInInspector]public bool backToPlayer = false;
+    public bool backToPlayer = false;
 
     [HideInInspector]public NavMeshAgent _agent;
+    [HideInInspector] public Animator _anim;
 
     public float minSpeed;
     public float maxSpeed;
+    public float speed;
     public float probabilityChangeSpeed;
     public float timeToChangeSpeed;
+    #endregion
 
     public virtual void Awake()
     {
-        _agent = GetComponent<NavMeshAgent>();   
+        _agent = GetComponent<NavMeshAgent>();
+        _anim = GetComponent<Animator>();
+    }
+
+    public void ForceIdle()
+    {
+        StartCoroutine(ForcingIdle());
+    }
+
+    IEnumerator ForcingIdle()
+    {
+        yield return new WaitForSeconds(1f);
+        _anim.SetInteger("state", -1);
     }
 
     public void SetObjective(Obstacle obs)
@@ -42,6 +58,7 @@ public abstract class Boogie : InteractableBody
 
     public IEnumerator ObjectiveNotFound()
     {
+        Debug.Log("max time to find objective = " + maxTimeToFindObjective);
         yield return new WaitForSeconds(maxTimeToFindObjective);
         if (currentObjective == null)
         {
@@ -56,15 +73,17 @@ public abstract class Boogie : InteractableBody
     public Vector3 GetRandomPointAroundObjective(Vector3 centerPoint)
     {
         return new Vector3(Random.Range(centerPoint.x - currentObjective._col.bounds.size.x, centerPoint.x + currentObjective._col.bounds.size.x),
-             -0.5f,
+             0.16f,
              Random.Range(centerPoint.z - currentObjective._col.bounds.size.z, centerPoint.z + currentObjective._col.bounds.size.z));
     }
 
     public Vector3 GetRandomPointAroundCircle(Vector3 centerPoint)
     {
-        return new Vector3(Random.Range(initialPoint.x - BoogiesSpawner.RadiusCircle, initialPoint.x + BoogiesSpawner.RadiusCircle),
-            -0.5f,
+        Vector3 position = new Vector3(Random.Range(initialPoint.x - BoogiesSpawner.RadiusCircle, initialPoint.x + BoogiesSpawner.RadiusCircle),
+            0.16f,
             Random.Range(initialPoint.z - BoogiesSpawner.RadiusCircle, initialPoint.z + BoogiesSpawner.RadiusCircle));
+        return position;
+        //while (_agent.)
     }
 
     public Vector3 GetRandomPointAroundPlayer(Vector3 centerPoint)

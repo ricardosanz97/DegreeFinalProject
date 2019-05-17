@@ -4,6 +4,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New CleanersConfig", menuName = "CleanersConfiguration")]
 public class CleanersConfiguration : ScriptableObject
 {
+    [Header("Speed Settings")]
     #region speed
     public float minSpeed = 4f;
     public float maxSpeed = 7f;
@@ -11,10 +12,10 @@ public class CleanersConfiguration : ScriptableObject
     public float probabilityVariateSpeed = 0.4f;
     public float timeTryVariateSpeed = 2f;
     #endregion
-
-    public float maxTimeToFindObjective = 10f;
+    [Header("Logic Settings")]
+    public float maxTimeToFindObjective = Mathf.Infinity;
     public float timeToCheckIfWorkWinished = 2f;
-
+    [Header("Cleaning Settings")]
     #region cleaning
     public float timeToChargeAgain = 2f;
     public float timeToUnchargeAgain = 2f;

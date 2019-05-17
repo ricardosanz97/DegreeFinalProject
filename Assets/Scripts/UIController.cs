@@ -106,7 +106,7 @@ public class UIController : Singleton<UIController>
             }
         }
 
-        if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Body", "Npc")) && !selectingSquadToJoin && selectingBodyToCover && !selectingWrestlerToChange)
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Body", "Npc", "Player")) && !selectingSquadToJoin && selectingBodyToCover && !selectingWrestlerToChange)
         {
             if (SelectorMouseBehavior.IsActive())
             {
@@ -225,7 +225,7 @@ public class UIController : Singleton<UIController>
                 if (!BoogiesSpawner.CanSpawnSquad)
                 {
                     BoogiesSpawner.SetCanSpawnSquad(true);
-                    BoogiesSpawner.SpawnSquadDisabled();
+                    BoogiesSpawner.SpawnAllieSquadDisabled();
                 }
                 BoogiesSpawner.SpawnBoogiesEnabled();
                 BoogiesSpawner.SetCanSpawnBoogies(false);
@@ -253,12 +253,34 @@ public class UIController : Singleton<UIController>
             }
             else
             {
-                BoogiesSpawner.SpawnSquadDisabled();
+                BoogiesSpawner.SpawnAllieSquadDisabled();
                 BoogiesSpawner.SetCanSpawnSquad(true);
                 UISpawnSquadDisabled();
             }
             Debug.Log("Open popup formations because we press G key");
-            UISquadSelectorController.Create();
+            UISquadSelectorController.Create(team:TEAM.A);
+        }
+
+        if (Input.GetKeyDown(KeyCode.H))
+        {
+            if (BoogiesSpawner.CanSpawnSquad)
+            {
+                if (!BoogiesSpawner.CanSpawnBoogies)
+                {
+                    BoogiesSpawner.SetCanSpawnBoogies(true);
+                    BoogiesSpawner.SpawnBoogiesDisabled();
+                    UISpawnSquadDisabled();
+                }
+                BoogiesSpawner.SetCanSpawnSquad(false);
+            }
+            else
+            {
+                BoogiesSpawner.SpawnEnemySquadDisabled();
+                BoogiesSpawner.SetCanSpawnSquad(true);
+                UISpawnSquadDisabled();
+            }
+            Debug.Log("Open popup formations because we press G key");
+            UISquadSelectorController.Create(team: TEAM.B);
         }
 
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -310,12 +332,17 @@ public class UIController : Singleton<UIController>
         }
     }
 
-    public void HandleSpawnSquadLogic()
+    public void HandleSpawnAllieSquadLogic()
     {
-        BoogiesSpawner.SpawnSquadEnabled();
+        BoogiesSpawner.SpawnAllieSquadEnabled();
         OnSpawnSquadEnabled?.Invoke();
     }
 
+    public void HandleSpawnEnemySquadLogic()
+    {
+        BoogiesSpawner.SpawnEnemySquadEnabled();
+        OnSpawnSquadEnabled?.Invoke();
+    }
 
     public void UISpawnBoogiesEnabled()
     {
@@ -359,13 +386,22 @@ public class UIController : Singleton<UIController>
         }
     }
 
-    public void OnSpawnSquadPositionSelected(Vector3 position)
+    public void OnSpawnAllieSquadPositionSelected(Vector3 position)
     {
         //FindObjectOfType<BoogiesSpawner>().CreateSquad(FindObjectOfType<BoogiesSpawner>().currentFormationSelected, position);
-        FindObjectOfType<BoogiesSpawner>().SpawnSquad(position, FindObjectOfType<SquadConfiguration>().currentSquadSelected);
+        FindObjectOfType<BoogiesSpawner>().SpawnAllieSquad(position, FindObjectOfType<BoogiesSpawner>().transform.rotation, FindObjectOfType<SquadConfiguration>().currentSquadSelected);
         FindObjectOfType<SquadConfiguration>().currentSquadSelected = null;
         UIHideMouseSelector();
-        OnGroundClicked -= OnSpawnSquadPositionSelected;
+        OnGroundClicked -= OnSpawnAllieSquadPositionSelected;
+    }
+
+    public void OnSpawnEnemySquadPositionSelected(Vector3 position)
+    {
+        //FindObjectOfType<BoogiesSpawner>().CreateSquad(FindObjectOfType<BoogiesSpawner>().currentFormationSelected, position);
+        FindObjectOfType<BoogiesSpawner>().SpawnEnemySquad(position, FindObjectOfType<BoogiesSpawner>().transform.rotation, FindObjectOfType<SquadConfiguration>().currentSquadSelected);
+        FindObjectOfType<SquadConfiguration>().currentSquadSelected = null;
+        UIHideMouseSelector();
+        OnGroundClicked -= OnSpawnEnemySquadPositionSelected;
     }
 
     public void UIShowXMarker(Vector3 position)

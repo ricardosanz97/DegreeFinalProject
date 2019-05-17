@@ -5,7 +5,8 @@ using UnityEngine;
 public enum ObstacleType
 {
     Debris,
-    Enemy
+    Elixir,
+    Multipath
 }
 
 public class Obstacle : MonoBehaviour
@@ -14,6 +15,7 @@ public class Obstacle : MonoBehaviour
     public BoogiesSpawner boogiesSpawner;
     public ObstacleType type;
     public Collider _col;
+    public bool completed;
     #endregion
 
     #region private

@@ -12,3 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c32694f6a0974fe1bf107294b48ef81, type: 3}
   m_Name: DefaultCleanersConfig
   m_EditorClassIdentifier: 
+  minSpeed: 5
+  maxSpeed: 8
+  probabilityVariateSpeed: 0.4
+  timeTryVariateSpeed: 2
+  maxTimeToFindObjective: Infinity
+  timeToCheckIfWorkWinished: 2
+  timeToChargeAgain: 2
+  timeToUnchargeAgain: 2

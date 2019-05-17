@@ -7,23 +7,28 @@ using DG.Tweening;
 public class BoogieCollector : Boogie
 {
     public float timeToCollect;
+    public float timeToDeposit;
     public float timeToCollectAgain;
     public float timeToFollowMarkerAgain;
     public float minTimeChangeDirection;
     public float maxTimeChangeDirection;
     public float probabilityChangeDirection;
     public float timeToReleaseMarker;
+    public float markerLifePeriod;
     public bool canCollect = true;
     public bool canFollowMarker = true;
     public bool followingMarker = false;
     public ElixirObstacleStone currentElixirStone;
     public GameObject marker;
     private GameObject lastMarker;
-    private GameObject currentMarker;
+    public GameObject currentMarker;
     private GameObject lastMarkerSpawned;
+    public ElixirObstacleStone.TYPE collectingType = ElixirObstacleStone.TYPE.None;
     //private bool coroutineChangeDirectionStarted = false;
     [HideInInspector]public List<MarkerBehaviour> markers;
     public CURRENT_STATE currentState;
+
+    private BoogieCollectorAnimationController _bcac;
 
     public enum CURRENT_STATE
     {
@@ -33,6 +38,7 @@ public class BoogieCollector : Boogie
         CollectingElixir,
         FollowingMarkersToElixirStone,
         FollowingMarkersToCollectorMachine,
+        DepositingElixir,
         GoingToPlayer
     }
 
@@ -45,6 +51,7 @@ public class BoogieCollector : Boogie
     public override void Awake()
     {
         base.Awake();
+        _bcac = GetComponent<BoogieCollectorAnimationController>();
     }
 
     private void Start()
@@ -53,6 +60,11 @@ public class BoogieCollector : Boogie
 
         type = BoogieType.Collector;
         randomPoint = GetRandomPointAroundCircle(initialPoint);
+        UnityEngine.AI.NavMeshPath nmp = new UnityEngine.AI.NavMeshPath();
+        while (!_agent.CalculatePath(randomPoint, nmp))
+        {
+            randomPoint = GetRandomPointAroundCircle(initialPoint);
+        }
         _agent.SetDestination(randomPoint);
         currentState = CURRENT_STATE.WanderingAroundCircle;
         StartCoroutine(HandleChangeDirectionRandomly());
@@ -66,23 +78,33 @@ public class BoogieCollector : Boogie
         maxTimeToFindObjective = Ccfg.maxTimeToFindObjective;
         timeToCheckIfWorkFinished = Ccfg.timeToCheckIfWorkWinished;
         timeToCollect = Ccfg.timeToCollect;
+        timeToDeposit = Ccfg.timeToDeposit;
         timeToCollectAgain = Ccfg.timeToCollectAgain;
         timeToFollowMarkerAgain = Ccfg.timeToFollowMarkerAgain;
         minTimeChangeDirection = Ccfg.minTimeChangeDirection;
-        maxTimeToFindObjective = Ccfg.maxTimeChangeDirection;
+        maxTimeChangeDirection = Ccfg.maxTimeChangeDirection;
         probabilityChangeDirection = Ccfg.probabilityChangeDirection;
+        timeToReleaseMarker = Ccfg.timeToReleaseMarker;
 
         minSpeed = Ccfg.minSpeed;
         maxSpeed = Ccfg.maxSpeed;
+        _agent.speed = Random.Range(minSpeed, maxSpeed);
         probabilityChangeSpeed = Ccfg.probabilityVariateSpeed;
         timeToChangeSpeed = Ccfg.timeTryVariateSpeed;
+        
+        markerLifePeriod = Ccfg.markersLifePeriod;
     }
 
     private void Update()
     {
-        if (currentState == CURRENT_STATE.WanderingAroundCircle && RandomPointDestinationReached()) //we don't have an objective yet.
+        if (!backToPlayer && currentState == CURRENT_STATE.WanderingAroundCircle && RandomPointDestinationReached()) //we don't have an objective yet.
         {
             randomPoint = GetRandomPointAroundCircle(initialPoint);
+            UnityEngine.AI.NavMeshPath nmp = new UnityEngine.AI.NavMeshPath();
+            while (!_agent.CalculatePath(randomPoint, nmp))
+            {
+                randomPoint = GetRandomPointAroundCircle(initialPoint);
+            }
             _agent.SetDestination(randomPoint);
             if (!objectiveNotFoundTimerEnabled)
             {
@@ -91,20 +113,60 @@ public class BoogieCollector : Boogie
             }
         }
 
-        if (currentState == CURRENT_STATE.WanderingAroundObjective && RandomPointDestinationReached()) //we have an objective but we are not carrying elixir.
+        if (!backToPlayer && currentState == CURRENT_STATE.WanderingAroundObjective && RandomPointDestinationReached()) //we have an objective but we are not carrying elixir.
         {
             randomPoint = GetRandomPointAroundObjective(currentObjective.transform.position);
+            UnityEngine.AI.NavMeshPath nmp = new UnityEngine.AI.NavMeshPath();
+            while (!_agent.CalculatePath(randomPoint, nmp))
+            {
+                randomPoint = GetRandomPointAroundObjective(currentObjective.transform.position);
+            }
             _agent.SetDestination(randomPoint);
         }
 
-        if (BoogiesSpawner.BoogiesKnowCollectorMachinePosition && currentState == CURRENT_STATE.GoingToCollectorMachine && CollectorMachineDestinationReached())
+        if (!backToPlayer && BoogiesSpawner.BoogiesKnowCollectorMachinePosition && currentState == CURRENT_STATE.GoingToCollectorMachine && CollectorMachineDestinationReached())
         {
-            DepositElixir();
+            if (FindObjectOfType<CollectorMachineBehavior>().type == this.collectingType)
+            {
+                Vector3 direction = FindObjectOfType<CollectorMachineBehavior>().transform.position - this.transform.position;
+                direction.y = 0f;
+                this.transform.rotation = Quaternion.LookRotation(direction);
+                StartCoroutine(DepositElixir());
+            }
+            else
+            {
+                if (currentObjective == null)
+                {
+                    randomPoint = GetRandomPointAroundCircle(initialPoint);
+                    UnityEngine.AI.NavMeshPath nmp = new UnityEngine.AI.NavMeshPath();
+                    while (!_agent.CalculatePath(randomPoint, nmp))
+                    {
+                        randomPoint = GetRandomPointAroundCircle(initialPoint);
+                    }
+                    _agent.SetDestination(randomPoint);
+                }
+                else
+                {
+                    randomPoint = GetRandomPointAroundObjective(currentObjective.transform.position);
+                    UnityEngine.AI.NavMeshPath nmp = new UnityEngine.AI.NavMeshPath();
+                    while (!_agent.CalculatePath(randomPoint, nmp))
+                    {
+                        randomPoint = GetRandomPointAroundObjective(currentObjective.transform.position);
+                    }
+                    _agent.SetDestination(randomPoint);
+                }
+            }
+            
         }
 
-        if (!BoogiesSpawner.BoogiesKnowCollectorMachinePosition && currentState == CURRENT_STATE.GoingToCollectorMachine && RandomPointDestinationReached())
+        if (!backToPlayer && !BoogiesSpawner.BoogiesKnowCollectorMachinePosition && currentState == CURRENT_STATE.GoingToCollectorMachine && RandomPointDestinationReached())
         {
             randomPoint = GetRandomPointAroundObjective(currentObjective.transform.position);
+            UnityEngine.AI.NavMeshPath nmp = new UnityEngine.AI.NavMeshPath();
+            while (!_agent.CalculatePath(randomPoint, nmp))
+            {
+                randomPoint = GetRandomPointAroundObjective(currentObjective.transform.position);
+            }
             _agent.SetDestination(randomPoint);
             if (!objectiveNotFoundTimerEnabled)
             {
@@ -115,16 +177,36 @@ public class BoogieCollector : Boogie
 
         if (backToPlayer && PlayerDestinationReached())
         {
-            Destroy(this.gameObject);
             BoogiesSpawner.CollectorsAmount++;
+            BoogiesSpawner.CollectorsSpawned--;
+            FindObjectOfType<FastSelectorBoogiesController>().collectorsAmountSlider.onValueChanged.RemoveAllListeners();
+            FindObjectOfType<FastSelectorBoogiesController>().collectorsAmountSlider.value++;
+            FindObjectOfType<FastSelectorBoogiesController>().collectorsAmountText.text = BoogiesSpawner.CollectorsAmount.ToString();
+            FindObjectOfType<FastSelectorBoogiesController>().collectorsAmountSlider.GetComponent<SliderController>().AddListener();
+            Destroy(this.gameObject);
+        }
+
+        if (BoogiesSpawner.CollectorsBackButtonPressed || backToPlayer)
+        {
+            BackToPlayer();
         }
     }
 
-    private void DepositElixir()
+    IEnumerator DepositElixir()
     {
+        currentMarker = null;
+        currentState = CURRENT_STATE.DepositingElixir;
+        _agent.isStopped = true;
+        Destroy(this.transform.Find("ChargingPoint").GetChild(0).gameObject);
+        _anim.SetInteger("state", 3);
         canCollect = false;
         canFollowMarker = false;
-        CollectorMachineBehavior.ElixirGot++;
+        yield return new WaitForSeconds(timeToDeposit);
+        if (!backToPlayer)
+        {
+            CollectorMachineBehavior.ElixirGot++;
+        }
+        
         currentElixirStone = null;
         StartCoroutine(HandleCanCollectTrue());
         StartCoroutine(HandleCanFollowMarkerTrue());
@@ -134,15 +216,20 @@ public class BoogieCollector : Boogie
             {
                 if (mb != null)
                 {
-                    mb.GetComponent<MeshRenderer>().material.color = Color.green;
+                    mb.GetComponentInChildren<SpriteRenderer>().color = Color.green;
                     mb.valid = true;
                 }                
             }
             markers.Clear();
         }
-
-        
+        _anim.SetInteger("state", 0);
+        _agent.isStopped = false;
         randomPoint = GetRandomPointAroundObjective(currentObjective.transform.position);
+        UnityEngine.AI.NavMeshPath nmp = new UnityEngine.AI.NavMeshPath();
+        while (!_agent.CalculatePath(randomPoint, nmp))
+        {
+            randomPoint = GetRandomPointAroundObjective(currentObjective.transform.position);
+        }
         _agent.SetDestination(randomPoint);
         currentState = CURRENT_STATE.WanderingAroundObjective;
     }
@@ -175,33 +262,73 @@ public class BoogieCollector : Boogie
         return distance < 1.5f;
     }
 
-    private bool Wandering()
+    public bool Wandering()
     {
         return currentState == CURRENT_STATE.WanderingAroundObjective || currentState == CURRENT_STATE.WanderingAroundCircle;
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if ((Wandering() || currentState == CURRENT_STATE.FollowingMarkersToElixirStone) && other.GetComponent<ElixirObstacleStone>() && StoneIsAvailable(other.GetComponent<ElixirObstacleStone>()) && canCollect)
-            //if we get a non-full stone
+        if (!backToPlayer && Wandering() && currentObjective == null && other.GetComponent<BoogieCollector>() && other.GetComponent<BoogieCollector>().currentObjective != null)
         {
-            if (currentObjective == null)
+            this.SetObjective(other.GetComponent<BoogieCollector>().currentObjective);
+            if (currentState == CURRENT_STATE.WanderingAroundCircle)
             {
-                SetObjective(other.GetComponentInParent<Obstacle>());
-                if (!objectiveNotFoundTimerEnabled)
+                randomPoint = GetRandomPointAroundObjective(currentObjective.transform.position);
+                UnityEngine.AI.NavMeshPath nmp = new UnityEngine.AI.NavMeshPath();
+                while (!_agent.CalculatePath(randomPoint, nmp))
                 {
-                    StartCoroutine(ObjectiveNotFound());
-                    objectiveNotFoundTimerEnabled = true;
+                    randomPoint = GetRandomPointAroundObjective(currentObjective.transform.position);
                 }
+                _agent.SetDestination(randomPoint);
+                currentState = CURRENT_STATE.WanderingAroundObjective;
             }
-
-            //canFollowMarker = false;
-            currentElixirStone = other.GetComponent<ElixirObstacleStone>();
-            StartCoroutine(OnCollectingElixir());
         }
 
-        if ((Wandering() || currentState == CURRENT_STATE.FollowingMarkersToElixirStone) && other.GetComponent<ElixirObstacleStone>() && !StoneIsAvailable(other.GetComponent<ElixirObstacleStone>()) && canCollect)
+        if (!backToPlayer && (Wandering() || currentState == CURRENT_STATE.FollowingMarkersToElixirStone) && other.GetComponent<ElixirObstacleStone>() 
+            && StoneIsAvailable(other.GetComponent<ElixirObstacleStone>()) && canCollect)
+            //if we get a non-full stone
         {
+            if (other.GetComponent<ElixirObstacleStone>().type == this.collectingType || this.collectingType == ElixirObstacleStone.TYPE.None)
+            {
+                if (this.collectingType == ElixirObstacleStone.TYPE.None)
+                {
+                    this.collectingType = other.GetComponent<ElixirObstacleStone>().type;
+                    if (this.collectingType == ElixirObstacleStone.TYPE.Elixir)
+                    {
+                        this.marker = Resources.Load("Prefabs/Obstacles/ElixirEnergyObstacle/ElixirMarker") as GameObject;
+                    }
+                    else if (this.collectingType == ElixirObstacleStone.TYPE.Energy)
+                    {
+                        this.marker = Resources.Load("Prefabs/Obstacles/ElixirEnergyObstacle/EnergyMarker") as GameObject;
+                    }
+
+                    this.marker.GetComponent<MarkerBehaviour>().lifePeriod = markerLifePeriod;
+                }
+                if (currentObjective == null)
+                {
+                    SetObjective(other.GetComponentInParent<Obstacle>());
+                    if (!objectiveNotFoundTimerEnabled)
+                    {
+                        StartCoroutine(ObjectiveNotFound());
+                        objectiveNotFoundTimerEnabled = true;
+                    }
+                }
+
+                //canFollowMarker = false;
+                currentElixirStone = other.GetComponent<ElixirObstacleStone>();
+                Vector3 direction = currentElixirStone.transform.position - this.transform.position;
+                direction.y = 0f;
+                this.transform.rotation = Quaternion.LookRotation(direction);
+                StartCoroutine(OnCollectingElixir());
+            }
+            
+        }
+
+        if (!backToPlayer && (Wandering() || currentState == CURRENT_STATE.FollowingMarkersToElixirStone) && other.GetComponent<ElixirObstacleStone>() && 
+            (other.GetComponent<ElixirObstacleStone>().type == this.collectingType || this.collectingType == ElixirObstacleStone.TYPE.None) && !StoneIsAvailable(other.GetComponent<ElixirObstacleStone>()) && canCollect)
+        {
+
             if (currentObjective == null)
             {
                 SetObjective(other.GetComponentInParent<Obstacle>());
@@ -211,18 +338,31 @@ public class BoogieCollector : Boogie
                     objectiveNotFoundTimerEnabled = true;
                 }
             }
+
             randomPoint = GetRandomPointAroundObjective(currentObjective.transform.position);
+            UnityEngine.AI.NavMeshPath nmp = new UnityEngine.AI.NavMeshPath();
+            while (!_agent.CalculatePath(randomPoint, nmp))
+            {
+                randomPoint = GetRandomPointAroundObjective(currentObjective.transform.position);
+            }
             _agent.SetDestination(randomPoint);
             currentState = CURRENT_STATE.WanderingAroundObjective;
         }
 
-        if (other.GetComponent<MarkerBehaviour>() && Wandering() && currentElixirStone == null && canFollowMarker)
+        if (!backToPlayer && other.GetComponent<MarkerBehaviour>() && (other.GetComponent<MarkerBehaviour>().type == this.collectingType || 
+            other.GetComponent<MarkerBehaviour>().type == ElixirObstacleStone.TYPE.None) && Wandering() && currentElixirStone == null 
+            && canFollowMarker && currentState != CURRENT_STATE.DepositingElixir)
         {
+            if (this.collectingType == ElixirObstacleStone.TYPE.None)
+            {
+                this.collectingType = other.GetComponent<MarkerBehaviour>().type;
+            }
             currentMarker = other.gameObject;
             StartCoroutine(OnFollowingMarkers(DIRECTION.ElixirStone));
         }
 
-        if (other.GetComponent<MarkerBehaviour>() && canFollowMarker && !BoogiesSpawner.BoogiesKnowCollectorMachinePosition && other.GetComponent<MarkerBehaviour>().valid)
+        if (!backToPlayer && other.GetComponent<MarkerBehaviour>() && other.GetComponent<MarkerBehaviour>().type == this.collectingType 
+            && canFollowMarker && !BoogiesSpawner.BoogiesKnowCollectorMachinePosition && other.GetComponent<MarkerBehaviour>().valid)
         {
             if (currentState == CURRENT_STATE.GoingToCollectorMachine && other.GetComponent<MarkerBehaviour>().markerCreator != this) //carrying elixir
             {
@@ -231,9 +371,14 @@ public class BoogieCollector : Boogie
             }
         }
 
-        if (other.GetComponent<CollectorMachineBehavior>() && !BoogiesSpawner.BoogiesKnowCollectorMachinePosition && (currentState == CURRENT_STATE.GoingToCollectorMachine || currentState == CURRENT_STATE.FollowingMarkersToCollectorMachine))
+        if (!backToPlayer && other.GetComponent<CollectorMachineBehavior>() != null && other.GetComponent<CollectorMachineBehavior>().type == this.collectingType 
+            && !BoogiesSpawner.BoogiesKnowCollectorMachinePosition 
+            && (currentState == CURRENT_STATE.GoingToCollectorMachine || currentState == CURRENT_STATE.FollowingMarkersToCollectorMachine))
         {
-            DepositElixir();
+            Vector3 direction = other.transform.position - this.transform.position;
+            direction.y = 0f;
+            this.transform.rotation = Quaternion.LookRotation(direction);
+            StartCoroutine(DepositElixir());
         }
     }
 
@@ -250,8 +395,9 @@ public class BoogieCollector : Boogie
 
         if (dir == DIRECTION.ElixirStone)
         {
-            while (currentMarker != null && currentState != CURRENT_STATE.CollectingElixir)
+            while (currentMarker != null && currentState != CURRENT_STATE.CollectingElixir && currentState != CURRENT_STATE.DepositingElixir && !backToPlayer)
             {
+                Debug.Log("following markers to elixir stone");
                 _agent.SetDestination(currentMarker.transform.position);
                 currentState = CURRENT_STATE.FollowingMarkersToElixirStone;
                 yield return StartCoroutine(OnGoingToAMarker());
@@ -269,8 +415,9 @@ public class BoogieCollector : Boogie
         }
         else if (dir == DIRECTION.CollectorMachine)
         {
-            while (currentMarker != null)
+            while (currentMarker != null && currentState != CURRENT_STATE.DepositingElixir)
             {
+                Debug.Log("following markers to collecting machine");
                 _agent.SetDestination(currentMarker.transform.position);
                 currentState = CURRENT_STATE.FollowingMarkersToCollectorMachine;
                 yield return StartCoroutine(OnGoingToAMarker());
@@ -291,13 +438,13 @@ public class BoogieCollector : Boogie
     IEnumerator OnGoingToAMarker()
     {
         _agent.isStopped = false;
-        while (true)
+        while (true && !backToPlayer)
         {
             if (currentState != CURRENT_STATE.FollowingMarkersToElixirStone && currentState != CURRENT_STATE.FollowingMarkersToCollectorMachine)
             {
                 break;
             }
-            if (currentMarker != null && Vector3.Distance(transform.position, currentMarker.transform.position) <= 0.1f)
+            if (currentMarker != null && Vector3.Distance(transform.position, currentMarker.transform.position) <= 01f)
             {
                 break;
             }
@@ -307,7 +454,7 @@ public class BoogieCollector : Boogie
 
     IEnumerator HandleChangeDirectionRandomly()
     {
-        while (true)
+        while (true && !backToPlayer)
         {
             yield return new WaitForSeconds(Random.Range(minTimeChangeDirection, maxTimeChangeDirection));
             if (Random.value > probabilityChangeDirection)
@@ -323,12 +470,57 @@ public class BoogieCollector : Boogie
             {
                 if (currentObjective != null)
                 {
+                    if (currentState == CURRENT_STATE.FollowingMarkersToCollectorMachine)
+                    {
+                        currentState = CURRENT_STATE.GoingToCollectorMachine;
+                        if (_anim.GetInteger("state") != 2)
+                        {
+                            _anim.SetInteger("state", 2);
+                        }
+                    }
+                    else if (currentState == CURRENT_STATE.FollowingMarkersToElixirStone)
+                    {
+                        currentState = CURRENT_STATE.WanderingAroundObjective;
+                        if (_anim.GetInteger("state") != 0)
+                        {
+                            _anim.SetInteger("state", 0);
+                        }
+                    }
+                    else if (currentState == CURRENT_STATE.GoingToCollectorMachine)
+                    {
+                        if (_anim.GetInteger("state") != 2)
+                        {
+                            _anim.SetInteger("state", 2);
+                        }
+                    }
+                    if (_agent.isStopped)
+                    {
+                        _agent.isStopped = false;
+                    }
                     randomPoint = GetRandomPointAroundObjective(currentObjective.transform.position);
+                    UnityEngine.AI.NavMeshPath nmp = new UnityEngine.AI.NavMeshPath();
+                    while (!_agent.CalculatePath(randomPoint, nmp))
+                    {
+                        randomPoint = GetRandomPointAroundObjective(currentObjective.transform.position);
+                    }
                     _agent.SetDestination(randomPoint);
                 }
                 else
                 {
+                    if (currentState == CURRENT_STATE.FollowingMarkersToElixirStone)
+                    {
+                        currentState = CURRENT_STATE.WanderingAroundCircle;
+                        if (_anim.GetInteger("state") != 0)
+                        {
+                            _anim.SetInteger("state", 0);
+                        }
+                    }
                     randomPoint = GetRandomPointAroundCircle(initialPoint);
+                    UnityEngine.AI.NavMeshPath nmp = new UnityEngine.AI.NavMeshPath();
+                    while (!_agent.CalculatePath(randomPoint, nmp))
+                    {
+                        randomPoint = GetRandomPointAroundCircle(initialPoint);
+                    }
                     _agent.SetDestination(randomPoint);
                 }
             }
@@ -342,12 +534,34 @@ public class BoogieCollector : Boogie
             currentState = CURRENT_STATE.CollectingElixir;
             currentElixirStone.bCollectorsIn++;
             _agent.isStopped = true;
-            currentElixirStone.elixirAvailable--;
-            if (currentElixirStone.elixirAvailable == 0)
+            
+            if (currentElixirStone.elixirAvailable <= 0)
             {
                 currentElixirStone.empty = true;
             }
+            
+            _anim.SetInteger("state", 1);
             yield return new WaitForSeconds(timeToCollect);
+
+            GameObject part = null;
+            if (!backToPlayer)
+            {
+                if (collectingType == ElixirObstacleStone.TYPE.Elixir && !backToPlayer)
+                {
+                    Debug.Log("elixir");
+                    part = Instantiate(Resources.Load("Prefabs/Obstacles/ElixirEnergyObstacle/ElixirStonePart"), this.transform.position, Quaternion.identity) as GameObject;
+                }
+                else if (collectingType == ElixirObstacleStone.TYPE.Energy && !backToPlayer)
+                {
+                    Debug.Log("energy");
+                    part = Instantiate(Resources.Load("Prefabs/Obstacles/ElixirEnergyObstacle/EnergyStonePart"), this.transform.position, Quaternion.identity) as GameObject;
+                }
+
+                part.transform.SetParent(this.transform.Find("ChargingPoint"), false);
+                part.transform.localPosition = Vector3.zero;
+            }
+            
+            
             if (BoogiesSpawner.BoogiesKnowCollectorMachinePosition)
             {
                 canFollowMarker = false;
@@ -358,12 +572,49 @@ public class BoogieCollector : Boogie
                 canFollowMarker = true;
                 canCollect = false;
             }
-            currentElixirStone.bCollectorsIn--;
-            BringElixirToCollectorMachine();
-            //change color
+            _anim.SetInteger("state", 2);
+            if (!backToPlayer)
+            {
+                if (currentElixirStone != null && currentElixirStone.elixirAvailable > 0)
+                {
+                    currentElixirStone.elixirAvailable--;
+                    currentElixirStone.bCollectorsIn--;
+                }
+                else
+                {
+                    CollectorMachineBehavior.ElixirGot--;
+                }
+                BringElixirToCollectorMachine();
+                //change color
+            }
         }
         else
         {
+            if (currentState == CURRENT_STATE.FollowingMarkersToElixirStone)
+            {
+                if (currentObjective != null)
+                {
+                    currentState = CURRENT_STATE.WanderingAroundObjective;
+                    randomPoint = GetRandomPointAroundObjective(currentObjective.transform.position);
+                    UnityEngine.AI.NavMeshPath nmp = new UnityEngine.AI.NavMeshPath();
+                    while (!_agent.CalculatePath(randomPoint, nmp))
+                    {
+                        randomPoint = GetRandomPointAroundObjective(currentObjective.transform.position);
+                    }
+                    _agent.SetDestination(randomPoint);
+                }
+                else
+                {
+                    currentState = CURRENT_STATE.WanderingAroundCircle;
+                    randomPoint = GetRandomPointAroundCircle(initialPoint);
+                    UnityEngine.AI.NavMeshPath nmp = new UnityEngine.AI.NavMeshPath();
+                    while (!_agent.CalculatePath(randomPoint, nmp))
+                    {
+                        randomPoint = GetRandomPointAroundCircle(initialPoint);
+                    }
+                    _agent.SetDestination(randomPoint);
+                }
+            }
             currentElixirStone = null;
             yield return null;
         }
@@ -381,6 +632,11 @@ public class BoogieCollector : Boogie
         else
         {
             randomPoint = GetRandomPointAroundObjective(currentObjective.transform.position);
+            UnityEngine.AI.NavMeshPath nmp = new UnityEngine.AI.NavMeshPath();
+            while (!_agent.CalculatePath(randomPoint, nmp))
+            {
+                randomPoint = GetRandomPointAroundObjective(currentObjective.transform.position);
+            }
             _agent.SetDestination(randomPoint);
             _agent.isStopped = false;
         }
@@ -389,39 +645,79 @@ public class BoogieCollector : Boogie
 
     IEnumerator MarkRoad()
     {
-        lastMarker = Instantiate(marker, transform.position, Quaternion.identity);
+        lastMarker = Instantiate(marker, new Vector3(transform.position.x, 0.11f, transform.position.z), Quaternion.Euler(new Vector3(0,Random.Range(0,360), 0)));
         lastMarker.GetComponent<MarkerBehaviour>().previousMarker = null;
         lastMarker.GetComponent<MarkerBehaviour>().markerCreator = this;
         markers.Add(lastMarker.GetComponent<MarkerBehaviour>());    
-        while (currentElixirStone != null)
+        while (currentElixirStone != null && !backToPlayer)
         {
             yield return new WaitForSeconds(timeToReleaseMarker);
-            GameObject currentMarker = Instantiate(marker, transform.position, Quaternion.identity);
-            MarkerBehaviour mb = currentMarker.GetComponent<MarkerBehaviour>();
-            mb.markerCreator = this;
-            mb.previousMarker = lastMarker;
-            mb.previousMarker.GetComponent<MarkerBehaviour>().nextMarker = currentMarker;
-            mb.valid = false;
-            markers.Add(mb);
-            lastMarker = currentMarker;
+            if (currentState == CURRENT_STATE.GoingToCollectorMachine || currentState == CURRENT_STATE.FollowingMarkersToCollectorMachine)
+            {
+                GameObject currentMarker = Instantiate(marker, new Vector3(transform.position.x, 0.11f, transform.position.z), Quaternion.Euler(new Vector3(0, Random.Range(0, 360), 0)));
+                MarkerBehaviour mb = currentMarker.GetComponent<MarkerBehaviour>();
+                mb.markerCreator = this;
+                mb.previousMarker = lastMarker;
+                mb.previousMarker.GetComponent<MarkerBehaviour>().nextMarker = currentMarker;
+                mb.valid = false;
+                markers.Add(mb);
+                lastMarker = currentMarker;
+            }
+            
         }
         lastMarker = null;
     }
 
     public override void BackToPlayer()
     {
+
         backToPlayer = true;
-        randomPoint = Vector3.positiveInfinity;
-        _agent.SetDestination(FindObjectOfType<BoogiesSpawner>().gameObject.transform.position);
+        canCollect = false;
+        canFollowMarker = false;
+        randomPoint = FindObjectOfType<BoogiesSpawner>().gameObject.transform.position;
+        if (_agent.isOnNavMesh)
+        {
+            _agent.isStopped = false;
+            _agent.SetDestination(randomPoint);
+        }
+
+        if (currentElixirStone != null)
+        {
+            if (currentState == CURRENT_STATE.FollowingMarkersToCollectorMachine || currentState == CURRENT_STATE.GoingToCollectorMachine || Wandering())
+            {
+                currentElixirStone.elixirAvailable++;
+            }
+            else if (currentState == CURRENT_STATE.DepositingElixir)
+            {
+                currentElixirStone.elixirAvailable++;
+                StopCoroutine(DepositElixir());
+            }
+            else if (currentState == CURRENT_STATE.CollectingElixir)
+            {
+                currentElixirStone.bCollectorsIn--;
+                StopCoroutine(OnCollectingElixir());
+            }
+
+            if (this.transform.Find("ChargingPoint").childCount > 0)
+            {
+                Debug.Log("HIJOS = " + this.transform.Find("ChargingPoint").childCount);
+                Destroy(this.transform.Find("ChargingPoint").GetChild(0).gameObject);
+            }
+
+            currentElixirStone = null;
+        }
+
+        _anim.SetInteger("state", 0);
         currentState = CURRENT_STATE.GoingToPlayer;
     }
 
     IEnumerator CheckIfWorkFinished()
     {
-        Debug.Log("checking. ");
         yield return new WaitForSeconds(timeToCheckIfWorkFinished);
         if (CollectorMachineBehavior.ElixirGot == currentObjective.GetComponent<ElixirObstacle>().totalElixirAvailable)
         {
+            currentObjective.completed = true;
+            Debug.Log("work finished");
             BackToPlayer();
         }
         StartCoroutine(CheckIfWorkFinished());
@@ -430,5 +726,10 @@ public class BoogieCollector : Boogie
     public override void OnObjectiveSelected()
     {
         StartCoroutine(CheckIfWorkFinished());
+    }
+
+    public override void Die()
+    {
+        throw new System.NotImplementedException();
     }
 }

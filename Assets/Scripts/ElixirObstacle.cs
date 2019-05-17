@@ -18,7 +18,6 @@ public class ElixirObstacle : Obstacle
                 elixirStones[i] = this.transform.GetChild(i).GetComponent<ElixirObstacleStone>();
                 totalElixirAvailable += elixirStones[i].elixirAvailable;
             }
-            
         }
     }
 }

@@ -10,5 +10,9 @@ public class SquadTeam : MonoBehaviour
     private void Update()
     {
         enemyWrestlers.RemoveAll((x) => x == null);
+        if (this.transform.childCount == 0)
+        {
+            Destroy(this.gameObject);
+        }
     }
 }

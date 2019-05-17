@@ -6,139 +6,161 @@ using UnityEngine.UI;
 public class FastSelectorBoogiesController : MonoBehaviour
 {
     #region public
-    public Text currentAmountText;
+    //public Text currentAmountText;
     public Text currentAvailableText;
-    public Text currentElixirText;
     public Text cleanersAmountText;
-    public Text wrestlersAmountText;
     public Text collectorsAmountText;
     public Text explorersAmountText;
     public Slider cleanersAmountSlider;
-    public Slider wrestlersAmountSlider;
     public Slider collectorsAmountSlider;
     public Slider explorersAmountSlider;
     #endregion
-    #region private
-    private int currentTotalAmount;
-    private int currentBoogiesLeftAmount;
-    private int currentElixir;
-    private int cleanersAmount;
-    private int wrestlersAmount;
-    private int explorersAmount;
-    private int collectorsAmount;
-    #endregion
 
-    private void GetInformation()
+    private void GetInitialInformation()
     {
-        currentTotalAmount = BoogiesSpawner.CurrentTotalAmount;
-        currentBoogiesLeftAmount = BoogiesSpawner.CurrentBoogiesLeftAmount;
-        currentElixir = BoogiesSpawner.CurrentElixir;
-        cleanersAmount = BoogiesSpawner.CleanersAmount;
-        wrestlersAmount = BoogiesSpawner.WrestlersAmount;
-        explorersAmount = BoogiesSpawner.ExplorersAmount;
-        collectorsAmount = BoogiesSpawner.CollectorsAmount;
+        BoogiesSpawner.CurrentTotalAmount = BoogiesSpawner.CleanersAmount + BoogiesSpawner.ExplorersAmount + BoogiesSpawner.CollectorsAmount + BoogiesSpawner.CurrentBoogiesLeftAmount + BoogiesSpawner.CleanersSpawned + BoogiesSpawner.CollectorsSpawned + BoogiesSpawner.ExplorersSpawned;
+        //this.currentAmountText.text = "/ " + BoogiesSpawner.CurrentTotalAmount.ToString();
+        this.currentAvailableText.text = BoogiesSpawner.CurrentBoogiesLeftAmount.ToString();
+
+        this.cleanersAmountSlider.value = BoogiesSpawner.CleanersAmount;
+        this.cleanersAmountSlider.GetComponent<SliderController>().sliderValue = BoogiesSpawner.CleanersAmount;
+        this.cleanersAmountText.text = BoogiesSpawner.CleanersAmount.ToString();
+
+        this.explorersAmountSlider.value = BoogiesSpawner.ExplorersAmount;
+        this.explorersAmountSlider.GetComponent<SliderController>().sliderValue = BoogiesSpawner.ExplorersAmount;
+        this.explorersAmountText.text = BoogiesSpawner.ExplorersAmount.ToString();
+
+        this.collectorsAmountSlider.value = BoogiesSpawner.CollectorsAmount;
+        this.collectorsAmountSlider.GetComponent<SliderController>().sliderValue = BoogiesSpawner.CollectorsAmount;
+        this.collectorsAmountText.text = BoogiesSpawner.CollectorsAmount.ToString();
     }
 
     private void SetInformation()
     {
-        BoogiesSpawner.CurrentBoogiesLeftAmount = currentBoogiesLeftAmount;
-        BoogiesSpawner.CleanersAmount = cleanersAmount;
-        BoogiesSpawner.WrestlersAmount = wrestlersAmount;
-        BoogiesSpawner.ExplorersAmount = explorersAmount;
-        BoogiesSpawner.CollectorsAmount = collectorsAmount;
+        BoogiesSpawner.CleanersAmount = (int)this.cleanersAmountSlider.value;
+        BoogiesSpawner.ExplorersAmount = (int)this.explorersAmountSlider.value;
+        BoogiesSpawner.CollectorsAmount = (int)this.collectorsAmountSlider.value;
+        BoogiesSpawner.CurrentBoogiesLeftAmount = (BoogiesSpawner.CurrentTotalAmount - (BoogiesSpawner.CleanersAmount + BoogiesSpawner.CollectorsAmount + BoogiesSpawner.ExplorersAmount + BoogiesSpawner.CleanersSpawned + BoogiesSpawner.ExplorersSpawned + BoogiesSpawner.CollectorsSpawned));
+        this.currentAvailableText.text = BoogiesSpawner.CurrentBoogiesLeftAmount.ToString();
     }
 
     private void Start()
     {
-        GetInformation();
-        OnUpdateUI();
+        GetInitialInformation();
     }
 
-    private void OnUpdateUI()
+    public void UpdateCleanersSlider(int value)
     {
-        currentAvailableText.text = currentBoogiesLeftAmount.ToString() + " /";
+        Debug.Log("pulsamos el botón cleaners con value " + value);
+        cleanersAmountSlider.value += value;
+    }
 
-        currentAmountText.text = currentTotalAmount.ToString();
+    public void UpdateCollectorsSlider(int value)
+    {
+        collectorsAmountSlider.value += value;
+    }
 
-        currentElixirText.text = currentElixir.ToString();
-
-        cleanersAmountSlider.value = cleanersAmount;
-        cleanersAmountSlider.maxValue = currentTotalAmount;
-        cleanersAmountText.text = cleanersAmount.ToString();
-
-        wrestlersAmountSlider.value = wrestlersAmount;
-        wrestlersAmountSlider.maxValue = currentTotalAmount;
-        wrestlersAmountText.text = wrestlersAmount.ToString();
-
-        explorersAmountSlider.value = explorersAmount;
-        explorersAmountSlider.maxValue = currentTotalAmount;
-        explorersAmountText.text = explorersAmount.ToString();
-
-        collectorsAmountSlider.value = collectorsAmount;
-        collectorsAmountSlider.maxValue = currentTotalAmount;
-        collectorsAmountText.text = collectorsAmount.ToString();
+    public void UpdateExplorersSlider(int value)
+    {
+        explorersAmountSlider.value += value;
     }
 
     public void UpdateCleanersAmount(int value)
     {
-        if (value == 1 && currentBoogiesLeftAmount > 0)
+        cleanersAmountSlider.onValueChanged.RemoveAllListeners();
+        if (value == 1 && BoogiesSpawner.CurrentBoogiesLeftAmount > 0)
         {
-            cleanersAmount++;
+            cleanersAmountSlider.value++;
         }
-        else if (value == -1 && cleanersAmount > 0)
+        else if (value == -1 && BoogiesSpawner.CleanersAmount > 0)
         {
-            cleanersAmount--;
+            cleanersAmountSlider.value--;
         }
-        currentBoogiesLeftAmount = (currentTotalAmount - (cleanersAmount + wrestlersAmount + collectorsAmount + explorersAmount));
+        cleanersAmountText.text = cleanersAmountSlider.value.ToString();
         SetInformation();
-    }
-
-    public void UpdateWrestlersAmount(int value)
-    {
-        if (value == 1 && currentBoogiesLeftAmount > 0)
-        {
-            wrestlersAmount++;
-        }
-        else if (value == -1 && wrestlersAmount > 0)
-        {
-            wrestlersAmount--;
-        }
-        currentBoogiesLeftAmount = (currentTotalAmount - (cleanersAmount + wrestlersAmount + collectorsAmount + explorersAmount));
-        SetInformation();
+        cleanersAmountSlider.GetComponent<SliderController>().sliderValue = (int)cleanersAmountSlider.value;
+        cleanersAmountSlider.GetComponent<SliderController>().AddListener();
     }
 
     public void UpdateExplorersAmount(int value)
     {
-        if (value == 1 && currentBoogiesLeftAmount > 0)
+        explorersAmountSlider.onValueChanged.RemoveAllListeners();
+        if (value == 1 && BoogiesSpawner.CurrentBoogiesLeftAmount > 0)
         {
-            explorersAmount++;
+            explorersAmountSlider.value++;
         }
-        else if (value == -1 && explorersAmount > 0)
+        else if (value == -1 && BoogiesSpawner.ExplorersAmount > 0)
         {
-            explorersAmount--;
+            explorersAmountSlider.value--;
         }
-        currentBoogiesLeftAmount = (currentTotalAmount - (cleanersAmount + wrestlersAmount + collectorsAmount + explorersAmount));
+        explorersAmountText.text = explorersAmountSlider.value.ToString();
         SetInformation();
+        explorersAmountSlider.GetComponent<SliderController>().sliderValue = (int)explorersAmountSlider.value;
+        explorersAmountSlider.GetComponent<SliderController>().AddListener();
     }
 
     public void UpdateCollectorsAmount(int value)
     {
-        if (value == 1 && currentBoogiesLeftAmount > 0)
+        collectorsAmountSlider.onValueChanged.RemoveAllListeners();
+        if (value == 1 && BoogiesSpawner.CurrentBoogiesLeftAmount > 0)
         {
-            collectorsAmount++;
+            collectorsAmountSlider.value++;
         }
-        else if (value == -1 && collectorsAmount > 0)
+        else if (value == -1 && BoogiesSpawner.CollectorsAmount > 0)
         {
-            collectorsAmount--;
+            collectorsAmountSlider.value--;
         }
-        currentBoogiesLeftAmount = (currentTotalAmount - (cleanersAmount + wrestlersAmount + collectorsAmount + explorersAmount));
+        collectorsAmountText.text = collectorsAmountSlider.value.ToString();
         SetInformation();
+        collectorsAmountSlider.GetComponent<SliderController>().sliderValue = (int)collectorsAmountSlider.value;
+        collectorsAmountSlider.GetComponent<SliderController>().AddListener();
     }
-    
-    private void Update()
+
+
+    public void BackButtonPressed(int num)
     {
-        GetInformation();
-        OnUpdateUI();
+        if (num == 0)
+        {
+            //cleaners
+            if (FindObjectOfType<BoogieCleaner>() == null)
+            {
+                Debug.Log("no cleaners in");
+                return;
+            }
+            else
+            {
+                Debug.Log("cleaners back button pressed = true");
+                BoogiesSpawner.CleanersBackButtonPressed = true;
+            }
+        }
+        else if (num == 1)
+        {
+            //explorers
+            if (FindObjectOfType<BoogieExplorer>() == null)
+            {
+                Debug.Log("no explorers in");
+                return;
+            }
+            else
+            {
+                Debug.Log("explorers back button pressed = true");
+                BoogiesSpawner.ExplorersBackButtonPressed = true;
+            }
+        }
+        else if (num == 2)
+        {
+            //collectors
+            if (FindObjectOfType<BoogieCollector>() == null)
+            {
+                Debug.Log("no collectors in");
+                return;
+            }
+            else
+            {
+                Debug.Log("collectors back button pressed = true");
+                BoogiesSpawner.CollectorsBackButtonPressed = true;
+            }
+        }
     }
     
 }

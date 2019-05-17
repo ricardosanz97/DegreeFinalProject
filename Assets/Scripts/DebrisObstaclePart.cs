@@ -6,4 +6,10 @@ public class DebrisObstaclePart : InteractableBody
 {
     public BoogieCleaner charger;
     public bool settledDown;
+    [HideInInspector]public float initialY;
+
+    private void Awake()
+    {
+        initialY = this.transform.position.y;
+    }
 }

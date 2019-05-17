@@ -14,9 +14,16 @@ public class UISquadOptionsController : GenericPanelController
     public Button UncoverButton;
     public Button ResetDefaultFormationButton;
     public Button CancelButton;
+    public Button BackPlayerButton;
     public BoogieWrestlerCommander commander;
 
-    public static UISquadOptionsController Create(BoogieWrestlerCommander bwc, Action callbackButtonMoveOrStop, Action callbackButtonFormation, Action callbackButtonRotate, Action callbackButtonCover, Action callbackButtonUncover, Action callbackButtonResetDefaultFormation)
+    public static UISquadOptionsController Create(BoogieWrestlerCommander bwc, Action callbackButtonMoveOrStop, 
+                                                                               Action callbackButtonFormation, 
+                                                                               Action callbackButtonRotate, 
+                                                                               Action callbackButtonCover, 
+                                                                               Action callbackButtonUncover, 
+                                                                               Action callbackButtonResetDefaultFormation, 
+                                                                               Action callbackButtonBackToPlayer)
     {
         if (FindObjectOfType<UISquadOptionsController>() != null)
         {
@@ -32,6 +39,7 @@ public class UISquadOptionsController : GenericPanelController
         UISquadOptionsController.CoverButton.onClick.AddListener(() => { callbackButtonCover(); UISquadOptionsController.ClosePanel(); });
         UISquadOptionsController.UncoverButton.onClick.AddListener(() => { callbackButtonUncover(); UISquadOptionsController.ClosePanel(); });
         UISquadOptionsController.ResetDefaultFormationButton.onClick.AddListener(() => { callbackButtonResetDefaultFormation(); UISquadOptionsController.ClosePanel(); });
+        UISquadOptionsController.BackPlayerButton.onClick.AddListener(() => { callbackButtonBackToPlayer(); UISquadOptionsController.ClosePanel(); });
         UISquadOptionsController.CancelButton.onClick.AddListener(() => { UISquadOptionsController.ClosePanel(); Destroy(UISquadOptionsController.gameObject); });
         UISquadOptionsController.commander = bwc;
         UISquadOptionsController.HandleButtonStatus();
@@ -65,9 +73,12 @@ public class UISquadOptionsController : GenericPanelController
         {
             UncoverButton.gameObject.SetActive(false);
         }
-
-        if ((commander.squadWrestlers.Count != commander.squadInfo.numClose + commander.squadInfo.numDistance + commander.squadInfo.numGiant + 1)//the commander 
-            || SquadConfiguration.ListsAreEquals(commander.currentSquadList, commander.squadInfo.listFormation))
+        //TODO: esto estaba asi
+        /*
+         * if ((commander.squadWrestlers.Count != commander.squadInfo.numClose + commander.squadInfo.numDistance + commander.squadInfo.numGiant + 1)//the commander 
+            || SquadConfiguration.ListsAreEquals(commander.currentSquadList, commander.squadInfo.listFormation))*/
+        if ((commander.squadWrestlers.Count == commander.squadInfo.numClose + commander.squadInfo.numDistance + commander.squadInfo.numGiant + 1)//the commander 
+            && SquadConfiguration.ListsAreEquals(commander.currentSquadList, commander.squadInfo.listFormation))
         {
             ResetDefaultFormationButton.gameObject.SetActive(false);
         }

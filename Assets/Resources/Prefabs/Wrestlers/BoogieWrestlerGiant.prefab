@@ -78,7 +78,7 @@ NavMeshAgent:
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 1.84
-  m_BaseOffset: 0.53
+  m_BaseOffset: 0.51
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 2
 --- !u!54 &3887739311187424516
@@ -203,8 +203,8 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 0.48
-  m_Height: 1.8
+  m_Radius: 0.59
+  m_Height: 2.07
   m_Direction: 1
   m_Center: {x: 0, y: 0.41, z: 0}
 --- !u!114 &7011931976043726333
@@ -272,6 +272,7 @@ MonoBehaviour:
   visibleTargets: []
   wrestlerSelected: {fileID: 0}
   wrestlersAttackingMe: []
+  helpingBoogie: {fileID: 0}
 --- !u!114 &214007904235470912
 MonoBehaviour:
   m_ObjectHideFlags: 0

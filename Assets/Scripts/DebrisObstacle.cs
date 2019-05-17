@@ -5,6 +5,7 @@ using UnityEngine;
 public class DebrisObstacle : Obstacle
 {
     public DebrisObstaclePart[] debrisParts;
+    public DebrisObstaclePart[] debrisPotentialParts;
     public override void Awake()
     {
         base.Awake();
@@ -14,5 +15,20 @@ public class DebrisObstacle : Obstacle
         {
             debrisParts[i] = this.transform.GetChild(i).GetComponent<DebrisObstaclePart>();
         }
+    }
+
+    private void Start()
+    {
+        ResetSettledDownDebris();
+    }
+
+    private void ResetSettledDownDebris()
+    {
+        foreach (DebrisObstaclePart dop in debrisParts)
+        {
+            dop.settledDown = false;
+        }
+
+        debrisPotentialParts[Random.Range(0, debrisPotentialParts.Length)].settledDown = true;
     }
 }

@@ -68,7 +68,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 1013227023}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.47
+  m_Radius: 0.51
   m_Speed: 7
   m_Acceleration: 80
   avoidancePriority: 50
@@ -203,8 +203,8 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 0.41
-  m_Height: 1.5
+  m_Radius: 0.58
+  m_Height: 2.05
   m_Direction: 1
   m_Center: {x: 0, y: 0.5, z: 0}
 --- !u!114 &8753919264013347703
@@ -272,6 +272,7 @@ MonoBehaviour:
   visibleTargets: []
   wrestlerSelected: {fileID: 0}
   wrestlersAttackingMe: []
+  helpingBoogie: {fileID: 0}
 --- !u!114 &864315373780778544
 MonoBehaviour:
   m_ObjectHideFlags: 0

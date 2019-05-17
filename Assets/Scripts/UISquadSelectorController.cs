@@ -8,8 +8,9 @@ public class UISquadSelectorController : GenericPanelController
     public BoogieWrestlerCommander commander;
     public Button customButton;
     public Transform parent;
+    public TEAM team;
 
-    public static UISquadSelectorController Create(BoogieWrestlerCommander commander = null)
+    public static UISquadSelectorController Create(TEAM team, BoogieWrestlerCommander commander = null)
     {
         if (FindObjectOfType<UISquadSelectorController>() != null)
         {
@@ -20,15 +21,34 @@ public class UISquadSelectorController : GenericPanelController
         UISquadSelectorController UISquadSelectorController = UISquadSelector.GetComponent<UISquadSelectorController>();
         UISquadSelectorController.transform.SetParent(GameObject.Find("MainCanvas").transform, false);
         UISquadSelectorController.commander = commander;
+        UISquadSelectorController.team = team;
         UISquadSelectorController.HandleButtons();
-        
-        ScriptableObject[] customSquads = Resources.LoadAll<ScriptableObject>("Squads/");
+
+        ScriptableObject[] customSquads = null;
+        if (team == TEAM.A)
+        {
+            customSquads = Resources.LoadAll<ScriptableObject>("Squads/Allies/");
+        }
+        else
+        {
+            customSquads = Resources.LoadAll<ScriptableObject>("Squads/Enemies/");
+        }
 
         if (commander == null) //spawning squad
         {
             foreach (ScriptableObject customSquad in customSquads)
             {
-                Squad newSquad = AssetDatabase.LoadAssetAtPath("Assets/Resources/Squads/" + customSquad.name + ".asset", typeof(ScriptableObject)) as Squad;
+                Squad newSquad = null;
+                if (team == TEAM.A)
+                {
+                    newSquad = AssetDatabase.LoadAssetAtPath("Assets/Resources/Squads/Allies/" + customSquad.name + ".asset",
+                        typeof(ScriptableObject)) as Squad;
+                }
+                else
+                {
+                    newSquad = AssetDatabase.LoadAssetAtPath("Assets/Resources/Squads/Enemies/" + customSquad.name + ".asset",
+                        typeof(ScriptableObject)) as Squad;
+                }
 
                 GameObject squadGO = Instantiate(UISquadSelectorController.customButton.gameObject);
                 squadGO.transform.SetParent(UISquadSelectorController.parent, false);
@@ -36,7 +56,14 @@ public class UISquadSelectorController : GenericPanelController
                 squadGO.GetComponent<Button>().onClick = new Button.ButtonClickedEvent();
                 squadGO.GetComponent<Button>().onClick.AddListener(() =>
                 {
-                    UIController.I.HandleSpawnSquadLogic();
+                    if (team == TEAM.A)
+                    {
+                        UIController.I.HandleSpawnAllieSquadLogic();
+                    }
+                    else
+                    {
+                        UIController.I.HandleSpawnEnemySquadLogic();
+                    }
                     SquadConfiguration.Squad squadConfig = new SquadConfiguration.Squad(newSquad.squadName, newSquad.squadRol, newSquad.numRows, newSquad.numCols, newSquad.customConfiguration);
                     FindObjectOfType<SquadConfiguration>().currentSquadSelected = new SquadConfiguration.Squad(newSquad.squadName, newSquad.squadRol, newSquad.numRows, newSquad.numCols, newSquad.customConfiguration);
                     UISquadSelectorController.ClosePanel();
@@ -47,7 +74,15 @@ public class UISquadSelectorController : GenericPanelController
         {
             foreach (ScriptableObject customSquad in customSquads)
             {
-                Squad newSquad = AssetDatabase.LoadAssetAtPath("Assets/Resources/Squads/" + customSquad.name + ".asset", typeof(ScriptableObject)) as Squad;
+                Squad newSquad = null;
+                if (team == TEAM.A)
+                {
+                    newSquad = AssetDatabase.LoadAssetAtPath("Assets/Resources/Squads/Allies/" + customSquad.name + ".asset", typeof(ScriptableObject)) as Squad;
+                }
+                else
+                {
+                    newSquad = AssetDatabase.LoadAssetAtPath("Assets/Resources/Squads/Enemies/" + customSquad.name + ".asset", typeof(ScriptableObject)) as Squad;
+                }
                 SquadConfiguration.Squad squadConfig = new SquadConfiguration.Squad(newSquad.squadName, newSquad.squadRol, newSquad.numRows, newSquad.numCols, newSquad.customConfiguration);
 
                 if (SquadConfiguration.ListsAreNumberByWrestlersEqual(squadConfig, commander.squadInfo) && squadConfig.hasBody == commander.squadInfo.hasBody && squadConfig.name != commander.squadInfo.name)
@@ -73,7 +108,7 @@ public class UISquadSelectorController : GenericPanelController
 
     public void ButtonCustomPressed()
     {
-        SE_SquadEditorController.Create();
+        SE_SquadEditorController.Create(FindObjectOfType<UISquadSelectorController>().team == TEAM.A ? 1 : 0);
         ClosePanel();
         Destroy(this.gameObject);
     }

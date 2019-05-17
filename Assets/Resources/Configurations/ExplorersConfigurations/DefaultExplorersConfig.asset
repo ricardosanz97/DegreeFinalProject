@@ -12,3 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc6e28a7a00b842789fe28273d1383af, type: 3}
   m_Name: DefaultExplorersConfig
   m_EditorClassIdentifier: 
+  minSpeed: 8
+  maxSpeed: 12
+  probabilityVariateSpeed: 0.4
+  timeTryVariateSpeed: 2
+  maxTimeToFindObjective: 10
+  timeToCheckIfWorkWinished: 2
+  timeToCarryAgain: 5

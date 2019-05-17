@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8b3c10565b024354aeca327a51b9511, type: 3}
+  m_Name: OtherCollectorsConfiguration
+  m_EditorClassIdentifier: 
+  minSpeed: 4
+  maxSpeed: 7
+  probabilityVariateSpeed: 0.4
+  timeTryVariateSpeed: 2
+  maxTimeToFindObjective: Infinity
+  timeToCheckIfWorkWinished: 2
+  timeToCollect: 5
+  timeToCollectAgain: 2
+  timeToFollowMarkerAgain: 2
+  minTimeChangeDirection: 2
+  maxTimeChangeDirection: 4
+  probabilityChangeDirection: 0.95
+  timeToDeposit: 2.5
+  timeToReleaseMarker: 0.1
+  markersLifePeriod: 3

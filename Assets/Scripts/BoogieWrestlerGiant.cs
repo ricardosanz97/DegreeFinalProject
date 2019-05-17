@@ -34,9 +34,4 @@ public class BoogieWrestlerGiant : BoogieWrestler
             return true;
         }
     }
-
-    public override void Start()
-    {
-        base.Start();
-    }
 }

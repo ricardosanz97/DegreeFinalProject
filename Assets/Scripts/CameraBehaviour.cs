@@ -66,9 +66,12 @@ public class CameraBehaviour : MonoBehaviour
         bool isCorrected = false;
         if (Physics.Linecast(cameraTargetPosition, position, out collisionHit))
         {
-            position = collisionHit.point;
-            correctedDistance = Vector3.Distance(cameraTargetPosition, position);
-            isCorrected = true;
+            if (collisionHit.transform.GetComponent<Boogie>() == null)
+            {
+                position = collisionHit.point;
+                correctedDistance = Vector3.Distance(cameraTargetPosition, position);
+                isCorrected = true;
+            }
         }
 
         currentDistance = !isCorrected || correctedDistance > currentDistance ? Mathf.Lerp(currentDistance, correctedDistance, Time.deltaTime * zoomRate) : correctedDistance;

@@ -12,3 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8b3c10565b024354aeca327a51b9511, type: 3}
   m_Name: DefaultCollectorsConfig
   m_EditorClassIdentifier: 
+  minSpeed: 5
+  maxSpeed: 7
+  probabilityVariateSpeed: 0.4
+  timeTryVariateSpeed: 2
+  maxTimeToFindObjective: Infinity
+  timeToCheckIfWorkWinished: 2
+  timeToCollect: 5
+  timeToCollectAgain: 2
+  timeToFollowMarkerAgain: 2
+  minTimeChangeDirection: 2
+  maxTimeChangeDirection: 4
+  probabilityChangeDirection: 0.8
+  timeToDeposit: 2.5
+  timeToReleaseMarker: 0.1

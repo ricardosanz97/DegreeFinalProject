@@ -5,10 +5,10 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
 
-public class PlayerMovement : InteractableBody
+public class PlayerMovement : MonoBehaviour
 {
     private Animator _animator;
-    private NavMeshAgent _agent;
+    public NavMeshAgent _agent;
     public float speedMovement = 2f;
 
     private void Awake()
@@ -24,6 +24,7 @@ public class PlayerMovement : InteractableBody
         {
             return;
         }
+        if (!GetComponent<PlayerHealth>().alive) { return; }
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
 
@@ -35,22 +36,14 @@ public class PlayerMovement : InteractableBody
         {
             //HandleNegativeMovement(horizontal, vertical);
         }
-        HandleAnimation(horizontal, vertical);
-        
-    }
-
-    
-
-    private void HandleAnimation(float horizontal, float vertical)
-    {
-        if (horizontal != 0 || vertical > 0)
-        {
-            _animator.SetBool("MOVING", true);
-        }
         else
         {
-            _animator.SetBool("MOVING", false);
+            if (_animator.GetInteger("state") != 0)
+            {
+                _animator.SetInteger("state", 0);
+            }
         }
+        
     }
 
     public void LookAtY(Vector3 position)
@@ -62,7 +55,10 @@ public class PlayerMovement : InteractableBody
     {
         if (horizontal != 0 || vertical != 0)
         {
-
+            if (_animator.GetInteger("state") != 1 && !_agent.isStopped)
+            {
+                _animator.SetInteger("state", 1);
+            }
             Vector3 input = new Vector3(horizontal, 0, vertical);
             if (input.magnitude > 1) input = input.normalized;
 

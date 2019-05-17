@@ -34,9 +34,4 @@ public class BoogieWrestlerDistance : BoogieWrestler
             return true;
         }
     }
-
-    public override void Start()
-    {
-        base.Start();
-    }
 }

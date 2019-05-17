@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c8861e13c366486bb01b0398764ff17, type: 3}
   m_Name: DefaultWrestlers
   m_EditorClassIdentifier: 
-  commanderHealth: 250
-  giantHealth: 200
-  closeHealth: 150
-  distanceHealth: 120
+  commanderHealth: 50
+  giantHealth: 33
+  closeHealth: 20
+  distanceHealth: 20
   commanderAttackSpeed: 3
   giantAttackSpeed: 4
   closeAttackSpeed: 2.5
@@ -29,10 +29,10 @@ MonoBehaviour:
   closeFieldView: 55
   distanceFieldView: 45
   distanceAttackRange: 7
-  commanderAttackDamage: 5
-  giantAttackDamage: 3
-  closeAttackDamage: 4
-  distanceAttackDamage: 3
+  commanderAttackDamage: 6
+  giantAttackDamage: 5
+  closeAttackDamage: 5
+  distanceAttackDamage: 4
   closeTimeFindTargets: 0.5
   distanceTimeFindTargets: 0.5
   giantTimeFindTargets: 1.2
@@ -53,20 +53,20 @@ MonoBehaviour:
   distanceProbChange: 0.5
   giantProbChange: 0.75
   commanderProbChange: 0.6
-  distanceMinSpeed: 9
-  distanceMaxSpeed: 14
+  distanceMinSpeed: 6
+  distanceMaxSpeed: 9
   distanceProbabilityVariateSpeed: 0.75
   distanceTimeVariateSpeed: 2
-  commanderMinSpeed: 10
-  commanderMaxSpeed: 10
+  commanderMinSpeed: 4
+  commanderMaxSpeed: 6
   commanderProbabilityVariateSpeed: 0
   commanderTimeVariateSpeed: 3.5
-  giantMinSpeed: 6
-  giantMaxSpeed: 7
+  giantMinSpeed: 3
+  giantMaxSpeed: 6
   giantProbabilityVariateSpeed: 0.2
   giantTimeVariateSpeed: 4
-  closeMinSpeed: 8
-  closeMaxSpeed: 12
+  closeMinSpeed: 5
+  closeMaxSpeed: 8
   closeProbabilityVariateSpeed: 0.6
   closeTimeVariateSpeed: 2.5
   timeVariateSpeed: 3
@@ -82,3 +82,23 @@ MonoBehaviour:
   percentHpCoverDistance: 0.6
   percentHpCoverCommander: 0.5
   percentHpCoverGiant: 0.4
+  minTimeCoverAgain: 6
+  maxTimeCoverAgain: 12
+  commanderOnDieCallback:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: OnDieEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  giantOnDieCallback:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: OnDieEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  distanceOnDieCallback:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  closeOnDieCallback:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null

@@ -11,19 +11,19 @@ NavMeshProjectSettings:
     cost: 1
   - name: Jump
     cost: 2
-  - name: 
+  - name: Boogie
     cost: 1
-  - name: 
+  - name: Player
     cost: 1
-  - name: 
+  - name: DebrisObstacle
     cost: 1
-  - name: 
+  - name: FrontJail
     cost: 1
-  - name: 
+  - name: InsideJailCleaners
     cost: 1
-  - name: 
+  - name: InsideJailCollectors
     cost: 1
-  - name: 
+  - name: InsideJailWrestlers
     cost: 1
   - name: 
     cost: 1
