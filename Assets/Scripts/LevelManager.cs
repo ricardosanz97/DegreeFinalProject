@@ -161,6 +161,7 @@ public class LevelManager : Singleton<LevelManager>
         int mask = 0;
         mask += 1 << NavMesh.GetAreaFromName("Walkable");
         mask += 1 << NavMesh.GetAreaFromName("InsideJailWrestlers");
+        mask += 1 << NavMesh.GetAreaFromName("FrontJail");
         FindObjectOfType<PlayerMovement>()._agent.areaMask = mask;
 
         doorAncient.transform.DOLocalMoveY(6f, 2f);
@@ -296,9 +297,9 @@ public class LevelManager : Singleton<LevelManager>
 
                 multipathObstacle.GetComponentInChildren<MultipathController>().CloseAllDoors();
 
-                //FindObjectOfType<BoogiesSpawner>().ForceSpawnBoogies(BoogieType.Cleaner, cleanersSpawnPoint.position, BoogiesSpawner.CleanersSpawned);
-                //FindObjectOfType<BoogiesSpawner>().ForceSpawnBoogies(BoogieType.Explorer, explorersSpawnPoint.position, BoogiesSpawner.ExplorersSpawned);
-                //FindObjectOfType<BoogiesSpawner>().ForceSpawnBoogies(BoogieType.Collector, collectorsSpawnPoint.position, BoogiesSpawner.CollectorsSpawned);
+                FindObjectOfType<BoogiesSpawner>().ForceSpawnBoogies(BoogieType.Cleaner, cleanersSpawnPoint.position, BoogiesSpawner.CleanersSpawned);
+                FindObjectOfType<BoogiesSpawner>().ForceSpawnBoogies(BoogieType.Explorer, explorersSpawnPoint.position, BoogiesSpawner.ExplorersSpawned);
+                FindObjectOfType<BoogiesSpawner>().ForceSpawnBoogies(BoogieType.Collector, collectorsSpawnPoint.position, BoogiesSpawner.CollectorsSpawned);
                 break;
             case GAME_STEP.Step1:
                 anciantConversation.SetActive(true);

@@ -19,7 +19,6 @@ public class SliderController : MonoBehaviour
 
     private void Start()
     {
-        Debug.Log("se activa por primera vez el listener");
         slider.onValueChanged.AddListener(delegate {CheckIfPossible(); });
     }
 

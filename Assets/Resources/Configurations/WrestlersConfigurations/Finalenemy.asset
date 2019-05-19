@@ -29,10 +29,10 @@ MonoBehaviour:
   closeFieldView: 55
   distanceFieldView: 45
   distanceAttackRange: 7
-  commanderAttackDamage: 6
-  giantAttackDamage: 5
-  closeAttackDamage: 4
-  distanceAttackDamage: 3
+  commanderAttackDamage: 5
+  giantAttackDamage: 4
+  closeAttackDamage: 3
+  distanceAttackDamage: 2
   closeTimeFindTargets: 0.5
   distanceTimeFindTargets: 0.5
   giantTimeFindTargets: 1.2

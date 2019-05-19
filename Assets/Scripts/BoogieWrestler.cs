@@ -449,7 +449,6 @@ public class BoogieWrestler : Boogie
         _agent.stoppingDistance = 0;
         this.transform.SetParent(null);
         commander.neededIndexs.Add(new SquadConfiguration.Index(this.indexs.i, this.indexs.j));
-
         commander.RemoveWrestlerSquad(this);
         leader = null;
         commander = null;
@@ -528,7 +527,8 @@ public class BoogieWrestler : Boogie
         }
         else
         {
-            SquadConfiguration.Index oldIndexs = new SquadConfiguration.Index(this.indexs.i, this.indexs.j);
+            SquadConfiguration.Index oldIndexs = 
+                new SquadConfiguration.Index(this.indexs.i, this.indexs.j);
             
             foreach (BoogieWrestler bw in commander.squadWrestlers)
             {
@@ -537,7 +537,8 @@ public class BoogieWrestler : Boogie
                     bw.leader = this.commander.gameObject;
                     continue;
                 }
-                if (commander.coveringBody.GetComponent<BoogieWrestler>() != null && commander.coveringBody.GetComponent<BoogieWrestler>() == bw)
+                if (commander.coveringBody.GetComponent<BoogieWrestler>() != null && 
+                    commander.coveringBody.GetComponent<BoogieWrestler>() == bw)
                 {
                     bw.leader = this.commander.gameObject;
                     continue;
@@ -960,7 +961,8 @@ public class BoogieWrestler : Boogie
             {
                 return;
             }
-            BoogieWrestler boogieTry = this.GetComponentInParent<SquadTeam>().enemyWrestlers.Find((x) => x != null && x.GetComponent<BoogieWrestler>() != null && x.GetComponent<BoogieWrestler>().wrestlerType == Preferences[i]);
+            BoogieWrestler boogieTry = this.GetComponentInParent<SquadTeam>().enemyWrestlers.Find((x) => x != null 
+            && x.GetComponent<BoogieWrestler>() != null && x.GetComponent<BoogieWrestler>().wrestlerType == Preferences[i]);
             if (boogieTry != null)
             {
                 Transform aTry = boogieTry.transform;
@@ -984,43 +986,28 @@ public class BoogieWrestler : Boogie
 
     void TryFindingInOurList(int i)
     {
-        if (this.visibleTargets.Count == 0 && commander != null)
-        {
-            TryFindingInCommonList(0);
-        }
+        if (this.visibleTargets.Count == 0 && commander != null) TryFindingInCommonList(0);
         if (Random.value <= probabilityPreferences || commander == null)
         {
             if (i >= Preferences.Length)
             {
-                //if (commander != null)
-                //{
                 if (this.GetComponentInParent<SquadTeam>() != null)
-                {
                     TryFindingInRemainList(0);
-                }
-                    
-                //}
                 return;
             }
-            Transform aTry = this.visibleTargets.Find((x) => x != null && x.GetComponent<BoogieWrestler>() != null && x.GetComponent<BoogieWrestler>().wrestlerType == Preferences[i]);
+            Transform aTry = this.visibleTargets.Find((x) => x != null && x.GetComponent<BoogieWrestler>() != null 
+            && x.GetComponent<BoogieWrestler>().wrestlerType == Preferences[i]);
             if (aTry != null)
             {
                 if (targetSelected == null)
                 {
                     EnemySelected(aTry.GetComponent<BoogieWrestler>());
                     return;
-                    
                 }
             }
-            else
-            {
-                TryFindingInOurList(i+1);
-            }
+            else TryFindingInOurList(i + 1);
         }
-        else
-        {
-            TryFindingInCommonList(0);
-        }
+        else TryFindingInCommonList(0);
     }
 
     void TryFindingInCommonList(int i)
@@ -1221,7 +1208,14 @@ public class BoogieWrestler : Boogie
         }
         Debug.Log("i die with " + health + " health points. ");
         OnDieEvent.Invoke();
-        Destroy(this.gameObject);
+
+        _anim.SetInteger("closeEnoughToAttack", -2);
+        Destroy(this.gameObject, 6f);
+        Destroy(GetComponent<AnimationController>());
+        Destroy(GetComponent<Collider>());
+        Destroy(GetComponent<FieldOfView>());
+        Destroy(GetComponent<NavMeshAgent>());
+        Destroy(this);
     }
 
     IEnumerator CheckBattleEnds()

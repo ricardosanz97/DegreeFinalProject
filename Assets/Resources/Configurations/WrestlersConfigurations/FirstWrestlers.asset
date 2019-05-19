@@ -37,8 +37,8 @@ MonoBehaviour:
   distanceTimeFindTargets: 0.5
   giantTimeFindTargets: 1.2
   commanderTimeFindTargets: 1
-  minOffset: 1
-  maxOffset: 1.6
+  minOffset: 1.2
+  maxOffset: 1.4
   probabilityVariateOffset: 0.5
   timeVariateOffset: 4
   closeMinTimeChange: 5

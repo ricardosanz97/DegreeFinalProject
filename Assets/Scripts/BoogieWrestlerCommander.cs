@@ -48,11 +48,14 @@ public class BoogieWrestlerCommander : BoogieWrestler
     {
         coveringBody = body;
 
-        SquadConfiguration.Index auxIndexs = new SquadConfiguration.Index(leaderIndex.i - bodyIndex.i, leaderIndex.j - bodyIndex.j);
+        SquadConfiguration.Index auxIndexs = 
+            new SquadConfiguration.Index(leaderIndex.i - bodyIndex.i, leaderIndex.j - bodyIndex.j);
        
         if (body.GetComponent<BoogieWrestler>())
         {
-            body.GetComponent<BoogieWrestler>().lastPos = new SquadConfiguration.Index(body.GetComponent<BoogieWrestler>().indexs.i, body.GetComponent<BoogieWrestler>().indexs.j);
+            body.GetComponent<BoogieWrestler>().lastPos = 
+                new SquadConfiguration.Index(body.GetComponent<BoogieWrestler>().indexs.i, 
+                                             body.GetComponent<BoogieWrestler>().indexs.j);
         }
 
         foreach (BoogieWrestler bw in squadWrestlers)
@@ -78,7 +81,8 @@ public class BoogieWrestlerCommander : BoogieWrestler
 
     public void ChangeSquadFormation(SquadConfiguration.Squad newSquadInfo)
     {
-        squadInfo = new SquadConfiguration.Squad(newSquadInfo.name, newSquadInfo.listFormation, newSquadInfo.squadCols, newSquadInfo.squadRows, newSquadInfo.customSquadConfiguration);
+        squadInfo = new SquadConfiguration.Squad(newSquadInfo.name, newSquadInfo.listFormation, 
+            newSquadInfo.squadCols, newSquadInfo.squadRows, newSquadInfo.customSquadConfiguration);
         currentSquadList = new List<SquadConfiguration.SQUAD_ROL>(squadInfo.listFormation);
         SquadConfiguration.SquadSlot[,] squadSlots = squadInfo.squad;
         leaderIndex = new SquadConfiguration.Index(newSquadInfo.leaderPosition.i, newSquadInfo.leaderPosition.j);
@@ -425,7 +429,6 @@ public class BoogieWrestlerCommander : BoogieWrestler
     {
         foreach (BoogieWrestler bw in squadWrestlers)
         {
-            //bw.StopCoroutines();
             if (bw.targetSelected != null)
             {
                 if (bw.targetSelected.GetComponent<BoogieWrestler>().wrestlersAttackingMe.Contains(bw))

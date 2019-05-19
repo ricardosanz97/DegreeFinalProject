@@ -22,6 +22,18 @@ public class CloseAnimationController : AnimationController
             return;
         }
 
+        if (bwc.currentState == STATE.AloneFollowingPlayer && (anim.GetInteger("closeEnoughToAttack") != 0 || anim.GetInteger("closeEnoughToAttack") != -1))
+        {
+            if (IsWalking() || IsMoving())
+            {
+                anim.SetInteger("closeEnoughToAttack", 0);
+            }
+            else
+            {
+                anim.SetInteger("closeEnoughToAttack", -1);
+            }
+        }
+
         if (bwc.currentState == STATE.OnSquadCovering)
         {
             if (IsMoving())
@@ -113,6 +125,7 @@ public class CloseAnimationController : AnimationController
     private bool IsWalking()
     {
         //return bwc._agent.velocity != Vector3.zero;
+        //Debug.Log(bwc._agent.velocity.magnitude);
         return bwc._agent.velocity.magnitude > 0.5f;
     }
 }

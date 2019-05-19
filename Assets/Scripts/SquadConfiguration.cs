@@ -111,7 +111,6 @@ public class SquadConfiguration : MonoBehaviour
                     }
                 }
             }
-
             return newSquad;
         }
     }

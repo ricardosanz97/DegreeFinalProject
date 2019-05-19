@@ -22,6 +22,18 @@ public class DistanceAnimationController : AnimationController
             return;
         }
 
+        if (bwd.currentState == STATE.AloneFollowingPlayer && (anim.GetInteger("closeEnoughToAttack") != 0 || anim.GetInteger("closeEnoughToAttack") != -1))
+        {
+            if (IsWalking() || IsMoving())
+            {
+                anim.SetInteger("closeEnoughToAttack", 0);
+            }
+            else
+            {
+                anim.SetInteger("closeEnoughToAttack", -1);
+            }
+        }
+
         if (bwd.currentState == STATE.OnSquadCovering)
         {
             

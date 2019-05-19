@@ -85,7 +85,8 @@ public class UISquadSelectorController : GenericPanelController
                 }
                 SquadConfiguration.Squad squadConfig = new SquadConfiguration.Squad(newSquad.squadName, newSquad.squadRol, newSquad.numRows, newSquad.numCols, newSquad.customConfiguration);
 
-                if (SquadConfiguration.ListsAreNumberByWrestlersEqual(squadConfig, commander.squadInfo) && squadConfig.hasBody == commander.squadInfo.hasBody && squadConfig.name != commander.squadInfo.name)
+                if (SquadConfiguration.ListsAreNumberByWrestlersEqual(squadConfig, commander.squadInfo) 
+                    && squadConfig.hasBody == commander.squadInfo.hasBody && squadConfig.name != commander.squadInfo.name)
                 {
                     GameObject squadGO = Instantiate(UISquadSelectorController.customButton.gameObject);
                     squadGO.transform.SetParent(UISquadSelectorController.parent, false);
@@ -95,7 +96,8 @@ public class UISquadSelectorController : GenericPanelController
                     squadGO.GetComponent<Button>().onClick.AddListener(() =>
                     {
                         commander.ChangeSquadFormation(squadConfig);
-                        FindObjectOfType<SquadConfiguration>().currentSquadSelected = new SquadConfiguration.Squad(newSquad.squadName, newSquad.squadRol, newSquad.numRows, newSquad.numCols, newSquad.customConfiguration);
+                        FindObjectOfType<SquadConfiguration>().currentSquadSelected = 
+                        new SquadConfiguration.Squad(newSquad.squadName, newSquad.squadRol, newSquad.numRows, newSquad.numCols, newSquad.customConfiguration);
                         UISquadSelectorController.ClosePanel();
                     });
                 }
