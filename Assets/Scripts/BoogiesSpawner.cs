@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using TMPro;
 public class BoogiesSpawner : MonoBehaviour
 {
     public int currentAmount = 30;

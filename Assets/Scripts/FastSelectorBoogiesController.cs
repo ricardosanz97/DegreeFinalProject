@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class FastSelectorBoogiesController : MonoBehaviour
 {
     #region public
     //public Text currentAmountText;
-    public Text currentAvailableText;
-    public Text cleanersAmountText;
-    public Text collectorsAmountText;
-    public Text explorersAmountText;
+    public TextMeshProUGUI currentAvailableText;
+    public TextMeshProUGUI cleanersAmountText;
+    public TextMeshProUGUI collectorsAmountText;
+    public TextMeshProUGUI explorersAmountText;
     public Slider cleanersAmountSlider;
     public Slider collectorsAmountSlider;
     public Slider explorersAmountSlider;

@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using DG.Tweening;
 using UnityEngine.UI;
-
+using TMPro;
 public enum GAME_STEP
 {
     Step0,//start game
@@ -376,7 +376,7 @@ public class LevelManager : Singleton<LevelManager>
                 lodwigConversation.SetActive(false);
                 fadeBlackImage.DOFade(1f, 3f).OnComplete(() =>
                 {
-                    fadeBlackImage.GetComponentInChildren<Text>().DOFade(1f, 3f).OnComplete(()=> 
+                    fadeBlackImage.GetComponentInChildren<TextMeshPro>().DOFade(1f, 3f).OnComplete(()=> 
                     {
                         //StartCoroutine(GameController.I.EndGame());
                     });
