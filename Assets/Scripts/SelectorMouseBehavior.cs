@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using System;
+using DG.Tweening;
 
 public enum SELECTION_TYPE
 {
@@ -16,8 +17,12 @@ public enum SELECTION_TYPE
 public class SelectorMouseBehavior : MonoBehaviour
 {
     public Vector3 clickPosition;
-    public Sprite sprite;
+    public Sprite sprite1;
+    public Sprite sprite2;
     public SELECTION_TYPE selectionType;
+
+    public Transform inside;
+    public Transform outside;
 
     public static SELECTION_TYPE Selection
     {
@@ -29,34 +34,56 @@ public class SelectorMouseBehavior : MonoBehaviour
         get { return FindObjectOfType<SelectorMouseBehavior>().clickPosition; }
     }
 
+    private void Start()
+    {
+        StartCoroutine(ChildrenRotate());
+    }
+
+    IEnumerator ChildrenRotate()
+    {
+        while (true)
+        {
+            inside.transform.Rotate(Vector3.forward, 20f * Time.deltaTime);
+            outside.transform.Rotate(Vector3.forward, -20f * Time.deltaTime);
+            yield return null;
+        }
+    }
+
     public static SelectorMouseBehavior Create(SELECTION_TYPE type)
     {
         Debug.Log("creating selectorMouseBehavior");
-        GameObject selectorMouse = Instantiate(Resources.Load("Prefabs/UI/SelectorMouse")) as GameObject;
+        GameObject selectorMouse = Instantiate(Resources.Load("Prefabs/UI/SelectorMouseFinal")) as GameObject;
         SelectorMouseBehavior selectorMouseBehavior = selectorMouse.GetComponent<SelectorMouseBehavior>();
         switch (type)
         {
             case SELECTION_TYPE.SquadSpawnPosition:
-                selectorMouseBehavior.sprite = Resources.Load<Sprite>("Sprites/selector");
+                selectorMouseBehavior.sprite1 = Resources.Load<Sprite>("Sprites/UIElements/selector_blue");
+                selectorMouseBehavior.sprite2 = Resources.Load<Sprite>("Sprites/UIElements/selector_blue");
                 break;
             case SELECTION_TYPE.SquadMovingPosition:
-                selectorMouseBehavior.sprite = Resources.Load<Sprite>("Sprites/selector");
+                selectorMouseBehavior.sprite1 = Resources.Load<Sprite>("Sprites/UIElements/selector_red");
+                selectorMouseBehavior.sprite2 = Resources.Load<Sprite>("Sprites/UIElements/selector_red");
                 break;
             case SELECTION_TYPE.SpawnBoogiesArea:
-                selectorMouseBehavior.sprite = Resources.Load<Sprite>("Sprites/circle");
+                selectorMouseBehavior.sprite1 = Resources.Load<Sprite>("Sprites/UIElements/circle_blue");
+                //selectorMouseBehavior.sprite2 = Resources.Load<Sprite>("Sprites/UIElements/circle_blue");
+                selectorMouseBehavior.inside.gameObject.SetActive(false);
                 selectorMouseBehavior.GetComponentInChildren<SpriteRenderer>().transform.localScale = Vector3.one;
                 selectorMouseBehavior.GetComponentInChildren<SpriteRenderer>().gameObject.AddComponent<CircleCollider2D>();
                 BoogiesSpawner.RadiusCircle = selectorMouseBehavior.GetComponentInChildren<CircleCollider2D>().radius;
                 break;
             case SELECTION_TYPE.SquadCover:
-                selectorMouseBehavior.sprite = Resources.Load<Sprite>("Sprites/selector");
+                selectorMouseBehavior.sprite1 = Resources.Load<Sprite>("Sprites/UIElements/selector_green");
+                selectorMouseBehavior.sprite2 = Resources.Load<Sprite>("Sprites/UIElements/selector_green");
                 break;
             case SELECTION_TYPE.SelectingSquadWrestlerChange:
-                selectorMouseBehavior.sprite = Resources.Load<Sprite>("Sprites/selector");
+                selectorMouseBehavior.sprite1 = Resources.Load<Sprite>("Sprites/UIElements/selector_yellow");
+                selectorMouseBehavior.sprite2 = Resources.Load<Sprite>("Sprites/UIElements/selector_yellow");
                 break;
         }
-        selectorMouseBehavior.GetComponentInChildren<SpriteRenderer>().sprite = selectorMouseBehavior.sprite;
-        selectorMouseBehavior.GetComponentInChildren<SpriteRenderer>().enabled = true;
+        selectorMouseBehavior.outside.GetComponent<SpriteRenderer>().sprite = selectorMouseBehavior.sprite1;
+        selectorMouseBehavior.inside.GetComponent<SpriteRenderer>().sprite = selectorMouseBehavior.sprite2;
+        //selectorMouseBehavior.GetComponentInChildren<SpriteRenderer>().enabled = true;
         return selectorMouseBehavior;
     }
 
