@@ -266,7 +266,7 @@ public class BoogieWrestlerCommander : BoogieWrestler
         randomPoint = clickPosition;
         foreach (BoogieWrestler bw in squadWrestlers)
         {
-            if (bw.commander.coveringBody != null)
+            if (bw.commander != null && bw.commander.coveringBody != null)
             {
                 bw.currentState = STATE.OnSquadCoveringMoving;
             }
@@ -490,5 +490,21 @@ public class BoogieWrestlerCommander : BoogieWrestler
             }
             yield return null;
         }
+    }
+
+    public override void Save()
+    {
+        base.Save();
+        SaverManager.I.saveData[key + "coveringBody"] = this.coveringBody;
+        SaverManager.I.saveData[key + "squadList"] = this.currentSquadList;
+        SaverManager.I.saveData[key + "neededIndexs"] = this.neededIndexs;
+    }
+
+    public override void Load()
+    {
+        base.Load();
+        coveringBody = SaverManager.I.saveData[key + "coveringBody"];
+        currentSquadList = SaverManager.I.saveData[key + "squadList"];
+        this.neededIndexs = SaverManager.I.saveData[key + "neededIndexs"];
     }
 }

@@ -6,6 +6,17 @@ public class SquadTeam : MonoBehaviour
 {
     public TEAM team;
     public List<BoogieWrestler> enemyWrestlers = new List<BoogieWrestler>();
+    public long uniqueId;
+
+    private void OnEnable()
+    {
+        uniqueId = GetHashCode() * Random.Range(1, 9);
+        while (SaverManager.I.uniqueIds.Contains(uniqueId))
+        {
+            uniqueId = GetHashCode() * (int)Time.unscaledTime * Random.Range(1, 9);
+        }
+        Debug.Log("uniqueId = " + uniqueId);
+    }
 
     private void Update()
     {

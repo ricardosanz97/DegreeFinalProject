@@ -74,11 +74,11 @@ public class UISquadOptionsController : GenericPanelController
             UncoverButton.gameObject.SetActive(false);
         }
         //TODO: esto estaba asi
-        /*
-         * if ((commander.squadWrestlers.Count != commander.squadInfo.numClose + commander.squadInfo.numDistance + commander.squadInfo.numGiant + 1)//the commander 
-            || SquadConfiguration.ListsAreEquals(commander.currentSquadList, commander.squadInfo.listFormation))*/
-        if ((commander.squadWrestlers.Count == commander.squadInfo.numClose + commander.squadInfo.numDistance + commander.squadInfo.numGiant + 1)//the commander 
-            && SquadConfiguration.ListsAreEquals(commander.currentSquadList, commander.squadInfo.listFormation))
+        
+        if ((commander.squadWrestlers.Count != commander.squadInfo.numClose + commander.squadInfo.numDistance + commander.squadInfo.numGiant + 1)//the commander 
+            || SquadConfiguration.ListsAreEquals(commander.currentSquadList, commander.squadInfo.listFormation))
+        /*if ((commander.squadWrestlers.Count == commander.squadInfo.numClose + commander.squadInfo.numDistance + commander.squadInfo.numGiant + 1)//the commander 
+            && SquadConfiguration.ListsAreEquals(commander.currentSquadList, commander.squadInfo.listFormation))*/
         {
             ResetDefaultFormationButton.gameObject.SetActive(false);
         }

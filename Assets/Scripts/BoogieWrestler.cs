@@ -77,10 +77,13 @@ public class BoogieWrestler : Boogie
     public int coroutinesGoToEnemyEnabled = 0;
 
     public UnityEvent OnDieEvent;
+
+    public string key;
     //public bool focusOtherCommander = false;
 
-    private void OnEnable()
+    public override void OnEnable()
     {
+        base.OnEnable();
         PlayerHealth.OnPlayerDead += PlayerDead;
     }
 
@@ -779,10 +782,14 @@ public class BoogieWrestler : Boogie
 
         if ((currentState == STATE.OnSquadAttacking || currentState == STATE.OnSquadObserving) && health <= initialHealth * percentHpToCover)
         {
-            if (!commander.needHelpBoogies.Contains(this))
+            if (commander != null)
             {
-                commander.INeedHelp(this);
+                if (!commander.needHelpBoogies.Contains(this))
+                {
+                    commander.INeedHelp(this);
+                }
             }
+            
             //currentState = STATE.OnSquadCovering;
         }
         
@@ -1258,5 +1265,59 @@ public class BoogieWrestler : Boogie
             float distance = Vector3.Distance(this.transform.position, position);
             return distance <= attackRange;
         }
+    }
+
+    public override void Save()
+    {
+        if (commander != null)
+        {
+            key = listPosition.ToString() + this.wrestlerType.ToString() + GetComponentInParent<SquadTeam>().uniqueId;
+        }
+        else
+        {
+            key = listPosition.ToString() + this.wrestlerType.ToString() + uniqueId;
+        }
+
+        Debug.Log("my wrestler key is " + key);
+
+        SaverManager.I.saveData[key + "position"] = this.transform.position;
+        SaverManager.I.saveData[key + "rotation"] = this.transform.rotation;
+        SaverManager.I.saveData[key + "state"] = (int)currentState;
+        SaverManager.I.saveData[key + "commander"] = this.commander;
+        SaverManager.I.saveData[key + "leader"] = this.leader;
+        SaverManager.I.saveData[key + "parent"] = this.transform.parent;
+        SaverManager.I.saveData[key + "indexs"] = this.indexs.i.ToString() + "," + this.indexs.j.ToString();
+    }
+
+    public override void Load()
+    {
+        _agent.enabled = false;
+        this.transform.position = SaverManager.I.saveData[key + "position"];
+        this.transform.rotation = SaverManager.I.saveData[key + "rotation"];
+        _agent.enabled = true;
+        this.currentState = (STATE)SaverManager.I.saveData[key + "state"];
+        this.commander = (BoogieWrestlerCommander)SaverManager.I.saveData[key + "commander"];
+        this.leader = SaverManager.I.saveData[key + "leader"];
+        this.transform.SetParent(SaverManager.I.saveData[key + "parent"], true);
+        string indexs = SaverManager.I.saveData[key + "indexs"];
+        string index1 = ""; string index2 = "";
+        bool commaEncounter = false;
+        for (int i = 0; i<indexs.Length; i++)
+        {
+            if (indexs[i] == ',')
+            {
+                commaEncounter = true;
+                continue;
+            }
+            if (!commaEncounter)
+            {
+                index1 += indexs[i];
+            }
+            else
+            {
+                index2 += indexs[i];
+            }
+        }
+        this.indexs = new SquadConfiguration.Index(int.Parse(index1), int.Parse(index2));
     }
 }

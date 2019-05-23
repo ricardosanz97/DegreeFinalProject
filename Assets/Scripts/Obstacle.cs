@@ -9,7 +9,7 @@ public enum ObstacleType
     Multipath
 }
 
-public class Obstacle : MonoBehaviour
+public class Obstacle : MonoBehaviour, ISaveable
 {
     #region public
     public BoogiesSpawner boogiesSpawner;
@@ -28,6 +28,19 @@ public class Obstacle : MonoBehaviour
         {
             _col = GetComponent<Collider>();
         }
-        
+    }
+
+    private void OnEnable()
+    {
+        SaverManager.OnLoadData += Load;
+        SaverManager.OnSaveData += Save;
+    }
+
+    public virtual void Load()
+    {
+    }
+
+    public virtual void Save()
+    {
     }
 }

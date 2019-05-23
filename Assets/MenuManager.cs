@@ -14,6 +14,11 @@ public class MenuManager : MonoBehaviour
 
     private void Start()
     {
+        SelectEntities();
+    }
+
+    public void SelectEntities()
+    {
         GameObject firstEntity = Instantiate(Resources.Load<GameObject>("Prefabs/MenuEntities/Entities/" + Random.Range(1, 8)), spawnFirst.transform.position, spawnFirst.transform.rotation);
         first = firstEntity.GetComponent<MenuEntityMovement>();
         first.AssignPoint(spawnFirst, destinyFirst);
@@ -27,6 +32,9 @@ public class MenuManager : MonoBehaviour
     {
         Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y, Camera.main.transform.position.z - 60);
         door.RestartDoor();
+        Destroy(first.gameObject);
+        Destroy(second.gameObject);
+        SelectEntities();
     }
 
     public void TriggerFirst()

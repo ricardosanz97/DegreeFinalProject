@@ -25,7 +25,14 @@ public enum GAME_STEP
     Step14,
     Step15
 }
-public class LevelManager : Singleton<LevelManager>
+
+public enum SAVE_STEP
+{
+    Init,
+    Teleport
+}
+
+public class LevelManager : Singleton<LevelManager>, ISaveable
 {
     public DebrisObstacle debrisObstacle;
     public ElixirObstacle elixirObstacle;
@@ -48,6 +55,8 @@ public class LevelManager : Singleton<LevelManager>
     public GameObject doorCollectors1;
     public GameObject doorCollectors2;
 
+    public GameObject doorCleaners;
+
     public GameObject aidilConversation;
     public GameObject giantsConversation;
     public GameObject distancesConversation;
@@ -63,8 +72,10 @@ public class LevelManager : Singleton<LevelManager>
     public bool conversationWithDistancesFinished;
 
     public GAME_STEP currentStep;
+    public SAVE_STEP currentSaveStep = SAVE_STEP.Init;
     public bool cleanersDoorOpened = false;
     public bool collectorsDoorOpened = false;
+    public bool ancientDoorOpened = false;
 
     public PortalController portalCollectors;
     public PortalController portalInitialRoom;
@@ -72,6 +83,25 @@ public class LevelManager : Singleton<LevelManager>
     public Image fadeBlackImage;
     public GameObject ancient;
     public Transform lodwigPosition;
+
+    public void GoToSaveStep(SAVE_STEP step)
+    {
+        switch (step)
+        {
+            case SAVE_STEP.Init:
+                GameController.I.LoadScene((int)SCENES.Game);
+                break;
+
+            case SAVE_STEP.Teleport:
+                break;
+        }
+    }
+
+    private void OnEnable()
+    {
+        SaverManager.OnSaveData += Save;
+        SaverManager.OnLoadData += Load;
+    }
 
     private void Start()
     {
@@ -83,6 +113,7 @@ public class LevelManager : Singleton<LevelManager>
 
     private void Update()
     {
+
         if (debrisObstacle.completed && currentStep == GAME_STEP.Step3)
         {
             //FindObjectOfType<PlayerMovement>()._agent.areaMask = NavMesh.AllAreas;
@@ -166,6 +197,7 @@ public class LevelManager : Singleton<LevelManager>
 
         doorAncient.transform.DOLocalMoveY(6f, 2f);
         Debug.Log("door opened");
+        ancientDoorOpened = true;
     }
 
     public void InitialCommanderDead()
@@ -182,8 +214,8 @@ public class LevelManager : Singleton<LevelManager>
 
     public void OpenCleanersDoors()
     {
-        GameObject door = FindObjectOfType<DoorCleaners>().gameObject;
-        door.transform.DOLocalMoveY(6f, 2.5f).OnComplete(() => {
+        doorCleaners = FindObjectOfType<DoorCleaners>().gameObject;
+        doorCleaners.transform.DOLocalMoveY(6f, 2.5f).OnComplete(() => {
             cleanersDoorOpened = true;
             FindObjectOfType<PlayerMovement>()._agent.areaMask += 1 << NavMesh.GetAreaFromName("InsideJailCleaners");
         });
@@ -344,6 +376,7 @@ public class LevelManager : Singleton<LevelManager>
                 break;
             case GAME_STEP.Step8:
                 aidilConversation.SetActive(false);
+                conversationWithAidilFinished = true;
                 FindObjectOfType<PlayerMovement>().enabled = true;
                 OpenCollectorsDoor();
                 break;
@@ -391,5 +424,29 @@ public class LevelManager : Singleton<LevelManager>
 
     }
 
+    public void Save()
+    {
+        SaverManager.I.saveData.Add("currentGameStep", (int)currentStep);
+        SaverManager.I.saveData.Add("conversationWithAncientFinished", conversationWithAnciantFinished);
+        SaverManager.I.saveData.Add("conversationWithGiantsFinished", conversationWithGiantsFinished);
+        SaverManager.I.saveData.Add("conversationWithDistancesFinished", conversationWithDistancesFinished);
+        SaverManager.I.saveData.Add("conversationWithAidilFinished", conversationWithAidilFinished);
 
+        SaverManager.I.saveData.Add("ancientDoorOpened", ancientDoorOpened);
+        SaverManager.I.saveData.Add("collectorsDoorOpened", collectorsDoorOpened);
+        SaverManager.I.saveData.Add("cleanersDoorOpened", cleanersDoorOpened);
+    }
+
+    public void Load()
+    {
+        this.currentStep = (GAME_STEP)SaverManager.I.saveData["currentGameStep"];
+        this.conversationWithAnciantFinished = SaverManager.I.saveData["conversationWithAncientFinished"];
+        this.conversationWithGiantsFinished = SaverManager.I.saveData["conversationWithGiantsFinished"];
+        this.conversationWithDistancesFinished = SaverManager.I.saveData["conversationWithDistancesFinished"];
+        this.conversationWithAidilFinished = SaverManager.I.saveData["conversationWithAidilFinished"];
+
+        this.ancientDoorOpened = SaverManager.I.saveData["ancientDoorOpened"];
+        this.cleanersDoorOpened = SaverManager.I.saveData["cleanersDoorOpened"];
+        this.collectorsDoorOpened = SaverManager.I.saveData["collectorsDoorOpened"];
+    }
 }

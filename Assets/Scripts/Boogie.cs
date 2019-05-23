@@ -11,7 +11,7 @@ public enum BoogieType
     Collector
 }
 
-public abstract class Boogie : AttackTarget
+public abstract class Boogie : AttackTarget, ISaveable
 {
     #region parameters
     public BoogieType type;
@@ -31,12 +31,26 @@ public abstract class Boogie : AttackTarget
     public float speed;
     public float probabilityChangeSpeed;
     public float timeToChangeSpeed;
+
+    public long uniqueId;
     #endregion
+
+    public virtual void OnEnable()
+    {
+        SaverManager.OnLoadData += Load;
+        SaverManager.OnSaveData += Save;
+    }
 
     public virtual void Awake()
     {
         _agent = GetComponent<NavMeshAgent>();
         _anim = GetComponent<Animator>();
+
+        uniqueId = GetHashCode() * (int)Time.unscaledTime * Random.Range(1, 9);
+        while (SaverManager.I.uniqueIds.Contains(uniqueId))
+        {
+            uniqueId = GetHashCode() * (int)Time.unscaledTime * Random.Range(1, 9);
+        }
     }
 
     public void ForceIdle()
@@ -105,5 +119,13 @@ public abstract class Boogie : AttackTarget
             }
             yield return null;
         }
+    }
+
+    public virtual void Save()
+    {
+    }
+
+    public virtual void Load()
+    {
     }
 }

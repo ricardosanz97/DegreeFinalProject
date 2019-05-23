@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1001049801}
   - component: {fileID: 4457789925089367355}
+  - component: {fileID: 714034055169348972}
   m_Layer: 0
   m_Name: DoorAncient
   m_TagString: Untagged
@@ -45,6 +46,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 3.95, y: 4.07, z: 0.3}
   m_Center: {x: 0, y: 0, z: -0.04}
+--- !u!114 &714034055169348972
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 419337320}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddc6975ae1f81174b84ca4975e7757a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1916511460
 GameObject:
   m_ObjectHideFlags: 0
