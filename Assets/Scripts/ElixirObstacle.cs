@@ -11,7 +11,6 @@ public class ElixirObstacle : Obstacle
     {
         base.Awake();
         elixirStones = GetComponentsInChildren<ElixirObstacleStone>();
-        Debug.Log(elixirStones.Length);
         for (int i = 0; i<this.elixirStones.Length; i++)
         {
             elixirStones[i] = this.transform.GetChild(i).GetComponent<ElixirObstacleStone>();

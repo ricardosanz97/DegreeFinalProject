@@ -23,14 +23,13 @@ public class PlayerHealth : AttackTarget
         alive = false;
         OnPlayerDead.Invoke();
         StartCoroutine(DieOnDelay());
-       
-        //lanzar un evento que sea player muerto
-        //TODO: animator to die.
     }
 
     IEnumerator DieOnDelay()
     {
         yield return new WaitForSeconds(1f);
         _anim.SetInteger("state", 4);
+        yield return new WaitForSeconds(3.5f);
+        UIController.I.PlayerIsDead();
     }
 }

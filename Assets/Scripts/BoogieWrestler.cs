@@ -89,7 +89,6 @@ public class BoogieWrestler : Boogie
 
     private void PlayerDead()
     {
-        Debug.Log("player ha muerto, paramos la batalla. ");
         playerSelected = false;
         if (targetSelected != null && targetSelected.GetComponent<PlayerHealth>())
         {

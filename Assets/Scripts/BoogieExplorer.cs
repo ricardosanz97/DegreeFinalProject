@@ -23,6 +23,60 @@ public class BoogieExplorer : Boogie
         _beac = GetComponent<BoogieExplorerAnimationController>();
     }
 
+    public override void Load()
+    {
+        base.Load();
+        string key = "BoogieExplorer" + uniqueId;
+        int animState = SaverManager.I.saveData[key + "AnimState"];
+        if (animState == -1)
+        {
+            _agent.enabled = false;
+            this.transform.position = SaverManager.I.saveData[key + "Position"];
+            this.transform.rotation = SaverManager.I.saveData[key + "Rotation"];
+            _agent.enabled = true;
+        }
+        else
+        {
+            this.transform.position = SaverManager.I.saveData[key + "Position"];
+            this.transform.rotation = SaverManager.I.saveData[key + "Rotation"];
+        }
+        _anim.SetInteger("state", animState);
+        this.currentPath = SaverManager.I.saveData[key + "CurrentPath"];
+        this.distanceTraveled = SaverManager.I.saveData[key + "DistanceTraveled"];
+        this.currentState = SaverManager.I.saveData[key + "CurrentState"];
+        this.currentCorridorIndex = SaverManager.I.saveData[key + "CurrentCorridorIndex"];
+        this.clueCarried = SaverManager.I.saveData[key + "ClueCarried"];
+        this.placingClue = SaverManager.I.saveData[key + "PlacingClue"];
+        this.canCarryClue = SaverManager.I.saveData[key + "CanCarryClue"];
+        this.currentObjective = SaverManager.I.saveData[key + "CurrentObjective"];
+        this.backToPlayer = SaverManager.I.saveData[key + "BackToPlayer"];
+
+        if (this.clueCarried != null)
+        {
+            clueCarried.transform.SetParent(this.transform.Find("ChargingPoint"), false);
+            clueCarried.transform.localPosition = Vector3.zero;
+        }
+    }
+
+    public override void Save()
+    {
+        base.Save();
+        string key = "BoogieExplorer" + uniqueId;
+        SaverManager.I.saveData.Add(key + "AnimState", _anim.GetInteger("state"));
+        SaverManager.I.saveData.Add(key + "Position", this.transform.position);
+        SaverManager.I.saveData.Add(key + "Rotation", this.transform.rotation);
+        SaverManager.I.saveData.Add(key + "CurrentPath", currentPath);
+        SaverManager.I.saveData.Add(key + "DistanceTraveled", distanceTraveled);
+        SaverManager.I.saveData.Add(key + "CurrentState", currentState);
+        SaverManager.I.saveData.Add(key + "CurrentCorridorIndex", currentCorridorIndex);
+        SaverManager.I.saveData.Add(key + "ClueCarried", clueCarried);
+        SaverManager.I.saveData.Add(key + "PlacingClue", placingClue);
+        SaverManager.I.saveData.Add(key + "CanCarryClue", canCarryClue);
+        SaverManager.I.saveData.Add(key + "CurrentObjective", currentObjective);
+        SaverManager.I.saveData.Add(key + "BackToPlayer", backToPlayer);
+
+    }
+
     public override void BackToPlayer()
     {
         _anim.SetInteger("state", 0);
@@ -296,7 +350,8 @@ public class BoogieExplorer : Boogie
         placingClue = true;
         yield return StartCoroutine(GoToPlacingPosition());
 
-        if (currentObjective.GetComponentInChildren <MultipathController>().clues[clueCarried.pathIndex] == null)
+        if (currentObjective.GetComponentInChildren <MultipathController>().clues[clueCarried.pathIndex] == null && 
+            clueCarried.corridorIndex == int.Parse(currentObjective.GetComponentInChildren<MultipathController>().combination[clueCarried.pathIndex].ToString()))
         {
             yield return StartCoroutine(PlaceClueInSite());
         }

@@ -61,11 +61,11 @@ public class CorridorBegin : MonoBehaviour
     {
         for (int i = 0; i<doorsBegin.Length; i++)
         {
-            doorsBegin[i].transform.Find("pCube4").transform.localPosition = GetComponentInParent<MultipathController>().rightDoorOpened.position;
-            doorsBegin[i].transform.Find("pCube4").transform.rotation = GetComponentInParent<MultipathController>().rightDoorOpened.rotation;
+            doorsBegin[i].transform.Find("right").transform.localPosition = GetComponentInParent<MultipathController>().rightDoorOpened.position;
+            doorsBegin[i].transform.Find("right").transform.rotation = GetComponentInParent<MultipathController>().rightDoorOpened.rotation;
 
-            doorsBegin[i].transform.Find("polySurface4").transform.localPosition = GetComponentInParent<MultipathController>().leftDoorOpened.position;
-            doorsBegin[i].transform.Find("polySurface4").transform.rotation = GetComponentInParent<MultipathController>().leftDoorOpened.rotation;
+            doorsBegin[i].transform.Find("left").transform.localPosition = GetComponentInParent<MultipathController>().leftDoorOpened.position;
+            doorsBegin[i].transform.Find("left").transform.rotation = GetComponentInParent<MultipathController>().leftDoorOpened.rotation;
         }
         doorsOpened = true;
     }

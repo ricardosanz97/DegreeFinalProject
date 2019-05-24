@@ -39,6 +39,51 @@ public class BoogieCleaner : Boogie
         StartCoroutine(HandleSpeed());
     }
 
+    public override void Load()
+    {
+        base.Load();
+        string key = "BoogieCleaner" + uniqueId;
+        int animState = SaverManager.I.saveData[key + "AnimState"];
+        if (animState == -1)
+        {
+            _agent.enabled = false;
+            this.transform.position = SaverManager.I.saveData[key + "Position"];
+            this.transform.rotation = SaverManager.I.saveData[key + "Rotation"];
+            _agent.enabled = true;
+        }
+        else
+        {
+            this.transform.position = SaverManager.I.saveData[key + "Position"];
+            this.transform.rotation = SaverManager.I.saveData[key + "Rotation"];
+        }
+        _anim.SetInteger("state", animState);
+        canCharge = SaverManager.I.saveData[key + "CanCharge"];
+        canDeposit = SaverManager.I.saveData[key + "CanDeposit"];
+        carriedObject = SaverManager.I.saveData[key + "CarriedObject"];
+        currentObjective = SaverManager.I.saveData[key + "CurrentObjective"];
+        backToPlayer = SaverManager.I.saveData[key + "BackToPlayer"];
+
+        if (this.carriedObject != null)
+        {
+            carriedObject.transform.SetParent(this.transform.Find("ChargingPoint"), false);
+            carriedObject.transform.localPosition = Vector3.zero;
+        }
+    }
+
+    public override void Save()
+    {
+        base.Save();
+        string key = "BoogieCleaner" + uniqueId;
+        SaverManager.I.saveData.Add(key + "Position", this.transform.position);
+        SaverManager.I.saveData.Add(key + "Rotation", this.transform.rotation);
+        SaverManager.I.saveData.Add(key + "AnimState", _anim.GetInteger("state"));
+        SaverManager.I.saveData.Add(key + "CanCharge", canCharge);
+        SaverManager.I.saveData.Add(key + "CanDeposit", canDeposit);
+        SaverManager.I.saveData.Add(key + "CarriedObject", carriedObject);
+        SaverManager.I.saveData.Add(key + "CurrentObjective", currentObjective);
+        SaverManager.I.saveData.Add(key + "BackToPlayer", backToPlayer);
+    }
+
     private void AssignConfiguration()
     {
         CleanersConfiguration Ccfg = FindObjectOfType<BoogiesSpawner>().cleanersConfig;

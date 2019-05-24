@@ -15,6 +15,7 @@ public class UIController : Singleton<UIController>
     public static event Action<BoogieWrestler> OnSelectingWrestlerChange;
     public static event Action<BoogieWrestlerCommander> OnSelectingSquadJoin;
     public static event Action<Vector3> OnMovePositionSelected;
+    public static event Action OnPlayerDead;
 
     public bool popupOpened = false;
     public bool selectingBodyToCover = false;
@@ -43,6 +44,11 @@ public class UIController : Singleton<UIController>
         {
             popupOpened = false;
         }
+    }
+
+    public void PlayerIsDead()
+    {
+        OnPlayerDead.Invoke();
     }
 
     public bool OnMoveSquadPositionSelectedNull()

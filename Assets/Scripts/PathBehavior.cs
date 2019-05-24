@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PathBehavior : MonoBehaviour
+public class PathBehavior : MonoBehaviour, ISaveable
 {
     public bool FirstPath = false;
     public int CorridorCorrectIndex;
@@ -13,6 +13,12 @@ public class PathBehavior : MonoBehaviour
     public CorridorEnd end;
     public PathCorridorTrigger[] corridors;
     public int bExplorersIn = 0;
+
+    private void OnEnable()
+    {
+        SaverManager.OnSaveData += Save;
+        SaverManager.OnLoadData += Load;
+    }
 
     public void AssignCorridorIndexs()
     {
@@ -27,6 +33,30 @@ public class PathBehavior : MonoBehaviour
         end = this.transform.parent.GetComponentInChildren<CorridorEnd>();
 
         AssignRandomCorrectCorridor();
+    }
+
+    public void Load()
+    {
+        long uniqueId = GetComponentInParent<MultipathObstacle>().uniqueId;
+        string key = "MultipathObstacle" + uniqueId + this.PathIndex.ToString() + "InitialDoorsOpened";
+        begin.doorsOpened = SaverManager.I.saveData[key];
+        foreach (PathCorridorTrigger pct in corridors)
+        {
+            pct.doorOpened = SaverManager.I.saveData["MultipathObstacle" + GetComponentInParent<MultipathObstacle>().uniqueId.ToString() + this.PathIndex.ToString() + pct.CorriderIndex.ToString() + "DoorOpened"];
+        }
+    }
+
+    public void Save()
+    {
+        long uniqueId = GetComponentInParent<MultipathObstacle>().uniqueId;
+        string key = "MultipathObstacle" + uniqueId + this.PathIndex.ToString() + "InitialDoorsOpened";
+        Debug.Log(key);
+        SaverManager.I.saveData.Add(key, begin.doorsOpened);
+        foreach (PathCorridorTrigger pct in corridors)
+        {
+            SaverManager.I.saveData.Add("MultipathObstacle" + GetComponentInParent<MultipathObstacle>().uniqueId.ToString() + this.PathIndex.ToString() +
+            pct.CorriderIndex.ToString() + "DoorOpened", pct.doorOpened);
+        }
     }
 
     private void AssignRandomCorrectCorridor()

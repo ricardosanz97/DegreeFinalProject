@@ -84,6 +84,8 @@ public class LevelManager : Singleton<LevelManager>, ISaveable
     public GameObject ancient;
     public Transform lodwigPosition;
 
+    public bool GameStarted = false;
+
     public void GoToSaveStep(SAVE_STEP step)
     {
         switch (step)
@@ -101,6 +103,8 @@ public class LevelManager : Singleton<LevelManager>, ISaveable
     {
         SaverManager.OnSaveData += Save;
         SaverManager.OnLoadData += Load;
+
+        UIController.OnPlayerDead += PlayerDead;
     }
 
     private void Start()
@@ -301,6 +305,13 @@ public class LevelManager : Singleton<LevelManager>, ISaveable
     {
         OnChangeStep(GAME_STEP.Step13);
     }
+    
+    IEnumerator InitGame()
+    {
+        yield return new WaitForSeconds(2f);
+        SaverManager.I.SaveState();
+        GameStarted = true;
+    }
 
     public void OnChangeStep(GAME_STEP step)
     {
@@ -332,6 +343,8 @@ public class LevelManager : Singleton<LevelManager>, ISaveable
                 FindObjectOfType<BoogiesSpawner>().ForceSpawnBoogies(BoogieType.Cleaner, cleanersSpawnPoint.position, BoogiesSpawner.CleanersSpawned);
                 FindObjectOfType<BoogiesSpawner>().ForceSpawnBoogies(BoogieType.Explorer, explorersSpawnPoint.position, BoogiesSpawner.ExplorersSpawned);
                 FindObjectOfType<BoogiesSpawner>().ForceSpawnBoogies(BoogieType.Collector, collectorsSpawnPoint.position, BoogiesSpawner.CollectorsSpawned);
+
+                StartCoroutine(InitGame());
                 break;
             case GAME_STEP.Step1:
                 anciantConversation.SetActive(true);
@@ -409,9 +422,9 @@ public class LevelManager : Singleton<LevelManager>, ISaveable
                 lodwigConversation.SetActive(false);
                 fadeBlackImage.DOFade(1f, 3f).OnComplete(() =>
                 {
-                    fadeBlackImage.GetComponentInChildren<TextMeshPro>().DOFade(1f, 3f).OnComplete(()=> 
+                    fadeBlackImage.transform.Find("TheEndText").GetComponent<TextMeshProUGUI>().DOFade(1f, 3f).OnComplete(()=> 
                     {
-                        //StartCoroutine(GameController.I.EndGame());
+                        StartCoroutine(GameController.I.EndGame());
                     });
                 });
                 break;
@@ -421,7 +434,29 @@ public class LevelManager : Singleton<LevelManager>, ISaveable
             case GAME_STEP.Step15:
                 break;
         }
+    }
 
+    public void PlayerDead()
+    {
+        this.fadeBlackImage.DOFade(1f, 3f).OnComplete(() =>
+        {
+            fadeBlackImage.transform.Find("YouDiedText").GetComponent<TextMeshProUGUI>().DOFade(1f, 3f).OnComplete(() =>
+            {
+                StartCoroutine(FadeOut());
+            });
+        });
+    }
+
+    IEnumerator FadeOut()
+    {
+        yield return StartCoroutine(GameController.I.LoadLastSavedState());
+        yield return new WaitForSeconds(3f);
+        this.fadeBlackImage.transform.Find("YouDiedText").GetComponent<TextMeshProUGUI>().DOFade(0f, 1.5f);
+        this.fadeBlackImage.DOFade(0f, 1.5f).OnComplete(() =>
+        {
+            FindObjectOfType<PlayerHealth>().alive = true;
+            GameStarted = true;
+        });
     }
 
     public void Save()

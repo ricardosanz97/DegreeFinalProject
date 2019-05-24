@@ -46,10 +46,10 @@ public abstract class Boogie : AttackTarget, ISaveable
         _agent = GetComponent<NavMeshAgent>();
         _anim = GetComponent<Animator>();
 
-        uniqueId = GetHashCode() * (int)Time.unscaledTime * Random.Range(1, 9);
-        while (SaverManager.I.uniqueWrestlersIds.Contains(uniqueId))
+        uniqueId = GetHashCode() * Random.Range(1, 9);
+        while (SaverManager.I.uniqueBoogiesIds.Contains(uniqueId))
         {
-            uniqueId = GetHashCode() * (int)Time.unscaledTime * Random.Range(1, 9);
+            uniqueId = GetHashCode() * Random.Range(1, 9);
         }
     }
 

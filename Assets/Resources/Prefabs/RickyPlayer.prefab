@@ -173,6 +173,7 @@ GameObject:
   - component: {fileID: 5460679248529087694}
   - component: {fileID: 7522781655122867042}
   - component: {fileID: 7740800666492154288}
+  - component: {fileID: 6065235616085985023}
   m_Layer: 0
   m_Name: RickyPlayer
   m_TagString: Untagged
@@ -455,6 +456,18 @@ MonoBehaviour:
   health: 5
   alive: 1
   team: 0
+--- !u!114 &6065235616085985023
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 540453957922383287}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01463363b919ca243a563db00fbbd1f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &782797110271310628
 GameObject:
   m_ObjectHideFlags: 0

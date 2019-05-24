@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Text;
 
-public class MultipathController : MonoBehaviour
+public class MultipathController : MonoBehaviour, ISaveable
 {
     public int minPaths = 5;
     public int maxPaths = 9;
@@ -28,6 +28,12 @@ public class MultipathController : MonoBehaviour
         //numPaths = Random.Range(minPaths, maxPaths + 1);
         numPaths = this.transform.childCount;
         AssignPaths();
+    }
+
+    private void OnEnable()
+    {
+        SaverManager.OnSaveData += Save;
+        SaverManager.OnLoadData += Load;
     }
 
     private void AssignPaths()
@@ -85,29 +91,28 @@ public class MultipathController : MonoBehaviour
         {
             for (int j = 0; j<this.transform.GetChild(i).Find("Corridors").childCount; j++)
             {
-                this.transform.GetChild(i).Find("Corridors").GetChild(j).Find("DoorModelBegin").transform.Find("pCube4").transform.localPosition = rightDoorClosed.position;
-                this.transform.GetChild(i).Find("Corridors").GetChild(j).Find("DoorModelBegin").transform.Find("pCube4").transform.localRotation = rightDoorClosed.rotation;
+                this.transform.GetChild(i).Find("Corridors").GetChild(j).Find("DoorModelBegin").transform.Find("right").transform.localRotation = rightDoorClosed.rotation;
 
-                this.transform.GetChild(i).Find("Corridors").GetChild(j).Find("DoorModelBegin").transform.Find("pCube4").transform.localPosition = rightDoorClosed.position;
-                this.transform.GetChild(i).Find("Corridors").GetChild(j).Find("DoorModelBegin").transform.Find("pCube4").transform.rotation = rightDoorClosed.rotation;
+                this.transform.GetChild(i).Find("Corridors").GetChild(j).Find("DoorModelBegin").transform.Find("right").transform.localPosition = rightDoorClosed.position;
+                this.transform.GetChild(i).Find("Corridors").GetChild(j).Find("DoorModelBegin").transform.Find("right").transform.rotation = rightDoorClosed.rotation;
 
-                this.transform.GetChild(i).Find("Corridors").GetChild(j).Find("DoorModelBegin").transform.Find("polySurface4").transform.localPosition = leftDoorClosed.position;
-                this.transform.GetChild(i).Find("Corridors").GetChild(j).Find("DoorModelBegin").transform.Find("polySurface4").transform.rotation = leftDoorClosed.rotation;
+                this.transform.GetChild(i).Find("Corridors").GetChild(j).Find("DoorModelBegin").transform.Find("left").transform.localPosition = leftDoorClosed.position;
+                this.transform.GetChild(i).Find("Corridors").GetChild(j).Find("DoorModelBegin").transform.Find("left").transform.rotation = leftDoorClosed.rotation;
 
-                this.transform.GetChild(i).Find("Corridors").GetChild(j).Find("DoorModelBegin").transform.Find("polySurface4").transform.localPosition = leftDoorClosed.position;
-                this.transform.GetChild(i).Find("Corridors").GetChild(j).Find("DoorModelBegin").transform.Find("polySurface4").transform.rotation = leftDoorClosed.rotation;
+                this.transform.GetChild(i).Find("Corridors").GetChild(j).Find("DoorModelBegin").transform.Find("left").transform.localPosition = leftDoorClosed.position;
+                this.transform.GetChild(i).Find("Corridors").GetChild(j).Find("DoorModelBegin").transform.Find("left").transform.rotation = leftDoorClosed.rotation;
 
-                this.transform.GetChild(i).Find("Corridors").GetChild(j).Find("DoorModelEnd").transform.Find("pCube4").transform.localPosition = rightDoorClosed.position;
-                this.transform.GetChild(i).Find("Corridors").GetChild(j).Find("DoorModelEnd").transform.Find("pCube4").transform.rotation = rightDoorClosed.rotation;
+                this.transform.GetChild(i).Find("Corridors").GetChild(j).Find("DoorModelEnd").transform.Find("right").transform.localPosition = rightDoorClosed.position;
+                this.transform.GetChild(i).Find("Corridors").GetChild(j).Find("DoorModelEnd").transform.Find("right").transform.rotation = rightDoorClosed.rotation;
 
-                this.transform.GetChild(i).Find("Corridors").GetChild(j).Find("DoorModelEnd").transform.Find("pCube4").transform.localPosition = rightDoorClosed.position;
-                this.transform.GetChild(i).Find("Corridors").GetChild(j).Find("DoorModelEnd").transform.Find("pCube4").transform.rotation = rightDoorClosed.rotation;
+                this.transform.GetChild(i).Find("Corridors").GetChild(j).Find("DoorModelEnd").transform.Find("right").transform.localPosition = rightDoorClosed.position;
+                this.transform.GetChild(i).Find("Corridors").GetChild(j).Find("DoorModelEnd").transform.Find("right").transform.rotation = rightDoorClosed.rotation;
 
-                this.transform.GetChild(i).Find("Corridors").GetChild(j).Find("DoorModelEnd").transform.Find("polySurface4").transform.localPosition = leftDoorClosed.position;
-                this.transform.GetChild(i).Find("Corridors").GetChild(j).Find("DoorModelEnd").transform.Find("polySurface4").transform.rotation = leftDoorClosed.rotation;
+                this.transform.GetChild(i).Find("Corridors").GetChild(j).Find("DoorModelEnd").transform.Find("left").transform.localPosition = leftDoorClosed.position;
+                this.transform.GetChild(i).Find("Corridors").GetChild(j).Find("DoorModelEnd").transform.Find("left").transform.rotation = leftDoorClosed.rotation;
 
-                this.transform.GetChild(i).Find("Corridors").GetChild(j).Find("DoorModelEnd").transform.Find("polySurface4").transform.localPosition = leftDoorClosed.position;
-                this.transform.GetChild(i).Find("Corridors").GetChild(j).Find("DoorModelEnd").transform.Find("polySurface4").transform.rotation = leftDoorClosed.rotation;
+                this.transform.GetChild(i).Find("Corridors").GetChild(j).Find("DoorModelEnd").transform.Find("left").transform.localPosition = leftDoorClosed.position;
+                this.transform.GetChild(i).Find("Corridors").GetChild(j).Find("DoorModelEnd").transform.Find("left").transform.rotation = leftDoorClosed.rotation;
             }
         }
     }
@@ -152,5 +157,61 @@ public class MultipathController : MonoBehaviour
                 this.transform.GetChild(i).Find("Corridors").GetChild(j).Find("DoorModelEnd").transform.Find("polySurface4").transform.rotation = leftDoorOpened.rotation;
             }
         }
+    }
+
+    public void Save()
+    {
+        string key = "MultipathObstacle" + GetComponentInParent<MultipathObstacle>().uniqueId + "Clue";
+        int counter = 0;
+        for (int i = 0; i<clues.Length; i++)
+        {
+            if (clues[i] != null)
+            {
+                string key2 = key + i;
+                SaverManager.I.saveData.Add(key2 + "Position", clues[i].transform.position);
+                SaverManager.I.saveData.Add(key2 + "Rotation", clues[i].transform.rotation);
+                SaverManager.I.saveData.Add(key2 + "CorridorIndex", clues[i].corridorIndex);
+                SaverManager.I.saveData.Add(key2 + "PathIndex", clues[i].pathIndex);
+                SaverManager.I.saveData.Add(key2 + "PlacedBy", clues[i].placedBy);
+                SaverManager.I.saveData.Add(key2 + "Placed", clues[i].placed);
+                counter++;
+            }
+        }
+        SaverManager.I.saveData.Add(key + "CluesAmount", counter);
+        SaverManager.I.saveData.Add(key + "Clues", clues);
+    }
+
+    public void Load()
+    {
+        string key = "MultipathObstacle" + GetComponentInParent<MultipathObstacle>().uniqueId + "Clue";
+
+        int counter = SaverManager.I.saveData[key + "CluesAmount"];
+
+        int numListClues = clues.Length;
+        for (int i = 0; i<numListClues; i++)
+        {
+            if (i >= counter)
+            {
+                if (clues[i] != null)
+                {
+                    Destroy(clues[i].gameObject);
+                    clues[i] = null;
+                }
+            }
+        }
+        clues = SaverManager.I.saveData[key + "Clues"];
+        for (int i = 0; i<clues.Length; i++)
+        {
+            if (clues[i] != null)
+            {
+                clues[i].transform.position = SaverManager.I.saveData[key + i + "Position"];
+                clues[i].transform.rotation = SaverManager.I.saveData[key + i + "Rotation"];
+                clues[i].corridorIndex = SaverManager.I.saveData[key + i + "CorridorIndex"];
+                clues[i].pathIndex = SaverManager.I.saveData[key + i + "PathIndex"];
+                clues[i].placedBy = SaverManager.I.saveData[key + i + "PlacedBy"];
+                clues[i].placed = SaverManager.I.saveData[key + i + "Placed"];
+            }
+        }
+
     }
 }

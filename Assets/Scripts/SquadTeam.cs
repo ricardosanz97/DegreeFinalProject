@@ -11,7 +11,7 @@ public class SquadTeam : MonoBehaviour
     private void OnEnable()
     {
         uniqueId = GetHashCode() * Random.Range(1, 9);
-        while (SaverManager.I.uniqueWrestlersIds.Contains(uniqueId))
+        while (SaverManager.I.uniqueBoogiesIds.Contains(uniqueId))
         {
             uniqueId = GetHashCode() * (int)Time.unscaledTime * Random.Range(1, 9);
         }

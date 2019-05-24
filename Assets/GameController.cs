@@ -17,4 +17,16 @@ public class GameController : Singleton<GameController>
     {
         SceneManager.LoadScene(scene);
     }
+
+    public IEnumerator EndGame()
+    {
+        yield return new WaitForSeconds(3f);
+        //Back to menu
+    }
+
+    public IEnumerator LoadLastSavedState()
+    {
+        yield return new WaitForSeconds(2f);
+        SaverManager.I.LoadLastSavedState();
+    }
 }

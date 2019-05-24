@@ -26,6 +26,7 @@ public class BoogieCollector : Boogie
     public ElixirObstacleStone.TYPE collectingType = ElixirObstacleStone.TYPE.None;
     //private bool coroutineChangeDirectionStarted = false;
     [HideInInspector]public List<MarkerBehaviour> markers;
+    GameObject carriedPart;
     public CURRENT_STATE currentState;
 
     private BoogieCollectorAnimationController _bcac;
@@ -46,6 +47,67 @@ public class BoogieCollector : Boogie
     {
         ElixirStone,
         CollectorMachine
+    }
+
+    public override void Save()
+    {
+        base.Save();
+        string key = "BoogieCollector" + uniqueId;
+        SaverManager.I.saveData.Add(key + "Position", this.transform.position);
+        SaverManager.I.saveData.Add(key + "Rotation", this.transform.rotation);
+        SaverManager.I.saveData.Add(key + "AnimState", _anim.GetInteger("state"));
+        SaverManager.I.saveData.Add(key + "CanCollect", canCollect);
+        SaverManager.I.saveData.Add(key + "CanFollowMarker", canFollowMarker);
+        SaverManager.I.saveData.Add(key + "FollowingMarker", followingMarker);
+        SaverManager.I.saveData.Add(key + "CurrentMarker", currentMarker);
+        SaverManager.I.saveData.Add(key + "LastMarkerSpawned", lastMarkerSpawned);
+        SaverManager.I.saveData.Add(key + "LastMarker", lastMarker);
+        SaverManager.I.saveData.Add(key + "CollectingType", collectingType);
+        SaverManager.I.saveData.Add(key + "Markers", markers);
+        SaverManager.I.saveData.Add(key + "CurrentElixirStone", currentElixirStone);
+        SaverManager.I.saveData.Add(key + "CurrentObjective", currentObjective);
+        SaverManager.I.saveData.Add(key + "CurrentState", currentState);
+        SaverManager.I.saveData.Add(key + "BackToPlayer", backToPlayer);
+        SaverManager.I.saveData.Add(key + "PartCarried", carriedPart);
+    }
+
+    public override void Load()
+    {
+        base.Load();
+        string key = "BoogieCollector" + uniqueId;
+        int animState = SaverManager.I.saveData[key + "AnimState"];
+        if (animState == -1)
+        {
+            _agent.enabled = false;
+            this.transform.position = SaverManager.I.saveData[key + "Position"];
+            this.transform.rotation = SaverManager.I.saveData[key + "Rotation"];
+            _agent.enabled = true;
+        }
+        else
+        {
+            this.transform.position = SaverManager.I.saveData[key + "Position"];
+            this.transform.rotation = SaverManager.I.saveData[key + "Rotation"];
+        }
+        _anim.SetInteger("state", animState);
+        this.canCollect = SaverManager.I.saveData[key + "CanCollect"];
+        this.canFollowMarker = SaverManager.I.saveData[key + "CanFollowMarker"];
+        this.followingMarker = SaverManager.I.saveData[key + "FollowingMarker"];
+        this.currentMarker = SaverManager.I.saveData[key + "CurrentMarker"];
+        this.lastMarkerSpawned = SaverManager.I.saveData[key + "LastMarkerSpawned"];
+        this.lastMarker = SaverManager.I.saveData[key + "LastMarker"];
+        this.collectingType = SaverManager.I.saveData[key + "CollectingType"];
+        this.markers = SaverManager.I.saveData[key + "Markers"];
+        this.currentElixirStone = SaverManager.I.saveData[key + "CurrentElixirStone"];
+        this.currentObjective = SaverManager.I.saveData[key + "CurrentObjective"];
+        this.currentState = SaverManager.I.saveData[key + "CurrentState"];
+        this.backToPlayer = SaverManager.I.saveData[key + "BackToPlayer"];
+        this.carriedPart = SaverManager.I.saveData[key + "PartCarried"];
+
+        if (this.carriedPart != null)
+        {
+            carriedPart.transform.SetParent(this.transform.Find("ChargingPoint"), false);
+            carriedPart.transform.localPosition = Vector3.zero;
+        }
     }
 
     public override void Awake()
@@ -543,22 +605,22 @@ public class BoogieCollector : Boogie
             _anim.SetInteger("state", 1);
             yield return new WaitForSeconds(timeToCollect);
 
-            GameObject part = null;
+            carriedPart = null;
             if (!backToPlayer)
             {
                 if (collectingType == ElixirObstacleStone.TYPE.Elixir && !backToPlayer)
                 {
                     Debug.Log("elixir");
-                    part = Instantiate(Resources.Load("Prefabs/Obstacles/ElixirEnergyObstacle/ElixirStonePart"), this.transform.position, Quaternion.identity) as GameObject;
+                    carriedPart = Instantiate(Resources.Load("Prefabs/Obstacles/ElixirEnergyObstacle/ElixirStonePart"), this.transform.position, Quaternion.identity) as GameObject;
                 }
                 else if (collectingType == ElixirObstacleStone.TYPE.Energy && !backToPlayer)
                 {
                     Debug.Log("energy");
-                    part = Instantiate(Resources.Load("Prefabs/Obstacles/ElixirEnergyObstacle/EnergyStonePart"), this.transform.position, Quaternion.identity) as GameObject;
+                    carriedPart = Instantiate(Resources.Load("Prefabs/Obstacles/ElixirEnergyObstacle/EnergyStonePart"), this.transform.position, Quaternion.identity) as GameObject;
                 }
 
-                part.transform.SetParent(this.transform.Find("ChargingPoint"), false);
-                part.transform.localPosition = Vector3.zero;
+                carriedPart.transform.SetParent(this.transform.Find("ChargingPoint"), false);
+                carriedPart.transform.localPosition = Vector3.zero;
             }
             
             

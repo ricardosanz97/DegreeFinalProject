@@ -34,11 +34,11 @@ public class PathCorridorTrigger : MonoBehaviour
 
     void OpenDoor()
     {
-        endDoor.transform.Find("pCube4").transform.localPosition = GetComponentInParent<MultipathController>().rightDoorOpened.position;
-        endDoor.transform.Find("pCube4").transform.rotation = GetComponentInParent<MultipathController>().rightDoorOpened.rotation;
+        endDoor.transform.Find("right").transform.localPosition = GetComponentInParent<MultipathController>().rightDoorOpened.position;
+        endDoor.transform.Find("right").transform.rotation = GetComponentInParent<MultipathController>().rightDoorOpened.rotation;
 
-        endDoor.transform.Find("polySurface4").transform.localPosition = GetComponentInParent<MultipathController>().leftDoorOpened.position;
-        endDoor.transform.Find("polySurface4").transform.rotation = GetComponentInParent<MultipathController>().leftDoorOpened.rotation;
+        endDoor.transform.Find("left").transform.localPosition = GetComponentInParent<MultipathController>().leftDoorOpened.position;
+        endDoor.transform.Find("left").transform.rotation = GetComponentInParent<MultipathController>().leftDoorOpened.rotation;
 
         this.doorOpened = true;
     }
