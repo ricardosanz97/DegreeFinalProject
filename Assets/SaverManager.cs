@@ -8,7 +8,8 @@ public class SaverManager : Singleton<SaverManager>
     public GAME_STEP currentGameStep;
 
     public Dictionary<string, dynamic> saveData = new Dictionary<string, dynamic>();
-    public List<long> uniqueIds = new List<long>();
+    public List<long> uniqueWrestlersIds = new List<long>();
+    public List<long> uniqueObstaclesIds = new List<long>();
     public static event Action OnSaveData;
     public static event Action OnLoadData;
 

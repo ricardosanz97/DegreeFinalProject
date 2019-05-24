@@ -9,6 +9,8 @@ public class ElixirObstacleStone : InteractableBody
     public bool empty = false;
     public int bCollectorsIn = 0;
     public TYPE type;
+
+    public int idStone;
     public enum TYPE
     {
         Elixir,
@@ -21,6 +23,10 @@ public class ElixirObstacleStone : InteractableBody
         if (elixirAvailable == 0)
         {
             this.transform.GetChild(0).GetComponent<MeshRenderer>().material.DisableKeyword("_EMISSION");
+        }
+        else
+        {
+            this.transform.GetChild(0).GetComponent<MeshRenderer>().material.EnableKeyword("_EMISSION");
         }
     }
 }

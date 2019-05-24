@@ -19,6 +19,10 @@ public class DebrisObstacle : Obstacle
         }
 
         uniqueId = GetHashCode() * Random.Range(1, 9);
+        while (SaverManager.I.uniqueObstaclesIds.Contains(uniqueId))
+        {
+            uniqueId = GetHashCode() * Random.Range(1, 9);
+        }
     }
 
     private void Start()
