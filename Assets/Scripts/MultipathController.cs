@@ -91,6 +91,7 @@ public class MultipathController : MonoBehaviour, ISaveable
         {
             for (int j = 0; j<this.transform.GetChild(i).Find("Corridors").childCount; j++)
             {
+                this.transform.GetChild(i).Find("Corridors").GetChild(j).Find("DoorModelBegin").transform.Find("right").transform.localPosition = rightDoorClosed.position;
                 this.transform.GetChild(i).Find("Corridors").GetChild(j).Find("DoorModelBegin").transform.Find("right").transform.localRotation = rightDoorClosed.rotation;
 
                 this.transform.GetChild(i).Find("Corridors").GetChild(j).Find("DoorModelBegin").transform.Find("right").transform.localPosition = rightDoorClosed.position;
