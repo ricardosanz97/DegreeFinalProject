@@ -203,14 +203,22 @@ public class MultipathController : MonoBehaviour, ISaveable
         clues = SaverManager.I.saveData[key + "Clues"];
         for (int i = 0; i<clues.Length; i++)
         {
-            if (clues[i] != null)
+            try
             {
-                clues[i].transform.position = SaverManager.I.saveData[key + i + "Position"];
-                clues[i].transform.rotation = SaverManager.I.saveData[key + i + "Rotation"];
-                clues[i].corridorIndex = SaverManager.I.saveData[key + i + "CorridorIndex"];
-                clues[i].pathIndex = SaverManager.I.saveData[key + i + "PathIndex"];
-                clues[i].placedBy = SaverManager.I.saveData[key + i + "PlacedBy"];
-                clues[i].placed = SaverManager.I.saveData[key + i + "Placed"];
+                if (clues[i] != null)
+                {
+                    clues[i].transform.position = SaverManager.I.saveData[key + i + "Position"];
+                    clues[i].transform.rotation = SaverManager.I.saveData[key + i + "Rotation"];
+                    clues[i].corridorIndex = SaverManager.I.saveData[key + i + "CorridorIndex"];
+                    clues[i].pathIndex = SaverManager.I.saveData[key + i + "PathIndex"];
+                    clues[i].placedBy = SaverManager.I.saveData[key + i + "PlacedBy"];
+                    clues[i].placed = SaverManager.I.saveData[key + i + "Placed"];
+                }
+            }
+
+            catch
+            {
+                Destroy(clues[i].gameObject);
             }
         }
 

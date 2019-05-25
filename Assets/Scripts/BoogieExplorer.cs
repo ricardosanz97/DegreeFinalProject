@@ -27,35 +27,44 @@ public class BoogieExplorer : Boogie
     {
         base.Load();
         string key = "BoogieExplorer" + uniqueId;
-        int animState = SaverManager.I.saveData[key + "AnimState"];
-        if (animState == -1)
+        try
         {
-            _agent.enabled = false;
-            this.transform.position = SaverManager.I.saveData[key + "Position"];
-            this.transform.rotation = SaverManager.I.saveData[key + "Rotation"];
-            _agent.enabled = true;
-        }
-        else
-        {
-            this.transform.position = SaverManager.I.saveData[key + "Position"];
-            this.transform.rotation = SaverManager.I.saveData[key + "Rotation"];
-        }
-        _anim.SetInteger("state", animState);
-        this.currentPath = SaverManager.I.saveData[key + "CurrentPath"];
-        this.distanceTraveled = SaverManager.I.saveData[key + "DistanceTraveled"];
-        this.currentState = SaverManager.I.saveData[key + "CurrentState"];
-        this.currentCorridorIndex = SaverManager.I.saveData[key + "CurrentCorridorIndex"];
-        this.clueCarried = SaverManager.I.saveData[key + "ClueCarried"];
-        this.placingClue = SaverManager.I.saveData[key + "PlacingClue"];
-        this.canCarryClue = SaverManager.I.saveData[key + "CanCarryClue"];
-        this.currentObjective = SaverManager.I.saveData[key + "CurrentObjective"];
-        this.backToPlayer = SaverManager.I.saveData[key + "BackToPlayer"];
+            int animState = SaverManager.I.saveData[key + "AnimState"];
+            if (animState == -1)
+            {
+                _agent.enabled = false;
+                this.transform.position = SaverManager.I.saveData[key + "Position"];
+                this.transform.rotation = SaverManager.I.saveData[key + "Rotation"];
+                _agent.enabled = true;
+            }
+            else
+            {
+                this.transform.position = SaverManager.I.saveData[key + "Position"];
+                this.transform.rotation = SaverManager.I.saveData[key + "Rotation"];
+            }
+            _anim.SetInteger("state", animState);
+            this.currentPath = SaverManager.I.saveData[key + "CurrentPath"];
+            this.distanceTraveled = SaverManager.I.saveData[key + "DistanceTraveled"];
+            this.currentState = SaverManager.I.saveData[key + "CurrentState"];
+            this.currentCorridorIndex = SaverManager.I.saveData[key + "CurrentCorridorIndex"];
+            this.clueCarried = SaverManager.I.saveData[key + "ClueCarried"];
+            this.placingClue = SaverManager.I.saveData[key + "PlacingClue"];
+            this.canCarryClue = SaverManager.I.saveData[key + "CanCarryClue"];
+            this.currentObjective = SaverManager.I.saveData[key + "CurrentObjective"];
+            this.backToPlayer = SaverManager.I.saveData[key + "BackToPlayer"];
 
-        if (this.clueCarried != null)
-        {
-            clueCarried.transform.SetParent(this.transform.Find("ChargingPoint"), false);
-            clueCarried.transform.localPosition = Vector3.zero;
+            if (this.clueCarried != null)
+            {
+                clueCarried.transform.SetParent(this.transform.Find("ChargingPoint"), false);
+                clueCarried.transform.localPosition = Vector3.zero;
+            }
         }
+
+        catch
+        {
+            Destroy(this.gameObject);
+        }
+
     }
 
     public override void Save()

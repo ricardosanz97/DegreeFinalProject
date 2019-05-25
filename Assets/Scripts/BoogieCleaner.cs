@@ -43,31 +43,39 @@ public class BoogieCleaner : Boogie
     {
         base.Load();
         string key = "BoogieCleaner" + uniqueId;
-        int animState = SaverManager.I.saveData[key + "AnimState"];
-        if (animState == -1)
+        try
         {
-            _agent.enabled = false;
-            this.transform.position = SaverManager.I.saveData[key + "Position"];
-            this.transform.rotation = SaverManager.I.saveData[key + "Rotation"];
-            _agent.enabled = true;
-        }
-        else
-        {
-            this.transform.position = SaverManager.I.saveData[key + "Position"];
-            this.transform.rotation = SaverManager.I.saveData[key + "Rotation"];
-        }
-        _anim.SetInteger("state", animState);
-        canCharge = SaverManager.I.saveData[key + "CanCharge"];
-        canDeposit = SaverManager.I.saveData[key + "CanDeposit"];
-        carriedObject = SaverManager.I.saveData[key + "CarriedObject"];
-        currentObjective = SaverManager.I.saveData[key + "CurrentObjective"];
-        backToPlayer = SaverManager.I.saveData[key + "BackToPlayer"];
+            int animState = SaverManager.I.saveData[key + "AnimState"];
+            if (animState == -1)
+            {
+                _agent.enabled = false;
+                this.transform.position = SaverManager.I.saveData[key + "Position"];
+                this.transform.rotation = SaverManager.I.saveData[key + "Rotation"];
+                _agent.enabled = true;
+            }
+            else
+            {
+                this.transform.position = SaverManager.I.saveData[key + "Position"];
+                this.transform.rotation = SaverManager.I.saveData[key + "Rotation"];
+            }
+            _anim.SetInteger("state", animState);
+            canCharge = SaverManager.I.saveData[key + "CanCharge"];
+            canDeposit = SaverManager.I.saveData[key + "CanDeposit"];
+            carriedObject = SaverManager.I.saveData[key + "CarriedObject"];
+            currentObjective = SaverManager.I.saveData[key + "CurrentObjective"];
+            backToPlayer = SaverManager.I.saveData[key + "BackToPlayer"];
 
-        if (this.carriedObject != null)
-        {
-            carriedObject.transform.SetParent(this.transform.Find("ChargingPoint"), false);
-            carriedObject.transform.localPosition = Vector3.zero;
+            if (this.carriedObject != null)
+            {
+                carriedObject.transform.SetParent(this.transform.Find("ChargingPoint"), false);
+                carriedObject.transform.localPosition = Vector3.zero;
+            }
         }
+        catch
+        {
+            Destroy(this.gameObject);
+        }
+
     }
 
     public override void Save()

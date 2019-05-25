@@ -1290,33 +1290,40 @@ public class BoogieWrestler : Boogie
 
     public override void Load()
     {
-        _agent.enabled = false;
-        this.transform.position = SaverManager.I.saveData[key + "position"];
-        this.transform.rotation = SaverManager.I.saveData[key + "rotation"];
-        _agent.enabled = true;
-        this.currentState = (STATE)SaverManager.I.saveData[key + "state"];
-        this.commander = (BoogieWrestlerCommander)SaverManager.I.saveData[key + "commander"];
-        this.leader = SaverManager.I.saveData[key + "leader"];
-        this.transform.SetParent(SaverManager.I.saveData[key + "parent"], true);
-        string indexs = SaverManager.I.saveData[key + "indexs"];
-        string index1 = ""; string index2 = "";
-        bool commaEncounter = false;
-        for (int i = 0; i<indexs.Length; i++)
+        try
         {
-            if (indexs[i] == ',')
+            _agent.enabled = false;
+            this.transform.position = SaverManager.I.saveData[key + "position"];
+            this.transform.rotation = SaverManager.I.saveData[key + "rotation"];
+            _agent.enabled = true;
+            this.currentState = (STATE)SaverManager.I.saveData[key + "state"];
+            this.commander = (BoogieWrestlerCommander)SaverManager.I.saveData[key + "commander"];
+            this.leader = SaverManager.I.saveData[key + "leader"];
+            this.transform.SetParent(SaverManager.I.saveData[key + "parent"], true);
+            string indexs = SaverManager.I.saveData[key + "indexs"];
+            string index1 = ""; string index2 = "";
+            bool commaEncounter = false;
+            for (int i = 0; i < indexs.Length; i++)
             {
-                commaEncounter = true;
-                continue;
+                if (indexs[i] == ',')
+                {
+                    commaEncounter = true;
+                    continue;
+                }
+                if (!commaEncounter)
+                {
+                    index1 += indexs[i];
+                }
+                else
+                {
+                    index2 += indexs[i];
+                }
             }
-            if (!commaEncounter)
-            {
-                index1 += indexs[i];
-            }
-            else
-            {
-                index2 += indexs[i];
-            }
+            this.indexs = new SquadConfiguration.Index(int.Parse(index1), int.Parse(index2));
         }
-        this.indexs = new SquadConfiguration.Index(int.Parse(index1), int.Parse(index2));
+        catch
+        {
+            Destroy(this.gameObject);
+        }
     }
 }

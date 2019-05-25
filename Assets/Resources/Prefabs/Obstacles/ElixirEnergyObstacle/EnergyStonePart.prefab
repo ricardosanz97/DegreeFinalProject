@@ -105,6 +105,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8106503726126702452}
   - component: {fileID: 2946420249113503832}
+  - component: {fileID: 6767629997210790184}
   m_Layer: 0
   m_Name: EnergyStonePart
   m_TagString: Untagged
@@ -141,6 +142,18 @@ CapsuleCollider:
   m_Height: 0.46
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &6767629997210790184
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5617809812046328222}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 497e3ea02765d4e43b86698d969e8332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6827668631246568007
 GameObject:
   m_ObjectHideFlags: 0

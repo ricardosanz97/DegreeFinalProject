@@ -75,38 +75,45 @@ public class BoogieCollector : Boogie
     {
         base.Load();
         string key = "BoogieCollector" + uniqueId;
-        int animState = SaverManager.I.saveData[key + "AnimState"];
-        if (animState == -1)
+        try
         {
-            _agent.enabled = false;
-            this.transform.position = SaverManager.I.saveData[key + "Position"];
-            this.transform.rotation = SaverManager.I.saveData[key + "Rotation"];
-            _agent.enabled = true;
-        }
-        else
-        {
-            this.transform.position = SaverManager.I.saveData[key + "Position"];
-            this.transform.rotation = SaverManager.I.saveData[key + "Rotation"];
-        }
-        _anim.SetInteger("state", animState);
-        this.canCollect = SaverManager.I.saveData[key + "CanCollect"];
-        this.canFollowMarker = SaverManager.I.saveData[key + "CanFollowMarker"];
-        this.followingMarker = SaverManager.I.saveData[key + "FollowingMarker"];
-        this.currentMarker = SaverManager.I.saveData[key + "CurrentMarker"];
-        this.lastMarkerSpawned = SaverManager.I.saveData[key + "LastMarkerSpawned"];
-        this.lastMarker = SaverManager.I.saveData[key + "LastMarker"];
-        this.collectingType = SaverManager.I.saveData[key + "CollectingType"];
-        this.markers = SaverManager.I.saveData[key + "Markers"];
-        this.currentElixirStone = SaverManager.I.saveData[key + "CurrentElixirStone"];
-        this.currentObjective = SaverManager.I.saveData[key + "CurrentObjective"];
-        this.currentState = SaverManager.I.saveData[key + "CurrentState"];
-        this.backToPlayer = SaverManager.I.saveData[key + "BackToPlayer"];
-        this.carriedPart = SaverManager.I.saveData[key + "PartCarried"];
+            int animState = SaverManager.I.saveData[key + "AnimState"];
+            if (animState == -1)
+            {
+                _agent.enabled = false;
+                this.transform.position = SaverManager.I.saveData[key + "Position"];
+                this.transform.rotation = SaverManager.I.saveData[key + "Rotation"];
+                _agent.enabled = true;
+            }
+            else
+            {
+                this.transform.position = SaverManager.I.saveData[key + "Position"];
+                this.transform.rotation = SaverManager.I.saveData[key + "Rotation"];
+            }
+            _anim.SetInteger("state", animState);
+            this.canCollect = SaverManager.I.saveData[key + "CanCollect"];
+            this.canFollowMarker = SaverManager.I.saveData[key + "CanFollowMarker"];
+            this.followingMarker = SaverManager.I.saveData[key + "FollowingMarker"];
+            this.currentMarker = SaverManager.I.saveData[key + "CurrentMarker"];
+            this.lastMarkerSpawned = SaverManager.I.saveData[key + "LastMarkerSpawned"];
+            this.lastMarker = SaverManager.I.saveData[key + "LastMarker"];
+            this.collectingType = SaverManager.I.saveData[key + "CollectingType"];
+            this.markers = SaverManager.I.saveData[key + "Markers"];
+            this.currentElixirStone = SaverManager.I.saveData[key + "CurrentElixirStone"];
+            this.currentObjective = SaverManager.I.saveData[key + "CurrentObjective"];
+            this.currentState = SaverManager.I.saveData[key + "CurrentState"];
+            this.backToPlayer = SaverManager.I.saveData[key + "BackToPlayer"];
+            this.carriedPart = SaverManager.I.saveData[key + "PartCarried"];
 
-        if (this.carriedPart != null)
+            if (this.carriedPart != null)
+            {
+                carriedPart.transform.SetParent(this.transform.Find("ChargingPoint"), false);
+                carriedPart.transform.localPosition = Vector3.zero;
+            }
+        }
+        catch
         {
-            carriedPart.transform.SetParent(this.transform.Find("ChargingPoint"), false);
-            carriedPart.transform.localPosition = Vector3.zero;
+            Destroy(this.gameObject);
         }
     }
 
@@ -621,6 +628,7 @@ public class BoogieCollector : Boogie
 
                 carriedPart.transform.SetParent(this.transform.Find("ChargingPoint"), false);
                 carriedPart.transform.localPosition = Vector3.zero;
+                carriedPart.GetComponent<ElixirStonePart>().AssignKey("BoogieCollector" + uniqueId);
             }
             
             
