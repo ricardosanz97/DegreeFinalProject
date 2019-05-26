@@ -67,6 +67,18 @@ public abstract class Boogie : AttackTarget, ISaveable
     public void SetObjective(Obstacle obs)
     {
         currentObjective = obs;
+        switch (type)
+        {
+            case BoogieType.Cleaner:
+                FindObjectOfType<BoogiesSpawner>().cleanersCleaning = true;
+                break;
+            case BoogieType.Collector:
+                FindObjectOfType<BoogiesSpawner>().collectorsCollecting = true;
+                break;
+            case BoogieType.Explorer:
+                FindObjectOfType<BoogiesSpawner>().explorersExploring = true;
+                break;
+        }
         OnObjectiveSelected();
     }
 
@@ -121,11 +133,41 @@ public abstract class Boogie : AttackTarget, ISaveable
         }
     }
 
-    public virtual void Save()
-    {
-    }
+    public abstract void Save();
 
-    public virtual void Load()
+    public abstract void Load();
+
+    private void OnDestroy()
     {
+        if (FindObjectOfType<BoogiesSpawner>() != null)
+        {
+            switch (type)
+            {
+                case BoogieType.Cleaner:
+                    if (FindObjectOfType<BoogiesSpawner>().cleanersCleaning)
+                    {
+                        FindObjectOfType<BoogiesSpawner>().cleanersCleaning = false;
+                    }
+                    break;
+                case BoogieType.Explorer:
+                    if (FindObjectOfType<BoogiesSpawner>().explorersExploring)
+                    {
+                        FindObjectOfType<BoogiesSpawner>().explorersExploring = false;
+                    }
+                    break;
+                case BoogieType.Collector:
+                    if (FindObjectOfType<BoogiesSpawner>().collectorsCollecting)
+                    {
+                        FindObjectOfType<BoogiesSpawner>().collectorsCollecting = false;
+                    }
+                    break;
+                case BoogieType.Wrestler:
+                    if (FindObjectOfType<BoogiesSpawner>().wrestlersWrestling)
+                    {
+                        FindObjectOfType<BoogiesSpawner>().wrestlersWrestling = false;
+                    }
+                    break;
+            }
+        }
     }
 }

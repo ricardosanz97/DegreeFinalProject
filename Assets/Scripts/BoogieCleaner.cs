@@ -41,7 +41,6 @@ public class BoogieCleaner : Boogie
 
     public override void Load()
     {
-        base.Load();
         string key = "BoogieCleaner" + uniqueId;
         try
         {
@@ -52,6 +51,7 @@ public class BoogieCleaner : Boogie
                 this.transform.position = SaverManager.I.saveData[key + "Position"];
                 this.transform.rotation = SaverManager.I.saveData[key + "Rotation"];
                 _agent.enabled = true;
+                _agent.isStopped = SaverManager.I.saveData[key + "IsStopped"];
             }
             else
             {
@@ -73,6 +73,10 @@ public class BoogieCleaner : Boogie
         }
         catch
         {
+            if (this == null || this.gameObject == null)
+            {
+                return;
+            }
             Destroy(this.gameObject);
         }
 
@@ -80,11 +84,15 @@ public class BoogieCleaner : Boogie
 
     public override void Save()
     {
-        base.Save();
+        if (this == null || this.gameObject == null)
+        {
+            return;
+        }
         string key = "BoogieCleaner" + uniqueId;
         SaverManager.I.saveData.Add(key + "Position", this.transform.position);
         SaverManager.I.saveData.Add(key + "Rotation", this.transform.rotation);
         SaverManager.I.saveData.Add(key + "AnimState", _anim.GetInteger("state"));
+        SaverManager.I.saveData.Add(key + "IsStopped", _agent.isStopped);
         SaverManager.I.saveData.Add(key + "CanCharge", canCharge);
         SaverManager.I.saveData.Add(key + "CanDeposit", canDeposit);
         SaverManager.I.saveData.Add(key + "CarriedObject", carriedObject);
@@ -140,6 +148,10 @@ public class BoogieCleaner : Boogie
         {
             BoogiesSpawner.CleanersAmount++;
             BoogiesSpawner.CleanersSpawned--;
+            if (BoogiesSpawner.CleanersSpawned == 0)
+            {
+                SaverManager.I.SaveState(true);
+            }
             FindObjectOfType<FastSelectorBoogiesController>().cleanersAmountSlider.onValueChanged.RemoveAllListeners();
             FindObjectOfType<FastSelectorBoogiesController>().cleanersAmountSlider.value++;
             FindObjectOfType<FastSelectorBoogiesController>().cleanersAmountText.text = BoogiesSpawner.CleanersAmount.ToString();

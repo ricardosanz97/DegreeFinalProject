@@ -34,8 +34,17 @@ public class SaverManager : Singleton<SaverManager>
         OnLoadData.Invoke();
     }
 
-    public void SaveState()
+    public void SaveState(bool force = false)
     {
+        if (!force)
+        {
+            if (FindObjectOfType<BoogiesSpawner>().BoogiesActing())
+            {
+                Debug.Log("Can't save because boogies are acting.");
+                return;
+            }
+        }
+        saveData.Clear();
         Debug.Log("state saved");
         OnSaveData.Invoke();
     }

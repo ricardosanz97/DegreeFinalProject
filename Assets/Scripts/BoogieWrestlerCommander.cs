@@ -502,9 +502,23 @@ public class BoogieWrestlerCommander : BoogieWrestler
 
     public override void Load()
     {
-        base.Load();
-        coveringBody = SaverManager.I.saveData[key + "coveringBody"];
-        currentSquadList = SaverManager.I.saveData[key + "squadList"];
-        this.neededIndexs = SaverManager.I.saveData[key + "neededIndexs"];
+        try
+        {
+            base.Load();
+            coveringBody = SaverManager.I.saveData[key + "coveringBody"];
+            currentSquadList = SaverManager.I.saveData[key + "squadList"];
+            this.neededIndexs = SaverManager.I.saveData[key + "neededIndexs"];
+        }
+        catch
+        {
+            if (this.gameObject == null)
+            {
+                return;
+            }
+            else
+            {
+                Destroy(this.gameObject);
+            }
+        }
     }
 }

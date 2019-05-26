@@ -33,6 +33,11 @@ public class BoogiesSpawner : MonoBehaviour
     public bool explorersBackButtonPressed;
     public bool collectorsBackButtonPressed;
 
+    public bool cleanersCleaning;
+    public bool explorersExploring;
+    public bool collectorsCollecting;
+    public bool wrestlersWrestling;
+
     public static bool CleanersBackButtonPressed
     {
         get { return FindObjectOfType<BoogiesSpawner>().cleanersBackButtonPressed; }
@@ -168,7 +173,17 @@ public class BoogiesSpawner : MonoBehaviour
         if (CollectorsBackButtonPressed && collectorsSpawned == 0)
         {
             CollectorsBackButtonPressed = false;
+
         }
+    }
+
+    public bool BoogiesActing()
+    {
+        if (this.cleanersCleaning || this.explorersExploring || this.collectorsCollecting || this.wrestlersWrestling)
+        {
+            return true;
+        }
+        return false;
     }
 
     public static void SpawnBoogiesEnabled()
@@ -401,6 +416,7 @@ public class BoogiesSpawner : MonoBehaviour
 
     public void SpawnEnemySquad(Vector3 position, Quaternion rotation, SquadConfiguration.Squad squadConfig)
     {
+        Debug.Log("spawning enemy!!");
         //GameObject commander = Instantiate(Resources.Load("Prefabs/Wrestlers/BoogieWrestlerCommander"), position, Quaternion.identity) as GameObject;
         GameObject commander = Instantiate(Resources.Load("Prefabs/Wrestlers/Enemies/EBoogieWrestlerCommander"), position, rotation) as GameObject;
         //GameObject commander = Instantiate(Resources.Load("Prefabs/Wrestlers/Allies/BoogieWrestlerCommander"), position, Quaternion.identity) as GameObject;

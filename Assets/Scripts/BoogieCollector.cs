@@ -26,7 +26,7 @@ public class BoogieCollector : Boogie
     public ElixirObstacleStone.TYPE collectingType = ElixirObstacleStone.TYPE.None;
     //private bool coroutineChangeDirectionStarted = false;
     [HideInInspector]public List<MarkerBehaviour> markers;
-    GameObject carriedPart;
+    public GameObject carriedPart;
     public CURRENT_STATE currentState;
 
     private BoogieCollectorAnimationController _bcac;
@@ -51,11 +51,15 @@ public class BoogieCollector : Boogie
 
     public override void Save()
     {
-        base.Save();
+        if (this == null || this.gameObject == null)
+        {
+            return;
+        }
         string key = "BoogieCollector" + uniqueId;
         SaverManager.I.saveData.Add(key + "Position", this.transform.position);
         SaverManager.I.saveData.Add(key + "Rotation", this.transform.rotation);
         SaverManager.I.saveData.Add(key + "AnimState", _anim.GetInteger("state"));
+        SaverManager.I.saveData.Add(key + "IsStopped", _agent.isStopped);
         SaverManager.I.saveData.Add(key + "CanCollect", canCollect);
         SaverManager.I.saveData.Add(key + "CanFollowMarker", canFollowMarker);
         SaverManager.I.saveData.Add(key + "FollowingMarker", followingMarker);
@@ -73,7 +77,6 @@ public class BoogieCollector : Boogie
 
     public override void Load()
     {
-        base.Load();
         string key = "BoogieCollector" + uniqueId;
         try
         {
@@ -84,6 +87,7 @@ public class BoogieCollector : Boogie
                 this.transform.position = SaverManager.I.saveData[key + "Position"];
                 this.transform.rotation = SaverManager.I.saveData[key + "Rotation"];
                 _agent.enabled = true;
+                _agent.isStopped = SaverManager.I.saveData[key + "IsStopped"];
             }
             else
             {
@@ -101,6 +105,7 @@ public class BoogieCollector : Boogie
             this.markers = SaverManager.I.saveData[key + "Markers"];
             this.currentElixirStone = SaverManager.I.saveData[key + "CurrentElixirStone"];
             this.currentObjective = SaverManager.I.saveData[key + "CurrentObjective"];
+            Debug.Log("current objective loaded.");
             this.currentState = SaverManager.I.saveData[key + "CurrentState"];
             this.backToPlayer = SaverManager.I.saveData[key + "BackToPlayer"];
             this.carriedPart = SaverManager.I.saveData[key + "PartCarried"];
@@ -110,11 +115,43 @@ public class BoogieCollector : Boogie
                 carriedPart.transform.SetParent(this.transform.Find("ChargingPoint"), false);
                 carriedPart.transform.localPosition = Vector3.zero;
             }
+            else
+            {
+                if (collectingType == ElixirObstacleStone.TYPE.Elixir && !backToPlayer)
+                {
+                    Debug.Log("elixir");
+                    carriedPart = Instantiate(Resources.Load("Prefabs/Obstacles/ElixirEnergyObstacle/ElixirStonePart"), this.transform.position, Quaternion.identity) as GameObject;
+                }
+                else if (collectingType == ElixirObstacleStone.TYPE.Energy && !backToPlayer)
+                {
+                    Debug.Log("energy");
+                    carriedPart = Instantiate(Resources.Load("Prefabs/Obstacles/ElixirEnergyObstacle/EnergyStonePart"), this.transform.position, Quaternion.identity) as GameObject;
+                }
+
+                else
+                {
+                    return;
+                }
+
+                carriedPart.transform.SetParent(this.transform.Find("ChargingPoint"), false);
+                carriedPart.transform.localPosition = Vector3.zero;
+                carriedPart.GetComponent<ElixirStonePart>().AssignKey("BoogieCollector" + uniqueId);
+                carriedPart.GetComponent<ElixirStonePart>().carriedBy = this;
+            }
         }
+
         catch
         {
-            Destroy(this.gameObject);
+            if (this == null || this.gameObject == null)
+            {
+                return;
+            }
+            if (this.gameObject != null)
+            {
+                Destroy(this.gameObject);
+            }
         }
+       
     }
 
     public override void Awake()
@@ -248,6 +285,10 @@ public class BoogieCollector : Boogie
         {
             BoogiesSpawner.CollectorsAmount++;
             BoogiesSpawner.CollectorsSpawned--;
+            if (BoogiesSpawner.CollectorsSpawned == 0)
+            {
+                SaverManager.I.SaveState(true);
+            }
             FindObjectOfType<FastSelectorBoogiesController>().collectorsAmountSlider.onValueChanged.RemoveAllListeners();
             FindObjectOfType<FastSelectorBoogiesController>().collectorsAmountSlider.value++;
             FindObjectOfType<FastSelectorBoogiesController>().collectorsAmountText.text = BoogiesSpawner.CollectorsAmount.ToString();
@@ -625,10 +666,15 @@ public class BoogieCollector : Boogie
                     Debug.Log("energy");
                     carriedPart = Instantiate(Resources.Load("Prefabs/Obstacles/ElixirEnergyObstacle/EnergyStonePart"), this.transform.position, Quaternion.identity) as GameObject;
                 }
+                else
+                {
+                    yield break;
+                }
 
                 carriedPart.transform.SetParent(this.transform.Find("ChargingPoint"), false);
                 carriedPart.transform.localPosition = Vector3.zero;
                 carriedPart.GetComponent<ElixirStonePart>().AssignKey("BoogieCollector" + uniqueId);
+                carriedPart.GetComponent<ElixirStonePart>().carriedBy = this;
             }
             
             
@@ -784,7 +830,7 @@ public class BoogieCollector : Boogie
     IEnumerator CheckIfWorkFinished()
     {
         yield return new WaitForSeconds(timeToCheckIfWorkFinished);
-        if (CollectorMachineBehavior.ElixirGot == currentObjective.GetComponent<ElixirObstacle>().totalElixirAvailable)
+        if (currentObjective != null && CollectorMachineBehavior.ElixirGot == currentObjective.GetComponent<ElixirObstacle>().totalElixirAvailable)
         {
             currentObjective.completed = true;
             Debug.Log("work finished");

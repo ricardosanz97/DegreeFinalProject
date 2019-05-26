@@ -2,17 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PortalController : MonoBehaviour
+public class PortalController : MonoBehaviour, ISaveable
 {
     public ParticleSystem particles;
     public PortalController linkedPortal;
     public Transform teleportedPosition;
     public bool portalEnabled = false;
+    public long id;
     private void Awake()
     {
         particles = GetComponentInChildren<ParticleSystem>();
         teleportedPosition = this.transform.Find("TeleportedPosition");
+        id = GetHashCode();
         //EnablePortal();
+    }
+
+    private void OnEnable()
+    {
+        SaverManager.OnLoadData += Load;
+        SaverManager.OnSaveData += Save;
     }
 
     public void EnablePortal()
@@ -45,4 +53,19 @@ public class PortalController : MonoBehaviour
         }
     }
 
+    public void Save()
+    {
+        SaverManager.I.saveData.Add("Portal" + id + "ParticlesSystemEnabled", particles.isPlaying);
+        SaverManager.I.saveData.Add("Portal" + id + "PortalEnabled", portalEnabled);
+    }
+
+    public void Load()
+    {
+        portalEnabled = SaverManager.I.saveData["Portal" + id + "PortalEnabled"];
+        Debug.Log("portal enabled = " + portalEnabled);
+        if (portalEnabled)
+        {
+            EnablePortal();
+        }
+    }
 }

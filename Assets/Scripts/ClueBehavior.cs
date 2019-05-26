@@ -12,11 +12,9 @@ public class ClueBehavior : InteractableBody, ISaveable
 
     public void Load()
     {
-
     }
 
     public void Save()
     {
-
     }
 }

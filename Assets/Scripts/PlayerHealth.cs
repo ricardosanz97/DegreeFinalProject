@@ -21,6 +21,22 @@ public class PlayerHealth : AttackTarget
     public override void Die()
     {
         alive = false;
+        if (LevelManager.I.aidilConversation.activeInHierarchy)
+        {
+            LevelManager.I.aidilConversation.SetActive(false);
+        }
+        if (LevelManager.I.giantsConversation.activeInHierarchy)
+        {
+            LevelManager.I.giantsConversation.SetActive(false);
+        }
+        if (LevelManager.I.anciantConversation.activeInHierarchy)
+        {
+            LevelManager.I.anciantConversation.SetActive(false);
+        }
+        if (LevelManager.I.distancesConversation.activeInHierarchy)
+        {
+            LevelManager.I.distancesConversation.SetActive(false);
+        }
         OnPlayerDead.Invoke();
         StartCoroutine(DieOnDelay());
     }

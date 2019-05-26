@@ -605,10 +605,11 @@ public class BoogieWrestler : Boogie
             {
                 this.transform.rotation = leader.transform.rotation;
             }
+            Vector3 offset = new Vector3(indexs.j * commander.wrestlersOffset, this.transform.position.y, indexs.i * commander.wrestlersOffset);
+            randomPoint = leader.transform.position + this.transform.TransformDirection(offset);
         }
 
-        Vector3 offset = new Vector3(indexs.j * commander.wrestlersOffset, this.transform.position.y, indexs.i * commander.wrestlersOffset);
-        randomPoint = leader.transform.position + this.transform.TransformDirection(offset);
+       
 
         /*
         if (currentState == STATE.OnSquadCovering && commander.coveringBody.GetComponent<BoogiesSpawner>())
@@ -1057,6 +1058,7 @@ public class BoogieWrestler : Boogie
 
     public void EnemySelected(BoogieWrestler bw)
     {
+        FindObjectOfType<BoogiesSpawner>().wrestlersWrestling = true;
         if (this.GetComponentInParent<SquadTeam>() != null && !this.GetComponentInParent<SquadTeam>().enemyWrestlers.Contains(bw))
         {
             this.GetComponentInParent<SquadTeam>().enemyWrestlers.Add(bw);
@@ -1268,6 +1270,11 @@ public class BoogieWrestler : Boogie
 
     public override void Save()
     {
+        if (this == null || this.gameObject == null)
+        {
+            return;
+        }
+
         if (commander != null)
         {
             key = listPosition.ToString() + this.wrestlerType.ToString() + GetComponentInParent<SquadTeam>().uniqueId;
@@ -1323,7 +1330,10 @@ public class BoogieWrestler : Boogie
         }
         catch
         {
-            Destroy(this.gameObject);
+            if (this != null && gameObject != null)
+            {
+                Destroy(this.gameObject);
+            }
         }
     }
 }

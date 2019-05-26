@@ -25,7 +25,6 @@ public class BoogieExplorer : Boogie
 
     public override void Load()
     {
-        base.Load();
         string key = "BoogieExplorer" + uniqueId;
         try
         {
@@ -36,6 +35,7 @@ public class BoogieExplorer : Boogie
                 this.transform.position = SaverManager.I.saveData[key + "Position"];
                 this.transform.rotation = SaverManager.I.saveData[key + "Rotation"];
                 _agent.enabled = true;
+                _agent.isStopped = SaverManager.I.saveData[key + "IsStopped"];
             }
             else
             {
@@ -62,16 +62,23 @@ public class BoogieExplorer : Boogie
 
         catch
         {
+            if (this == null || this.gameObject == null)
+            {
+                return;
+            }
             Destroy(this.gameObject);
         }
-
     }
 
     public override void Save()
     {
-        base.Save();
+        if (this == null || this.gameObject == null)
+        {
+            return;
+        }
         string key = "BoogieExplorer" + uniqueId;
         SaverManager.I.saveData.Add(key + "AnimState", _anim.GetInteger("state"));
+        SaverManager.I.saveData.Add(key + "IsStopped", _agent.isStopped);
         SaverManager.I.saveData.Add(key + "Position", this.transform.position);
         SaverManager.I.saveData.Add(key + "Rotation", this.transform.rotation);
         SaverManager.I.saveData.Add(key + "CurrentPath", currentPath);
@@ -173,6 +180,10 @@ public class BoogieExplorer : Boogie
             _agent.SetDestination(randomPoint);
             BoogiesSpawner.ExplorersAmount++;
             BoogiesSpawner.ExplorersSpawned--;
+            if (BoogiesSpawner.ExplorersSpawned == 0)
+            {
+                SaverManager.I.SaveState(true);
+            }
             FindObjectOfType<FastSelectorBoogiesController>().explorersAmountSlider.onValueChanged.RemoveAllListeners();
             FindObjectOfType<FastSelectorBoogiesController>().explorersAmountSlider.value++;
             FindObjectOfType<FastSelectorBoogiesController>().explorersAmountText.text = BoogiesSpawner.ExplorersAmount.ToString();

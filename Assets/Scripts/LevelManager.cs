@@ -37,8 +37,8 @@ public class LevelManager : Singleton<LevelManager>, ISaveable
     public DebrisObstacle debrisObstacle;
     public ElixirObstacle elixirObstacle;
     public MultipathObstacle multipathObstacle;
-    [HideInInspector]public BoogieWrestlerCommander allieCommander;
-    [HideInInspector]public BoogieWrestlerCommander initialEnemyCommander;
+    public BoogieWrestlerCommander allieCommander;
+    public BoogieWrestlerCommander initialEnemyCommander;
 
     public Transform spawnCommanderSquadPosition;
     public Transform spawnFirstWrestlers;
@@ -208,6 +208,7 @@ public class LevelManager : Singleton<LevelManager>, ISaveable
     {
         Debug.Log("initial commander dead");
         FindObjectOfType<LevelManager>().OnChangeStep(GAME_STEP.Step3);
+        SaverManager.I.SaveState(true);
     }
 
     public void ConversationAncientFinished()
@@ -470,6 +471,11 @@ public class LevelManager : Singleton<LevelManager>, ISaveable
         SaverManager.I.saveData.Add("ancientDoorOpened", ancientDoorOpened);
         SaverManager.I.saveData.Add("collectorsDoorOpened", collectorsDoorOpened);
         SaverManager.I.saveData.Add("cleanersDoorOpened", cleanersDoorOpened);
+
+        if (initialEnemyCommander != null)
+        {
+            SaverManager.I.saveData.Add("initialCommander", initialEnemyCommander);
+        }
     }
 
     public void Load()
@@ -483,5 +489,29 @@ public class LevelManager : Singleton<LevelManager>, ISaveable
         this.ancientDoorOpened = SaverManager.I.saveData["ancientDoorOpened"];
         this.cleanersDoorOpened = SaverManager.I.saveData["cleanersDoorOpened"];
         this.collectorsDoorOpened = SaverManager.I.saveData["collectorsDoorOpened"];
+
+        if (!ancientDoorOpened)
+        {
+            foreach (BoogieWrestler bw in allieCommander.squadWrestlers)
+            {
+                bw.GetComponent<NavMeshAgent>().areaMask -= 1 << NavMesh.GetAreaFromName("FrontJail");
+            }
+        }
+
+        if (SaverManager.I.saveData.ContainsKey("initialCommander") && initialEnemyCommander == null) //cuando se guardó, el initial commander estaba vivo.
+        {
+            Squad newSquad2 = AssetDatabase.LoadAssetAtPath("Assets/Resources/Squads/Enemies/Commander.asset", typeof(ScriptableObject)) as Squad;
+            SquadConfiguration.Squad squadConfig2 = new SquadConfiguration.Squad(newSquad2.squadName, newSquad2.squadRol, newSquad2.numRows, newSquad2.numCols, newSquad2.customConfiguration);
+            FindObjectOfType<SquadConfiguration>().currentSquadSelected = new SquadConfiguration.Squad(newSquad2.squadName, newSquad2.squadRol, newSquad2.numRows, newSquad2.numCols, newSquad2.customConfiguration);
+            FindObjectOfType<BoogiesSpawner>().SpawnEnemySquad(spawnCommanderSquadPosition.position, spawnCommanderSquadPosition.rotation, FindObjectOfType<SquadConfiguration>().currentSquadSelected);
+            BoogieWrestlerCommander[] commanders = FindObjectsOfType<BoogieWrestlerCommander>();
+            foreach (BoogieWrestlerCommander bwc in commanders)
+            {
+                if (bwc.squadInfo.name == "Commander")
+                {
+                    initialEnemyCommander = bwc;
+                }
+            }
+        }
     }
 }
