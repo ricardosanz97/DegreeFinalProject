@@ -86,6 +86,10 @@ public class LevelManager : Singleton<LevelManager>, ISaveable
 
     public bool GameStarted = false;
 
+    public GameObject cleanersPanel;
+    public GameObject collectorsPanel;
+    public GameObject explorersPanel;
+
     public void GoToSaveStep(SAVE_STEP step)
     {
         switch (step)
@@ -314,6 +318,24 @@ public class LevelManager : Singleton<LevelManager>, ISaveable
         GameStarted = true;
     }
 
+    public void UnlockCleanersPanel()
+    {
+        cleanersPanel.GetComponentInChildren<TextMeshProUGUI>().DOFade(0f, 1f);
+        cleanersPanel.GetComponent<Image>().DOFade(0f, 1f).OnComplete(()=> { Destroy(cleanersPanel); });
+    }
+
+    public void UnlockCollectorsPanel()
+    {
+        collectorsPanel.GetComponentInChildren<TextMeshProUGUI>().DOFade(0f, 1f);
+        collectorsPanel.GetComponent<Image>().DOFade(0f, 1f).OnComplete(() => { Destroy(collectorsPanel); });
+    }
+
+    public void UnlockExplorersPanel()
+    {
+        explorersPanel.GetComponentInChildren<TextMeshProUGUI>().DOFade(0f, 1f);
+        explorersPanel.GetComponent<Image>().DOFade(0f, 1f).OnComplete(() => { Destroy(explorersPanel); });
+    }
+
     public void OnChangeStep(GAME_STEP step)
     {
         currentStep = step;
@@ -361,7 +383,7 @@ public class LevelManager : Singleton<LevelManager>, ISaveable
                 FindObjectOfType<TriggerOpenDoorCleaners>().GetComponent<SphereCollider>().enabled = true;
                 allieCommander.wrestlersOffset = 2f;
                 //STOP EPIC BATTLE MUSIC
-                //SE ACTIVA LA UI PARA PODER DEVOLVER LOS CLEANERS
+                UnlockCleanersPanel();
                 break;
             case GAME_STEP.Step4:
                 FindObjectOfType<PlayerMovement>()._agent.areaMask += 1 << NavMesh.GetAreaFromName("DebrisObstacle");
@@ -369,6 +391,7 @@ public class LevelManager : Singleton<LevelManager>, ISaveable
                 {
                     giants[i].gameObject.SetActive(true);
                 }
+                UnlockExplorersPanel();
                 StartCoroutine(PositionateGiants());
                 break;
             case GAME_STEP.Step5:
@@ -393,6 +416,7 @@ public class LevelManager : Singleton<LevelManager>, ISaveable
                 conversationWithAidilFinished = true;
                 FindObjectOfType<PlayerMovement>().enabled = true;
                 OpenCollectorsDoor();
+                UnlockCollectorsPanel();
                 break;
             case GAME_STEP.Step9:
                 portalCollectors.EnablePortal();

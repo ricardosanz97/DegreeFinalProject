@@ -497,7 +497,7 @@ public class BoogieWrestlerCommander : BoogieWrestler
         base.Save();
         SaverManager.I.saveData[key + "coveringBody"] = this.coveringBody;
         SaverManager.I.saveData[key + "squadList"] = this.currentSquadList;
-        SaverManager.I.saveData[key + "neededIndexs"] = this.neededIndexs;
+        SaverManager.I.saveData[key + "neededIndexs"] = new List<SquadConfiguration.Index>(this.neededIndexs);
     }
 
     public override void Load()
@@ -507,7 +507,9 @@ public class BoogieWrestlerCommander : BoogieWrestler
             base.Load();
             coveringBody = SaverManager.I.saveData[key + "coveringBody"];
             currentSquadList = SaverManager.I.saveData[key + "squadList"];
-            this.neededIndexs = SaverManager.I.saveData[key + "neededIndexs"];
+            List<SquadConfiguration.Index> savedNeededIndexs = SaverManager.I.saveData[key + "neededIndexs"];
+            Debug.Log("saved needed indexs has " + savedNeededIndexs.Count + " elements. ");
+            this.neededIndexs = new List<SquadConfiguration.Index>(savedNeededIndexs);
         }
         catch
         {

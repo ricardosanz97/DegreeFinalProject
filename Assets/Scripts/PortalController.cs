@@ -23,6 +23,24 @@ public class PortalController : MonoBehaviour, ISaveable
         SaverManager.OnSaveData += Save;
     }
 
+    public void Save()
+    {
+        SaverManager.I.saveData.Add("Portal" + id + "ParticlesSystemEnabled", particles.isPlaying);
+        SaverManager.I.saveData.Add("Portal" + id + "PortalEnabled", portalEnabled);
+    }
+
+    public void Load()
+    {
+        portalEnabled = SaverManager.I.saveData["Portal" + id + "PortalEnabled"];
+        Debug.Log("portal enabled = " + portalEnabled);
+        if (portalEnabled)
+        {
+            EnablePortal();
+        }
+    }
+
+
+
     public void EnablePortal()
     {
         linkedPortal.enabled = true;
@@ -53,19 +71,4 @@ public class PortalController : MonoBehaviour, ISaveable
         }
     }
 
-    public void Save()
-    {
-        SaverManager.I.saveData.Add("Portal" + id + "ParticlesSystemEnabled", particles.isPlaying);
-        SaverManager.I.saveData.Add("Portal" + id + "PortalEnabled", portalEnabled);
-    }
-
-    public void Load()
-    {
-        portalEnabled = SaverManager.I.saveData["Portal" + id + "PortalEnabled"];
-        Debug.Log("portal enabled = " + portalEnabled);
-        if (portalEnabled)
-        {
-            EnablePortal();
-        }
-    }
 }

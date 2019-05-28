@@ -51,7 +51,10 @@ public class BoogieCleaner : Boogie
                 this.transform.position = SaverManager.I.saveData[key + "Position"];
                 this.transform.rotation = SaverManager.I.saveData[key + "Rotation"];
                 _agent.enabled = true;
-                _agent.isStopped = SaverManager.I.saveData[key + "IsStopped"];
+                if (SaverManager.I.saveData.ContainsKey(key + "IsStopped"))
+                {
+                    _agent.isStopped = SaverManager.I.saveData[key + "IsStopped"];
+                }
             }
             else
             {
@@ -92,7 +95,10 @@ public class BoogieCleaner : Boogie
         SaverManager.I.saveData.Add(key + "Position", this.transform.position);
         SaverManager.I.saveData.Add(key + "Rotation", this.transform.rotation);
         SaverManager.I.saveData.Add(key + "AnimState", _anim.GetInteger("state"));
-        SaverManager.I.saveData.Add(key + "IsStopped", _agent.isStopped);
+        if (_agent.isOnNavMesh)
+        {
+            SaverManager.I.saveData.Add(key + "IsStopped", _agent.isStopped);
+        }
         SaverManager.I.saveData.Add(key + "CanCharge", canCharge);
         SaverManager.I.saveData.Add(key + "CanDeposit", canDeposit);
         SaverManager.I.saveData.Add(key + "CarriedObject", carriedObject);

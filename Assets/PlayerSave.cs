@@ -16,7 +16,6 @@ public class PlayerSave : MonoBehaviour, ISaveable
         _playerHealth = GetComponent<PlayerHealth>();
         _anim = GetComponent<Animator>();
     }
-
     private void OnEnable()
     {
         SaverManager.OnSaveData += Save;

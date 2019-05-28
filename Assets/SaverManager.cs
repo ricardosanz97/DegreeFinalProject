@@ -13,21 +13,6 @@ public class SaverManager : Singleton<SaverManager>
     public static event Action OnSaveData;
     public static event Action OnLoadData;
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.O))
-        {
-            saveData.Clear();
-            Debug.Log("data saved");
-            OnSaveData.Invoke();
-        }
-        else if (Input.GetKeyDown(KeyCode.P))
-        {
-            Debug.Log("loading data");
-            OnLoadData.Invoke();
-        }
-    }
-
     public void LoadLastSavedState()
     {
         Debug.Log("state loaded");
@@ -48,4 +33,21 @@ public class SaverManager : Singleton<SaverManager>
         Debug.Log("state saved");
         OnSaveData.Invoke();
     }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            saveData.Clear();
+            Debug.Log("data saved");
+            OnSaveData.Invoke();
+        }
+        else if (Input.GetKeyDown(KeyCode.P))
+        {
+            Debug.Log("loading data");
+            OnLoadData.Invoke();
+        }
+    }
+
+    
 }
