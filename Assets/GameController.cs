@@ -8,25 +8,18 @@ public enum SCENES
     Loader = 0,
     Menu = 1,
     Game = 2,
-    Sandbox = 3
+    LimitedGame = 3,
+    Sandbox = 4
 }
 
 public class GameController : Singleton<GameController>
 {
+    private void Awake()
+    {
+        Debug.Log("GameController created!");
+    }
     public void LoadScene(int scene)
     {
         SceneManager.LoadScene(scene);
-    }
-
-    public IEnumerator EndGame()
-    {
-        yield return new WaitForSeconds(3f);
-        //Back to menu
-    }
-
-    public IEnumerator LoadLastSavedState()
-    {
-        yield return new WaitForSeconds(2f);
-        SaverManager.I.LoadLastSavedState();
     }
 }

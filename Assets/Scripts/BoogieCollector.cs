@@ -776,7 +776,7 @@ public class BoogieCollector : Boogie
             yield return new WaitForSeconds(timeToReleaseMarker);
             if (currentState == CURRENT_STATE.GoingToCollectorMachine || currentState == CURRENT_STATE.FollowingMarkersToCollectorMachine)
             {
-                GameObject currentMarker = Instantiate(marker, new Vector3(transform.position.x, 0.11f, transform.position.z), Quaternion.Euler(new Vector3(0, Random.Range(0, 360), 0)));
+                GameObject currentMarker = Instantiate(marker, new Vector3(transform.position.x, transform.position.y, transform.position.z), Quaternion.Euler(new Vector3(0, Random.Range(0, 360), 0)));
                 MarkerBehaviour mb = currentMarker.GetComponent<MarkerBehaviour>();
                 mb.markerCreator = this;
                 mb.previousMarker = lastMarker;

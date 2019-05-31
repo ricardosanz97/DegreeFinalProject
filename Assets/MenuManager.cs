@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MenuManager : MonoBehaviour
 {
@@ -12,8 +13,14 @@ public class MenuManager : MonoBehaviour
     public Transform destinySecond;
     public MenuDoorBehavior door;
 
+    public GameObject creditsPanel;
+    public GameObject menuPanel;
+    public GameObject aboutPanel;
+
     private void Start()
     {
+        this.GetComponent<AudioSource>().clip = Resources.Load<AudioClip>("Sounds/menu");
+        this.GetComponent<AudioSource>().Play();
         SelectEntities();
     }
 
@@ -50,5 +57,54 @@ public class MenuManager : MonoBehaviour
     public void TriggerDoor()
     {
         door.Trigger();
+    }
+
+    public void OpenSandboxScene()
+    {
+        GameController.I.LoadScene((int)SCENES.Sandbox);
+        //SceneManager.LoadScene((int)SCENES.Sandbox);
+    }
+
+    public void OpenCompleteDemoScene()
+    {
+        GameController.I.LoadScene((int)SCENES.Game);
+        //SceneManager.LoadScene((int)SCENES.Game);
+    }
+
+    public void OpenLimitedDemoScene()
+    {
+        GameController.I.LoadScene((int)SCENES.LimitedGame);
+        //SceneManager.LoadScene((int)SCENES.LimitedGame);
+    }
+
+    public void QuitButtonPressed()
+    {
+        Application.Quit();
+    }
+
+    public void AboutButtonPressed()
+    {
+        menuPanel.SetActive(false);
+        creditsPanel.SetActive(false);
+        aboutPanel.SetActive(true);
+    }
+
+    public void CreditsButtonPressed()
+    {
+        menuPanel.SetActive(false);
+        aboutPanel.SetActive(false);
+        creditsPanel.SetActive(true);
+    }
+
+    public void BackCreditsButtonPressed()
+    {
+        creditsPanel.SetActive(false);
+        menuPanel.SetActive(true);
+    }
+
+    public void BackAboutButtonPresed()
+    {
+        aboutPanel.SetActive(false);
+        menuPanel.SetActive(true);
     }
 }

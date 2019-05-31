@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c8861e13c366486bb01b0398764ff17, type: 3}
   m_Name: FirstWrestlers
   m_EditorClassIdentifier: 
-  commanderHealth: 70
-  giantHealth: 70
-  closeHealth: 40
-  distanceHealth: 40
+  commanderHealth: 120
+  giantHealth: 80
+  closeHealth: 45
+  distanceHealth: 45
   commanderAttackSpeed: 3
   giantAttackSpeed: 4
   closeAttackSpeed: 2.5

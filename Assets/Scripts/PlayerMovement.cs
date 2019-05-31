@@ -24,7 +24,7 @@ public class PlayerMovement : MonoBehaviour
         {
             return;
         }
-        if (!GetComponent<PlayerHealth>().alive || !LevelManager.I.GameStarted) { return; }
+        if (!GetComponent<PlayerHealth>().alive || (FindObjectOfType<LevelManager>() != null && !LevelManager.I.GameStarted)) { return; }
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
 

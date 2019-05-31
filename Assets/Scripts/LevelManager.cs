@@ -6,6 +6,7 @@ using UnityEngine.AI;
 using DG.Tweening;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 public enum GAME_STEP
 {
     Step0,//start game
@@ -90,6 +91,11 @@ public class LevelManager : Singleton<LevelManager>, ISaveable
     public GameObject collectorsPanel;
     public GameObject explorersPanel;
 
+    public List<Squad> provisionalAlliesCreatedSquads = new List<Squad>();
+    public List<Squad> provisionalEnemiesCreatedSquads = new List<Squad>();
+
+    public bool limitedVersion = false;
+
     public void GoToSaveStep(SAVE_STEP step)
     {
         switch (step)
@@ -103,6 +109,21 @@ public class LevelManager : Singleton<LevelManager>, ISaveable
         }
     }
 
+    private void Awake()
+    {
+        if (SceneManager.GetActiveScene().buildIndex == (int)SCENES.Sandbox)
+        {
+            Destroy(this.gameObject);
+        }
+
+        if (SceneManager.GetActiveScene().buildIndex == (int)SCENES.LimitedGame)
+        {
+            limitedVersion = true;
+        }
+
+        this.fadeBlackImage.GetComponent<Image>().DOFade(0f, 3f);
+   }
+
     private void OnEnable()
     {
         SaverManager.OnSaveData += Save;
@@ -113,6 +134,9 @@ public class LevelManager : Singleton<LevelManager>, ISaveable
 
     private void Start()
     {
+        this.GetComponent<AudioSource>().clip = Resources.Load<AudioClip>("Sounds/game");
+        this.GetComponent<AudioSource>().Play();
+
         DoorCollectors[] d = FindObjectsOfType<DoorCollectors>();
         doorCollectors1 = d[0].gameObject;
         doorCollectors2 = d[1].gameObject;
@@ -210,9 +234,12 @@ public class LevelManager : Singleton<LevelManager>, ISaveable
 
     public void InitialCommanderDead()
     {
-        Debug.Log("initial commander dead");
-        FindObjectOfType<LevelManager>().OnChangeStep(GAME_STEP.Step3);
-        SaverManager.I.SaveState(true);
+        if (FindObjectOfType<LevelManager>().currentStep == GAME_STEP.Step2)
+        {
+            Debug.Log("initial commander dead");
+            FindObjectOfType<LevelManager>().OnChangeStep(GAME_STEP.Step3);
+            SaverManager.I.SaveState(true);
+        }
     }
 
     public void ConversationAncientFinished()
@@ -259,7 +286,8 @@ public class LevelManager : Singleton<LevelManager>, ISaveable
 
     IEnumerator SpawnAllieWrestlers()
     {
-        Squad newSquad = AssetDatabase.LoadAssetAtPath("Assets/Resources/Squads/Allies/Allies.asset", typeof(ScriptableObject)) as Squad;
+        //Squad newSquad = AssetDatabase.LoadAssetAtPath("Assets/Resources/Squads/Allies/Allies.asset", typeof(ScriptableObject)) as Squad;
+        Squad newSquad = Resources.Load<ScriptableObject>("Squads/Allies/Allies") as Squad;
         SquadConfiguration.Squad squadConfig = new SquadConfiguration.Squad(newSquad.squadName, newSquad.squadRol, newSquad.numRows, newSquad.numCols, newSquad.customConfiguration);
         FindObjectOfType<SquadConfiguration>().currentSquadSelected = new SquadConfiguration.Squad(newSquad.squadName, newSquad.squadRol, newSquad.numRows, newSquad.numCols, newSquad.customConfiguration);
         FindObjectOfType<BoogiesSpawner>().SpawnAllieSquad(spawnFirstWrestlers.position, spawnFirstWrestlers.rotation, FindObjectOfType<SquadConfiguration>().currentSquadSelected);
@@ -293,7 +321,8 @@ public class LevelManager : Singleton<LevelManager>, ISaveable
 
     private void SpawnFinalEnemyWrestlers()
     {
-        Squad newSquad = AssetDatabase.LoadAssetAtPath("Assets/Resources/Squads/Enemies/Finalenemy.asset", typeof(ScriptableObject)) as Squad;
+        //Squad newSquad = AssetDatabase.LoadAssetAtPath("Assets/Resources/Squads/Enemies/Finalenemy.asset", typeof(ScriptableObject)) as Squad;
+        Squad newSquad = Resources.Load<ScriptableObject>("Squads/Enemies/Finalenemy") as Squad;
         SquadConfiguration.Squad squadConfig2 = new SquadConfiguration.Squad(newSquad.squadName, newSquad.squadRol, newSquad.numRows, newSquad.numCols, newSquad.customConfiguration);
         FindObjectOfType<SquadConfiguration>().currentSquadSelected = new SquadConfiguration.Squad(newSquad.squadName, newSquad.squadRol, newSquad.numRows, newSquad.numCols, newSquad.customConfiguration);
         FindObjectOfType<BoogiesSpawner>().SpawnEnemySquad(spawnFinalEnemyWrestlers.position, spawnFinalEnemyWrestlers.rotation, FindObjectOfType<SquadConfiguration>().currentSquadSelected);
@@ -347,7 +376,8 @@ public class LevelManager : Singleton<LevelManager>, ISaveable
                 StartCoroutine(SpawnAllieWrestlers());
 
                 //spawn commander
-                Squad newSquad2 = AssetDatabase.LoadAssetAtPath("Assets/Resources/Squads/Enemies/Commander.asset", typeof(ScriptableObject)) as Squad;
+                //Squad newSquad2 = AssetDatabase.LoadAssetAtPath("Assets/Resources/Squads/Enemies/Commander.asset", typeof(ScriptableObject)) as Squad;
+                Squad newSquad2 = Resources.Load<ScriptableObject>("Squads/Enemies/Commander") as Squad;
                 SquadConfiguration.Squad squadConfig2 = new SquadConfiguration.Squad(newSquad2.squadName, newSquad2.squadRol, newSquad2.numRows, newSquad2.numCols, newSquad2.customConfiguration);
                 FindObjectOfType<SquadConfiguration>().currentSquadSelected = new SquadConfiguration.Squad(newSquad2.squadName, newSquad2.squadRol, newSquad2.numRows, newSquad2.numCols, newSquad2.customConfiguration);
                 FindObjectOfType<BoogiesSpawner>().SpawnEnemySquad(spawnCommanderSquadPosition.position, spawnCommanderSquadPosition.rotation, FindObjectOfType<SquadConfiguration>().currentSquadSelected);
@@ -449,7 +479,7 @@ public class LevelManager : Singleton<LevelManager>, ISaveable
                 {
                     fadeBlackImage.transform.Find("TheEndText").GetComponent<TextMeshProUGUI>().DOFade(1f, 3f).OnComplete(()=> 
                     {
-                        StartCoroutine(GameController.I.EndGame());
+                        StartCoroutine(this.EndGame());
                     });
                 });
                 break;
@@ -459,6 +489,12 @@ public class LevelManager : Singleton<LevelManager>, ISaveable
             case GAME_STEP.Step15:
                 break;
         }
+    }
+
+    IEnumerator EndGame()
+    {
+        yield return new WaitForSeconds(3f);
+        SceneManager.LoadScene((int)SCENES.Menu);
     }
 
     public void PlayerDead()
@@ -474,7 +510,7 @@ public class LevelManager : Singleton<LevelManager>, ISaveable
 
     IEnumerator FadeOut()
     {
-        yield return StartCoroutine(GameController.I.LoadLastSavedState());
+        yield return StartCoroutine(this.LoadLastSavedState());
         yield return new WaitForSeconds(3f);
         this.fadeBlackImage.transform.Find("YouDiedText").GetComponent<TextMeshProUGUI>().DOFade(0f, 1.5f);
         this.fadeBlackImage.DOFade(0f, 1.5f).OnComplete(() =>
@@ -482,6 +518,12 @@ public class LevelManager : Singleton<LevelManager>, ISaveable
             FindObjectOfType<PlayerHealth>().alive = true;
             GameStarted = true;
         });
+    }
+
+    public IEnumerator LoadLastSavedState()
+    {
+        yield return new WaitForSeconds(3f);
+        SaverManager.I.LoadLastSavedState();
     }
 
     public void Save()
@@ -524,7 +566,8 @@ public class LevelManager : Singleton<LevelManager>, ISaveable
 
         if (SaverManager.I.saveData.ContainsKey("initialCommander") && initialEnemyCommander == null) //cuando se guardó, el initial commander estaba vivo.
         {
-            Squad newSquad2 = AssetDatabase.LoadAssetAtPath("Assets/Resources/Squads/Enemies/Commander.asset", typeof(ScriptableObject)) as Squad;
+            //Squad newSquad2 = AssetDatabase.LoadAssetAtPath("Assets/Resources/Squads/Enemies/Commander.asset", typeof(ScriptableObject)) as Squad;
+            Squad newSquad2 =Resources.Load<ScriptableObject>("Squads/Enemies/Commander") as Squad;
             SquadConfiguration.Squad squadConfig2 = new SquadConfiguration.Squad(newSquad2.squadName, newSquad2.squadRol, newSquad2.numRows, newSquad2.numCols, newSquad2.customConfiguration);
             FindObjectOfType<SquadConfiguration>().currentSquadSelected = new SquadConfiguration.Squad(newSquad2.squadName, newSquad2.squadRol, newSquad2.numRows, newSquad2.numCols, newSquad2.customConfiguration);
             FindObjectOfType<BoogiesSpawner>().SpawnEnemySquad(spawnCommanderSquadPosition.position, spawnCommanderSquadPosition.rotation, FindObjectOfType<SquadConfiguration>().currentSquadSelected);

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c8861e13c366486bb01b0398764ff17, type: 3}
   m_Name: InitialCommander
   m_EditorClassIdentifier: 
-  commanderHealth: 50
+  commanderHealth: 25
   giantHealth: 33
   closeHealth: 20
   distanceHealth: 20

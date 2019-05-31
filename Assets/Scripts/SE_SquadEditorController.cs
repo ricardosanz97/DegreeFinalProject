@@ -230,8 +230,18 @@ public class SE_SquadEditorController : GenericPanelController
         {
             path = "Assets/Resources/Squads/Enemies/" + asset.squadName + ".asset";
         }
+
+#if UNITY_EDITOR
         AssetDatabase.CreateAsset(asset, path);
         AssetDatabase.SaveAssets();
+#else
+        if (allie){
+            LevelManager.I.provisionalAlliesCreatedSquads.Add(asset);
+        }
+        else{
+            LevelManager.I.provisionalEnemiesCreatedSquads.Add(asset);
+        }
+#endif
         this.ClosePanel();
         squadNamePopup.SetActive(false);
         UIController.I.writing = false;
