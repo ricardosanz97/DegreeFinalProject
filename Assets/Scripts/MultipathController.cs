@@ -30,6 +30,24 @@ public class MultipathController : MonoBehaviour, ISaveable
         AssignPaths();
     }
 
+    private void Start()
+    {
+        if (LevelManager.I.limitedVersion)
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                int clue = int.Parse(combination[i].ToString());
+                GameObject clueGO = Instantiate(Resources.Load<GameObject>("Prefabs/Clues/" + clue + "Clue"),new Vector3(100,100,100), Quaternion.identity);
+                Vector3 position = new Vector3(Paths[0].begin.transform.position.x, 0.4f + (i * clueGO.GetComponent<Collider>().bounds.size.y), Paths[0].begin.transform.position.z);
+                clueGO.transform.position = position;
+                clues[i] = clueGO.GetComponent<ClueBehavior>();
+                clueGO.GetComponent<ClueBehavior>().pathIndex = i;
+                clueGO.GetComponent<ClueBehavior>().corridorIndex = clue;
+                clueGO.GetComponent<ClueBehavior>().placed = true;
+            }
+        }
+    }
+
     private void OnEnable()
     {
         SaverManager.OnSaveData += Save;
@@ -70,6 +88,8 @@ public class MultipathController : MonoBehaviour, ISaveable
             sb.Append(Paths[i].CorridorCorrectIndex.ToString());
         }
         combination = sb.ToString();
+
+        Debug.Log("limitedVersion = " + LevelManager.I.limitedVersion);
     }
 
     public void CloseAllDoors()

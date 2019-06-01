@@ -416,7 +416,7 @@ public class BoogiesSpawner : MonoBehaviour
 
     public void SpawnEnemySquad(Vector3 position, Quaternion rotation, SquadConfiguration.Squad squadConfig)
     {
-        Debug.Log("spawning enemy!!");
+        //Debug.Log("spawning enemy!!");
         //GameObject commander = Instantiate(Resources.Load("Prefabs/Wrestlers/BoogieWrestlerCommander"), position, Quaternion.identity) as GameObject;
         GameObject commander = Instantiate(Resources.Load("Prefabs/Wrestlers/Enemies/EBoogieWrestlerCommander"), position, rotation) as GameObject;
         //GameObject commander = Instantiate(Resources.Load("Prefabs/Wrestlers/Allies/BoogieWrestlerCommander"), position, Quaternion.identity) as GameObject;

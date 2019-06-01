@@ -23,7 +23,8 @@ public class CorridorBegin : MonoBehaviour
             {
                 mc.initialPosition = Vector3.zero;
                 //other.transform.Translate(mc.distanceTraveled);
-                other.transform.position += mc.distanceTraveled;
+                //other.transform.position += mc.distanceTraveled;
+                other.transform.position = mc.Paths[0].begin.transform.position;
 
                 mc.distanceTraveled = Vector3.zero;
             }

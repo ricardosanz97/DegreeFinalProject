@@ -50,7 +50,7 @@ public class PathBehavior : MonoBehaviour, ISaveable
     {
         long uniqueId = GetComponentInParent<MultipathObstacle>().uniqueId;
         string key = "MultipathObstacle" + uniqueId + this.PathIndex.ToString() + "InitialDoorsOpened";
-        Debug.Log(key);
+        //Debug.Log(key);
         SaverManager.I.saveData.Add(key, begin.doorsOpened);
         foreach (PathCorridorTrigger pct in corridors)
         {

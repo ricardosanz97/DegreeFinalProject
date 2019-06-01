@@ -84,7 +84,7 @@ public abstract class Boogie : AttackTarget, ISaveable
 
     public IEnumerator ObjectiveNotFound()
     {
-        Debug.Log("max time to find objective = " + maxTimeToFindObjective);
+        //Debug.Log("max time to find objective = " + maxTimeToFindObjective);
         yield return new WaitForSeconds(maxTimeToFindObjective);
         if (currentObjective == null)
         {

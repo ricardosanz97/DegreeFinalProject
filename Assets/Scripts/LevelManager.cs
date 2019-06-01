@@ -400,6 +400,12 @@ public class LevelManager : Singleton<LevelManager>, ISaveable
                 StartCoroutine(InitGame());
                 break;
             case GAME_STEP.Step1:
+                if (limitedVersion)
+                {
+                    OpenAncientDoor();
+                    ConversationAncientFinished();
+                    return;
+                }
                 anciantConversation.SetActive(true);
                 FindObjectOfType<PlayerMovement>().enabled = false;
                 FindObjectOfType<BoogiesSpawner>().GetComponent<Animator>().SetInteger("state", 0);

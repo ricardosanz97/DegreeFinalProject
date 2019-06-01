@@ -15,7 +15,7 @@ public class SquadTeam : MonoBehaviour
         {
             uniqueId = GetHashCode() * (int)Time.unscaledTime * Random.Range(1, 9);
         }
-        Debug.Log("uniqueId = " + uniqueId);
+        //Debug.Log("uniqueId = " + uniqueId);
     }
 
     private void Update()

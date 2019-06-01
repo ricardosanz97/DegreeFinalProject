@@ -20,6 +20,11 @@ public class AidilController : MonoBehaviour, ISaveable
         {
             if (!LevelManager.I.conversationWithAidilFinished)
             {
+                if (LevelManager.I.limitedVersion)
+                {
+                    LevelManager.I.ConversationWithAidilFinished();
+                    return;
+                }
                 LevelManager.I.OnChangeStep(GAME_STEP.Step7);
             }
         }

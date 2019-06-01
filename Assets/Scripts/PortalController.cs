@@ -67,6 +67,12 @@ public class PortalController : MonoBehaviour, ISaveable
             other.GetComponent<PlayerMovement>().transform.rotation = linkedPortal.teleportedPosition.localRotation;
             DisablePortal();  
             other.GetComponent<PlayerMovement>()._agent.enabled = true;
+
+            if (LevelManager.I.limitedVersion)
+            {
+                LevelManager.I.ConversationWithDistancesFinished();
+                return;
+            }
             LevelManager.I.OnChangeStep(GAME_STEP.Step10);
         }
     }

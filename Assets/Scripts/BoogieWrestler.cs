@@ -575,7 +575,7 @@ public class BoogieWrestler : Boogie
         {
             initialIndexs = new SquadConfiguration.Index(indexs.i, indexs.j);
 
-            Debug.Log(this.wrestlerType.ToString() + " -> commander assigned");
+            //Debug.Log(this.wrestlerType.ToString() + " -> commander assigned");
             commander = this.transform.parent.gameObject.GetComponentInChildren<BoogieWrestlerCommander>();
             currentState = STATE.OnSquadObserving;
             leader = commander.gameObject;
@@ -1284,7 +1284,7 @@ public class BoogieWrestler : Boogie
             key = listPosition.ToString() + this.wrestlerType.ToString() + uniqueId;
         }
 
-        Debug.Log("my wrestler key is " + key);
+        //Debug.Log("my wrestler key is " + key);
 
         SaverManager.I.saveData[key + "position"] = this.transform.position;
         SaverManager.I.saveData[key + "rotation"] = this.transform.rotation;

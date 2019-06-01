@@ -8,6 +8,11 @@ public class TriggerGiants : MonoBehaviour
     {
         if (other.GetComponent<PlayerMovement>() && LevelManager.I.currentStep == GAME_STEP.Step4)
         {
+            if (LevelManager.I.limitedVersion)
+            {
+                LevelManager.I.ConversationWithGiantsFinished();
+                return;
+            }
             LevelManager.I.OnChangeStep(GAME_STEP.Step5);
         }
     }
