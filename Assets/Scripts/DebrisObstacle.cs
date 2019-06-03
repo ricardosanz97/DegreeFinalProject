@@ -14,8 +14,12 @@ public class DebrisObstacle : Obstacle
         debrisParts = new DebrisObstaclePart[this.transform.childCount];
         for (int i = 0; i<this.transform.childCount; i++)
         {
-            debrisParts[i] = this.transform.GetChild(i).GetComponent<DebrisObstaclePart>();
-            debrisParts[i].idPart = i;
+            if (this.transform.GetChild(i).gameObject.activeInHierarchy)
+            {
+                debrisParts[i] = this.transform.GetChild(i).GetComponent<DebrisObstaclePart>();
+                debrisParts[i].idPart = i;
+            }
+            
         }
 
         uniqueId = GetHashCode() * Random.Range(1, 9);
