@@ -75,6 +75,10 @@ public class UISquadSelectorController : GenericPanelController
             }
             if (team == TEAM.A)
             {
+                if (FindObjectOfType<LevelManager>() == null)
+                {
+                    return null;
+                }
                 foreach (Squad s in LevelManager.I.provisionalAlliesCreatedSquads)
                 {
                     GameObject squadGO = Instantiate(UISquadSelectorController.customButton.gameObject);
@@ -92,6 +96,10 @@ public class UISquadSelectorController : GenericPanelController
             }
             else
             {
+                if (FindObjectOfType<LevelManager>() == null)
+                {
+                    return null;
+                }
                 foreach (Squad s in LevelManager.I.provisionalEnemiesCreatedSquads)
                 {
                     GameObject squadGO = Instantiate(UISquadSelectorController.customButton.gameObject);
@@ -147,6 +155,10 @@ public class UISquadSelectorController : GenericPanelController
 
             if (team == TEAM.A)
             {
+                if (FindObjectOfType<LevelManager>() == null)
+                {
+                    return null;
+                }
                 foreach (Squad s in LevelManager.I.provisionalAlliesCreatedSquads)
                 {
                     SquadConfiguration.Squad squadConfig = new SquadConfiguration.Squad(s.squadName, s.squadRol, s.numRows, s.numCols, s.customConfiguration);

@@ -1,0 +1,104 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c8861e13c366486bb01b0398764ff17, type: 3}
+  m_Name: SandboxAllies
+  m_EditorClassIdentifier: 
+  commanderHealth: 120
+  giantHealth: 80
+  closeHealth: 45
+  distanceHealth: 45
+  commanderAttackSpeed: 3
+  giantAttackSpeed: 4
+  closeAttackSpeed: 2.5
+  distanceAttackSpeed: 4
+  commanderVisionDistance: 8
+  giantVisionDistance: 4
+  closeVisionDistance: 6
+  distanceVisionDistance: 10
+  commanderFieldView: 60
+  giantFieldView: 90
+  closeFieldView: 55
+  distanceFieldView: 45
+  distanceAttackRange: 7
+  commanderAttackDamage: 6
+  giantAttackDamage: 4
+  closeAttackDamage: 5
+  distanceAttackDamage: 4
+  closeTimeFindTargets: 0.5
+  distanceTimeFindTargets: 0.5
+  giantTimeFindTargets: 1.2
+  commanderTimeFindTargets: 1
+  minOffset: 2
+  maxOffset: 2.2
+  probabilityVariateOffset: 0.5
+  timeVariateOffset: 4
+  closeMinTimeChange: 5
+  closeMaxTimeChange: 10
+  distanceMinTimeChange: 5
+  distanceMaxTimeChange: 10
+  giantMinTimeChange: 2
+  giantMaxTimeChange: 5
+  commanderMinTimeChange: 4
+  commanderMaxTimeChange: 9
+  closeProbChange: 0.5
+  distanceProbChange: 0.5
+  giantProbChange: 0.75
+  commanderProbChange: 0.6
+  distanceMinSpeed: 6
+  distanceMaxSpeed: 9
+  distanceProbabilityVariateSpeed: 0.75
+  distanceTimeVariateSpeed: 2
+  commanderMinSpeed: 4
+  commanderMaxSpeed: 6
+  commanderProbabilityVariateSpeed: 0
+  commanderTimeVariateSpeed: 3.5
+  giantMinSpeed: 3
+  giantMaxSpeed: 5
+  giantProbabilityVariateSpeed: 0.2
+  giantTimeVariateSpeed: 4
+  closeMinSpeed: 5
+  closeMaxSpeed: 8
+  closeProbabilityVariateSpeed: 0.6
+  closeTimeVariateSpeed: 2.5
+  timeVariateSpeed: 3
+  closeProbabilityPreferences: 0.85
+  giantProbabilityPreferences: 0.7
+  commanderProbabilityPreferences: 0.8
+  distanceProbabilityPreferences: 0.6
+  CommanderPreferences: 03000000000000000100000002000000
+  GiantPreferences: 03000000020000000100000000000000
+  ClosePreferences: 01000000020000000300000000000000
+  DistancePreferences: 01000000020000000300000000000000
+  percentHpCoverClose: 0.6
+  percentHpCoverDistance: 0.6
+  percentHpCoverCommander: 0.5
+  percentHpCoverGiant: 0.4
+  minTimeCoverAgain: 6
+  maxTimeCoverAgain: 12
+  commanderOnDieCallback:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: OnDieEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  giantOnDieCallback:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: OnDieEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  distanceOnDieCallback:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  closeOnDieCallback:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null

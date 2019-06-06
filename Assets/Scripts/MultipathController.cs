@@ -32,7 +32,7 @@ public class MultipathController : MonoBehaviour, ISaveable
 
     private void Start()
     {
-        if (LevelManager.I.limitedVersion)
+        if (FindObjectOfType<LevelManager>() != null && LevelManager.I.limitedVersion)
         {
             for (int i = 0; i < 2; i++)
             {
@@ -89,7 +89,7 @@ public class MultipathController : MonoBehaviour, ISaveable
         }
         combination = sb.ToString();
 
-        Debug.Log("limitedVersion = " + LevelManager.I.limitedVersion);
+        //Debug.Log("limitedVersion = " + LevelManager.I.limitedVersion);
     }
 
     public void CloseAllDoors()
